@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Portal Bersepadu Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah
  * Data Utama & Pangkalan Maklumat Sekolah (Sesi Persekolahan 2026)
  * Domain Utama: xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1
@@ -57,6 +57,7 @@ const SCHOOL_DATA = {
   leadership: [
     {
       id: "gb",
+      photo: "assets/images/guru/t01.jpg",
       name: "En. Mudah Hj. Admaim",
       title: "Guru Besar",
       role: "Pemimpin Instruksional & Pengurusan Tertinggi Sekolah",
@@ -74,6 +75,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "pk1",
+      photo: "assets/images/guru/t02.jpg",
       name: "Datin Razana Hj. Abd. Wahid",
       title: "Penolong Kanan Pentadbiran",
       role: "Pengurusan Kurikulum & Akademik Sekolah",
@@ -91,6 +93,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "pkhem",
+      photo: "assets/images/guru/t03.jpg",
       name: "Pn. Hamisah Janah",
       title: "Penolong Kanan Hal Ehwal Murid",
       role: "Pembangunan Sahsiah, Kebajikan & Disiplin Murid",
@@ -108,6 +111,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "pkkoko",
+      photo: "assets/images/guru/t04.jpg",
       name: "Pn. Jennet Gindawa",
       title: "Penolong Kanan Kokurikulum",
       role: "Pembangunan Bakat, Sukan & Kepimpinan Murid",
@@ -129,6 +133,7 @@ const SCHOOL_DATA = {
   teachers: [
     {
       id: "T01",
+      photo: "assets/images/guru/t01.jpg",
       name: "En. Mudah Hj. Admaim",
       role: "Guru Besar",
       mainSubject: "Pendidikan Islam",
@@ -141,6 +146,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T02",
+      photo: "assets/images/guru/t02.jpg",
       name: "Datin Razana Hj. Abd. Wahid",
       role: "Penolong Kanan Pentadbiran",
       mainSubject: "Pendidikan Moral",
@@ -153,6 +159,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T03",
+      photo: "assets/images/guru/t03.jpg",
       name: "Pn. Hamisah Janah",
       role: "Penolong Kanan HEM",
       mainSubject: "Pendidikan Moral",
@@ -165,6 +172,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T04",
+      photo: "assets/images/guru/t04.jpg",
       name: "Pn. Jennet Gindawa",
       role: "Penolong Kanan Kokurikulum",
       mainSubject: "Sains / BKD / Muzik",
@@ -177,6 +185,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T05",
+      photo: "assets/images/guru/t05.jpg",
       name: "En. Amriee Abdullah",
       role: "Guru Panitia Sejarah & PJK",
       mainSubject: "Sejarah / PJK / PSV / Muzik",
@@ -189,6 +198,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T06",
+      photo: "assets/images/guru/t06.jpg",
       name: "Pn. Anidah Samad",
       role: "Ketua Panitia Bahasa Melayu",
       mainSubject: "Bahasa Melayu / PSV",
@@ -201,6 +211,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T07",
+      photo: "assets/images/guru/t07.jpg",
       name: "Pn. Anna Octavia Ninteh",
       role: "Ketua Panitia Matematik",
       mainSubject: "Matematik / Muzik / PSV",
@@ -213,6 +224,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T08",
+      photo: "assets/images/guru/t08.jpg",
       name: "En. Duin Lasig",
       role: "Guru Akademik Matematik",
       mainSubject: "Matematik",
@@ -225,6 +237,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T09",
+      photo: "assets/images/guru/t09.jpg",
       name: "Pn. Fatimah Daud",
       role: "Ketua Panitia Pendidikan Islam",
       mainSubject: "Pendidikan Islam / Tasmik",
@@ -237,6 +250,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T10",
+      photo: "assets/images/guru/t10.jpg",
       name: "En. George Simun",
       role: "Ketua Panitia Pendidikan Muzik",
       mainSubject: "Bahasa Melayu / Muzik",
@@ -249,6 +263,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T11",
+      photo: "assets/images/guru/t11.jpg",
       name: "Pn. Jamlinah Maliasan",
       role: "Guru Akademik Bahasa Melayu",
       mainSubject: "Bahasa Melayu / Pendidikan Moral",
@@ -261,6 +276,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T12",
+      photo: "assets/images/guru/t12.jpg",
       name: "Pn. Kasmalah Ismail",
       role: "Guru Penyelaras SPBT & Agama",
       mainSubject: "Pendidikan Islam / Bahasa Arab",
@@ -273,6 +289,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T13",
+      photo: "assets/images/guru/t13.jpg",
       name: "En. L Asmara Luandim",
       role: "Guru Penyelaras Disiplin & Kokurikulum",
       mainSubject: "Pendidikan Jasmani / Sejarah",
@@ -285,6 +302,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T14",
+      photo: "assets/images/guru/t14.jpg",
       name: "Pn. Mastikahjunaidah Shahrom",
       role: "Ketua Panitia PSV",
       mainSubject: "Pendidikan Seni Visual / BM",
@@ -297,6 +315,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T15",
+      photo: "assets/images/guru/t15.jpg",
       name: "Pn. Milnah Namih",
       role: "Penyelaras Jadual Waktu & Guru Data",
       mainSubject: "Sains / Matematik",
@@ -309,6 +328,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T16",
+      photo: "assets/images/guru/t16.jpg",
       name: "En. Mohd. Hafiz Qayyum Ahmad",
       role: "Ketua Panitia RBT & Jurulatih Sukan",
       mainSubject: "Reka Bentuk & Teknologi / PJK",
@@ -321,6 +341,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T17",
+      photo: "assets/images/guru/t17.jpg",
       name: "Pn. Muhayan Diman",
       role: "Guru Penyelaras RMT & Kebajikan",
       mainSubject: "Bahasa Melayu / Muzik",
@@ -333,6 +354,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T18",
+      photo: "assets/images/guru/t18.jpg",
       name: "En. Muhd. Huzaifah Arman",
       role: "Ketua Panitia Sains & ICT",
       mainSubject: "Sains / Teknologi Maklumat",
@@ -345,6 +367,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T19",
+      photo: "assets/images/guru/t19.jpg",
       name: "En. Rejos Baking",
       role: "Ketua Panitia PJK & Sukan",
       mainSubject: "Pendidikan Jasmani & Kesihatan",
@@ -357,6 +380,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T20",
+      photo: "assets/images/guru/t20.jpg",
       name: "Pn. Rohanah Mohd. Soud",
       role: "Guru Bimbingan & Kaunseling (UBK)",
       mainSubject: "Bimbingan & Kaunseling / Moral",
@@ -369,6 +393,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T21",
+      photo: "assets/images/guru/t21.jpg",
       name: "Cik Rozeline Francis",
       role: "Ketua Panitia Bahasa Inggeris",
       mainSubject: "English Language",
@@ -381,6 +406,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T22",
+      photo: "assets/images/guru/t22.jpg",
       name: "Cik Rozie Sumil",
       role: "Guru Akademik Bahasa Inggeris",
       mainSubject: "English Language / Muzik",
@@ -393,6 +419,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T23",
+      photo: "assets/images/guru/t23.jpg",
       name: "Pn. Salhah Awang Tengah",
       role: "Guru Penyelaras Prasekolah",
       mainSubject: "Pendidikan Prasekolah",
@@ -405,6 +432,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T24",
+      photo: "assets/images/guru/t24.jpg",
       name: "Pn. Yunizah Esun",
       role: "Penyelaras Pusat Sumber Sekolah (PSS)",
       mainSubject: "Bahasa Melayu / Sains",
@@ -417,6 +445,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T25",
+      photo: "assets/images/guru/t25.jpg",
       name: "Pn. Zuraidah Hj. Marjin",
       role: "Penyelaras Jadual Waktu & Penilaian PBD",
       mainSubject: "Matematik / Bahasa Melayu",
@@ -429,6 +458,7 @@ const SCHOOL_DATA = {
     },
     {
       id: "T26",
+      photo: "assets/images/guru/t26.jpg",
       name: "Pn. Zurinah Jubidi",
       role: "Guru Penyelaras Kebersihan & 3K",
       mainSubject: "Bahasa Melayu / PSV",
@@ -1234,3 +1264,4 @@ const SCHOOL_DATA = {
     ]
   }
 };
+

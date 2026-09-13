@@ -411,8 +411,11 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="p-6 md:p-8">
         <div class="flex items-start justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-700">
           <div class="flex items-center gap-4">
-            <div class="guru-avatar-circle" style="background-color: ${teacher.palette.bg}; color: ${teacher.palette.text}; border: 2px solid ${teacher.palette.border};">
-              ${initial}
+            <div class="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-md border-2" style="border-color: ${teacher.palette.border};">
+              <img src="${teacher.photo}" alt="${teacher.name}" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+              <div class="guru-avatar-circle w-full h-full hidden items-center justify-center font-bold text-lg" style="background-color: ${teacher.palette.bg}; color: ${teacher.palette.text};">
+                ${initial}
+              </div>
             </div>
             <div>
               <span class="status-chip bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 mb-1">
@@ -536,8 +539,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="guru-card p-5 cursor-pointer flex flex-col justify-between" onclick="openTeacherModal('${t.id}')">
           <div>
             <div class="flex items-center gap-3.5 mb-3">
-              <div class="guru-avatar-circle flex-shrink-0" style="background-color: ${t.palette.bg}; color: ${t.palette.text}; border: 2px solid ${t.palette.border};">
-                ${initial}
+              <div class="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2" style="border-color: ${t.palette.border};">
+                <img src="${t.photo}" alt="${t.name}" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                <div class="guru-avatar-circle w-full h-full hidden items-center justify-center font-bold text-sm" style="background-color: ${t.palette.bg}; color: ${t.palette.text};">
+                  ${initial}
+                </div>
               </div>
               <div class="min-w-0">
                 <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate" title="${t.name}">${t.name}</h4>
