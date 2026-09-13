@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd700" />
+      <stop offset="50%" stop-color="#fdb813" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f0f0f0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Bulan Sabit dan Bintang 14 Bucu (Puncak Keagungan) -->
+  <g transform="translate(250, 45)">
+    <!-- Bintang 14 Bucu -->
+    <path d="M 0,-40 L 5,-15 L 28,-28 L 15,-5 L 40,0 L 15,5 L 28,28 L 5,15 L 0,40 L -5,15 L -28,28 L -15,5 L -40,0 L -15,-5 L -28,-28 L -5,-15 Z" fill="url(#goldGrad)" stroke="#b8860b" stroke-width="1.5" />
+    <!-- Bulan Sabit Emas -->
+    <path d="M -38,8 A 36,36 0 1,0 38,8 A 30,30 0 1,1 -38,8 Z" fill="url(#goldGrad)" stroke="#b8860b" stroke-width="1" />
+  </g>
+
+  <!-- Harimau Kiri (Supporter) -->
+  <g id="tiger-left" transform="translate(100, 150)">
+    <!-- Badan & Kaki -->
+    <path d="M 45,120 C 10,100 -20,60 -10,10 C -5,-15 15,-30 40,-25 C 25,-10 20,20 45,50 Z" fill="#e67e22" stroke="#2c3e50" stroke-width="2.5" />
+    <!-- Belang Harimau -->
+    <path d="M 10,20 Q 20,25 25,10 M 5,50 Q 20,55 30,40 M 15,80 Q 25,82 35,70" stroke="#111111" stroke-width="3" fill="none" stroke-linecap="round" />
+    <!-- Kepala & Telinga -->
+    <circle cx="35" cy="-25" r="18" fill="#e67e22" stroke="#2c3e50" stroke-width="2" />
+    <circle cx="26" cy="-36" r="6" fill="#d35400" />
+    <circle cx="38" cy="-25" r="3" fill="#ffffff" />
+    <circle cx="39" cy="-25" r="1.5" fill="#000000" />
+    <path d="M 48,-20 Q 40,-15 36,-18" stroke="#ffffff" stroke-width="3" fill="none" />
+    <!-- Kaki Belakang & Ekor -->
+    <path d="M -10,70 C -35,70 -50,40 -40,10 C -35,-10 -50,-20 -55,-10" stroke="#e67e22" stroke-width="8" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Harimau Kanan (Supporter) -->
+  <use href="#tiger-left" transform="translate(500, 0) scale(-1, 1)" />
+
+  <!-- Perisai Utama (Shield) -->
+  <g transform="translate(250, 195)">
+    <!-- Bentuk Perisai -->
+    <path d="M -90,-95 L 90,-95 C 90,0 85,75 0,115 C -85,75 -90,0 -90,-95 Z" fill="url(#shieldGrad)" stroke="#2c3e50" stroke-width="4" />
+    <clipPath id="shieldClip">
+      <path d="M -88,-93 L 88,-93 C 88,0 83,73 0,112 C -83,73 -88,0 -88,-93 Z" />
+    </clipPath>
+
+    <g clip-path="url(#shieldClip)">
+      <!-- Bahagian Atas (5 Keris - Negeri Melayu Tidak Bersekutu) -->
+      <rect x="-90" y="-95" width="180" height="42" fill="#c0392b" />
+      <!-- 5 Keris Emas -->
+      <g fill="url(#goldGrad)" stroke="#873600" stroke-width="0.8">
+        <path d="M -60,-60 L -60,-90 L -57,-85 L -54,-90 L -54,-60 Z" />
+        <path d="M -30,-60 L -30,-90 L -27,-85 L -24,-90 L -24,-60 Z" />
+        <path d="M 0,-60 L 0,-90 L 3,-85 L 6,-90 L 6,-60 Z" />
+        <path d="M 30,-60 L 30,-90 L 33,-85 L 36,-90 L 36,-60 Z" />
+        <path d="M 60,-60 L 60,-90 L 63,-85 L 66,-90 L 66,-60 Z" />
+      </g>
+
+      <!-- 4 Jalur Tengah (Negeri Melayu Bersekutu: Merah, Hitam, Putih, Kuning) -->
+      <g transform="translate(0, -53)">
+        <rect x="-90" y="0" width="45" height="45" fill="#c0392b" />
+        <rect x="-45" y="0" width="45" height="45" fill="#111111" />
+        <rect x="0" y="0" width="45" height="45" fill="#ffffff" />
+        <rect x="45" y="0" width="45" height="45" fill="#f1c40f" />
+      </g>
+
+      <!-- Bahagian Bawah Kiri (Pulau Pinang - Pokok Pinang) -->
+      <g transform="translate(-55, 20)">
+        <rect x="-35" y="-28" width="55" height="55" fill="#ffffff" stroke="#2980b9" stroke-width="1.5" />
+        <path d="M -8,15 L -8,-10 Q -5,-22 5,-20 Q -5,-12 -4,15 Z" fill="#27ae60" />
+        <circle cx="-6" cy="-12" r="3" fill="#e67e22" />
+      </g>
+
+      <!-- Bahagian Bawah Kanan (Melaka - Pokok Melaka) -->
+      <g transform="translate(55, 20)">
+        <rect x="-20" y="-28" width="55" height="55" fill="#ffffff" stroke="#2980b9" stroke-width="1.5" />
+        <path d="M 8,15 L 8,-5 Q 12,-18 20,-15 Q 10,-8 11,15 Z" fill="#27ae60" />
+        <circle cx="8" cy="-5" r="4" fill="#2ecc71" />
+      </g>
+
+      <!-- Bahagian Bawah Tengah: Sabah, Bunga Raya, Sarawak -->
+      <g transform="translate(0, 42)">
+        <!-- Sabah (Kiri) -->
+        <path d="M -30,-15 L -5,-15 L -5,35 L -30,20 Z" fill="#2980b9" />
+        <path d="M -22,10 L -12,-5 L -7,10 Z" fill="#ecf0f1" />
+        
+        <!-- Bunga Raya Kebangsaan (Tengah) -->
+        <circle cx="0" cy="8" r="14" fill="#ffffff" />
+        <circle cx="0" cy="8" r="8" fill="#e74c3c" />
+        <circle cx="0" cy="8" r="3" fill="#f1c40f" />
+
+        <!-- Sarawak (Kanan) -->
+        <path d="M 5,-15 L 30,-15 L 30,20 L 5,35 Z" fill="#f1c40f" />
+        <path d="M 12,-10 L 25,-10 L 15,10 Z" fill="#c0392b" />
+        <path d="M 17,-10 L 25,15 L 20,20 Z" fill="#111111" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Cogan Kata / Riben Slogan Bawah -->
+  <g transform="translate(250, 335)">
+    <!-- Riben Kuning Emas -->
+    <path d="M -160,0 Q -100,-15 0,-15 Q 100,-15 160,0 L 180,25 L 150,22 Q 100,10 0,10 Q -100,10 -150,22 L -180,25 Z" fill="url(#goldGrad)" stroke="#b8860b" stroke-width="2" />
+    <path d="M -150,22 L -170,40 L -140,32 Z" fill="#d4ac0d" stroke="#b8860b" />
+    <path d="M 150,22 L 170,40 L 140,32 Z" fill="#d4ac0d" stroke="#b8860b" />
+    
+    <!-- Tulisan Cogan Kata -->
+    <text x="0" y="3" font-family="'Times New Roman', serif" font-weight="bold" font-size="14" fill="#000000" text-anchor="middle" letter-spacing="2.5">BERSEKUTU BERTAMBAH MUTU</text>
+    <text x="0" y="-4" font-family="'Traditional Arabic', Arial" font-size="11" fill="#000000" text-anchor="middle">برسكوتو برتمبه موتو</text>
+  </g>
+</svg>

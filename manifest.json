@@ -1,0 +1,24 @@
+{
+  "name": "Portal Rasmi SK Tampasuk 1 Kota Belud",
+  "short_name": "SK Tampasuk 1",
+  "description": "Portal Bersepadu Rasmi Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/logo-sekolah.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo-sekolah.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

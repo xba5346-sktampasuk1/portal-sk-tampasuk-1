@@ -1,0 +1,17 @@
+{
+  "name": "e-Guru Ganti - SK Tampasuk 1",
+  "short_name": "e-GuruGanti",
+  "description": "Sistem Pengurusan & Penjadualan Guru Ganti SK Tampasuk 1 Kota Belud",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/logo-sekolah.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

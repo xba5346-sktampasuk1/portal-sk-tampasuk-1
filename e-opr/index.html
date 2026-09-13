@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>e-OPR • SK Tampasuk 1 Kota Belud</title>
+  <meta name="description" content="Sistem Penjana One Page Report (OPR) Automatik SK Tampasuk 1 Kota Belud, Sabah">
+  <meta name="theme-color" content="#06244a">
+
+  <!-- PWA Manifest & App Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/logo-sekolah.png">
+  <link rel="apple-touch-icon" href="assets/logo-sekolah.png">
+  
+  <!-- Google Fonts: Libre Franklin, Oswald, Cinzel, Montserrat & Cursive Calligraphy -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@600;700;800;900&family=Great+Vibes&family=Libre+Franklin:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Oswald:wght@500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Fail CSS Utama -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="theme-pentadbiran">
+
+  <div class="app-shell">
+    
+    <!-- TOPBAR / NAVIGASI ATAS -->
+    <header class="topbar no-print">
+      <div class="w-full max-w-[1550px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Logo & Tajuk Portal Sekolah -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-md flex items-center justify-center overflow-hidden border-2 border-amber-400">
+            <img id="header-school-logo" src="assets/logo-sekolah.png" alt="Logo Rasmi SK Tampasuk 1" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight m-0">e-OPR</h1>
+              <span class="bg-amber-400 text-slate-950 text-[11px] font-extrabold px-2 py-0.5 rounded shadow-sm">VERSI 2.0</span>
+            </div>
+            <p class="m-0 text-xs sm:text-sm text-sky-100 font-medium tracking-wide">
+              SK Tampasuk 1, Kota Belud • Sistem Laporan Satu Muka Surat Rasmi
+            </p>
+          </div>
+        </div>
+
+        <!-- Kawalan Cepat Atas (Top Bar Actions) -->
+        <div class="flex items-center flex-wrap gap-2.5">
+          <!-- Pautan Balik ke Portal Sekolah -->
+          <a href="../index.html" class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-bold px-3 py-2 rounded-xl text-xs border border-white/20 transition">
+            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+            <span>Portal Sekolah</span>
+          </a>
+
+          <!-- Status Auto-Save -->
+          <span id="save-status" class="text-xs text-amber-200 font-semibold bg-slate-900/40 px-3 py-1.5 rounded-full border border-amber-400/30 transition-opacity">
+            Draf sedia
+          </span>
+
+          <!-- Butang Pasang Aplikasi PWA (Muncul jika disokong) -->
+          <button id="btn-install-pwa" type="button" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-transform hover:-translate-y-0.5">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Pasang App (PWA)</span>
+          </button>
+
+          <!-- Butang Cetak / PDF Cepat -->
+          <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-transform hover:-translate-y-0.5">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Cetak / Simpan PDF</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- KANDUNGAN UTAMA (MAIN CONTAINER) -->
+    <main class="w-full max-w-[1550px] mx-auto px-4 sm:px-6 py-6 flex-1">
+      
+      <!-- NAVIGASI TAB HALAMAN: PENJANA OPR vs SEJARAH OPR -->
+      <div id="tab-nav-bar" class="no-print mb-6 border-b border-slate-200">
+        <div class="flex items-center gap-2 sm:gap-4 overflow-x-auto pb-0.5">
+          <button type="button" id="tab-btn-generator" class="page-nav-tab is-active flex items-center gap-2.5 px-5 py-3 rounded-t-2xl font-extrabold text-sm sm:text-base border-b-2 transition">
+            <i data-lucide="file-edit" class="w-4 h-4 text-amber-500"></i>
+            <span>Penjana OPR (Utama)</span>
+          </button>
+          <button type="button" id="tab-btn-history" class="page-nav-tab flex items-center gap-2.5 px-5 py-3 rounded-t-2xl font-extrabold text-sm sm:text-base border-b-2 text-slate-500 hover:text-slate-800 transition">
+            <i data-lucide="history" class="w-4 h-4 text-blue-600"></i>
+            <span>Sejarah OPR (Arkib)</span>
+            <span id="history-count-badge" class="ml-1.5 px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-blue-100 text-blue-900 border border-blue-200">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: PENJANA OPR (UTAMA) -->
+      <div id="view-generator" class="view-panel space-y-6">
+
+        <!-- Status Banner jika sedang edit dari arkib sejarah -->
+        <div id="editing-banner" class="hidden no-print bg-amber-50 border border-amber-300 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-amber-900 shadow-sm">
+          <div class="flex items-center gap-2 text-xs sm:text-sm font-bold">
+            <i data-lucide="edit-3" class="w-4 h-4 text-amber-600 flex-none"></i>
+            <span>Sedang menyunting OPR dari Arkib: <strong id="editing-program-name" class="text-amber-950 underline">-</strong></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btn-cancel-editing" class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 transition shadow-sm">
+              Tutup Suntingan / OPR Baharu
+            </button>
+          </div>
+        </div>
+
+        <!-- BAR MOD PAPARAN (VIEW MODES) -->
+      <div class="no-print mb-4 flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur-sm p-2.5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+          <i data-lucide="monitor" class="w-4 h-4 text-blue-700"></i>
+          <span>Mod Pratonton:</span>
+        </div>
+        <div class="flex items-center gap-1.5" role="group" aria-label="Mod Paparan">
+          <button type="button" data-view="desktop" class="view-btn is-active px-3 py-1.5 rounded-lg border text-xs font-bold bg-white text-slate-700 shadow-sm">
+            Desktop
+          </button>
+          <button type="button" data-view="tablet" class="view-btn px-3 py-1.5 rounded-lg border text-xs font-bold bg-white text-slate-700">
+            Tablet
+          </button>
+          <button type="button" data-view="phone" class="view-btn px-3 py-1.5 rounded-lg border text-xs font-bold bg-white text-slate-700">
+            Telefon
+          </button>
+        </div>
+      </div>
+
+      <!-- PANEL PILIHAN TEMA WARNA LAPORAN -->
+      <section id="section-theme-panel" class="no-print mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-blue-900">SKEMA WARNA LAPORAN</span>
+            <h2 class="text-base font-extrabold text-slate-800 m-0">Pilih Tema Unit / Panitia</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-semibold">Tema Semasa:</span>
+            <span id="active-theme" class="rounded-full bg-blue-950 text-amber-400 border border-blue-900 px-3 py-1 text-xs font-bold shadow-sm">
+              PENTADBIRAN
+            </span>
+          </div>
+        </div>
+
+        <!-- Butang-butang Pilihan Tema -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-theme="pentadbiran" class="theme-btn is-active px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-900 inline-block"></span>
+            <span>PENTADBIRAN</span>
+          </button>
+          <button type="button" data-theme="kurikulum" class="theme-btn px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-800 inline-block"></span>
+            <span>KURIKULUM</span>
+          </button>
+          <button type="button" data-theme="kokurikulum" class="theme-btn px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-700 inline-block"></span>
+            <span>KOKURIKULUM</span>
+          </button>
+          <button type="button" data-theme="hem" class="theme-btn px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-900 inline-block"></span>
+            <span>HAL EHWAL MURID (HEM)</span>
+          </button>
+
+          <!-- Dropdown Panitia -->
+          <div class="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
+            <label for="theme-panitia" class="text-xs font-bold text-slate-700 whitespace-nowrap">PANITIA:</label>
+            <select id="theme-panitia" class="bg-transparent text-xs font-bold text-blue-950 outline-none cursor-pointer">
+              <option value="panitia-bm">Bahasa Melayu</option>
+              <option value="panitia-bi">Bahasa Inggeris</option>
+              <option value="panitia-math">Matematik</option>
+              <option value="panitia-sains">Sains</option>
+              <option value="panitia-islam-moral">Pendidikan Islam & Moral</option>
+              <option value="panitia-sejarah">Sejarah</option>
+              <option value="panitia-seni-muzik">PSV & Muzik</option>
+              <option value="panitia-rbt">Reka Bentuk & Teknologi</option>
+              <option value="panitia-pjk">Pendidikan Jasmani & Kesihatan (PJK)</option>
+              <option value="panitia-arab-bkd">B. Arab & B. Kadazandusun</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- RUANG KERJA (WORKSPACE: BORANG KIRI, PRATONTON KANAN) -->
+      <div class="workspace">
+        
+        <!-- ==================== BORANG MAKLUMAT (KIRI) ==================== -->
+        <aside class="sticky-panel no-print">
+          <form id="opr-form" class="form-card" novalidate>
+            
+            <!-- Kepala Borang -->
+            <div class="form-card-head flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="grid w-10 h-10 place-items-center rounded-xl bg-amber-400 text-slate-950 shadow-sm flex-none">
+                  <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h2 class="text-base font-bold text-white m-0">Borang Laporan Program</h2>
+                  <p class="text-xs text-sky-100 m-0 mt-0.5">Lengkapkan butiran untuk menjana OPR A4</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEKSYEN 1: MAKLUMAT ASAS PROGRAM -->
+            <section class="form-section">
+              <p class="section-caption">
+                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                <span>Maklumat Asas Program</span>
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                
+                <!-- Anjuran -->
+                <div class="sm:col-span-2">
+                  <label class="field-label" for="anjuran">Anjuran / Bahagian / Unit</label>
+                  <select id="anjuran" class="form-control">
+                    <option value="">-- Pilih Anjuran / Unit --</option>
+                    <optgroup label="Pentadbiran">
+                      <option>Unit Pengurusan & Pentadbiran</option>
+                      <option>Unit Bimbingan dan Kaunseling (UBK)</option>
+                      <option>Persatuan Ibu Bapa dan Guru (PIBG)</option>
+                    </optgroup>
+                    <optgroup label="Kurikulum">
+                      <option>Unit Kurikulum</option>
+                      <option>Panitia Bahasa Melayu</option>
+                      <option>Panitia Bahasa Inggeris</option>
+                      <option>Panitia Matematik</option>
+                      <option>Panitia Sains</option>
+                      <option>Panitia Pendidikan Islam</option>
+                      <option>Panitia Pendidikan Moral</option>
+                      <option>Panitia Sejarah</option>
+                      <option>Panitia Pendidikan Seni Visual & Muzik</option>
+                      <option>Panitia Reka Bentuk & Teknologi</option>
+                      <option>Panitia Pendidikan Jasmani & Kesihatan (PJK)</option>
+                      <option>Panitia Bahasa Arab & BKD</option>
+                    </optgroup>
+                    <optgroup label="Kokurikulum">
+                      <option>Unit Kokurikulum</option>
+                      <option>Unit Sukan dan Permainan</option>
+                      <option>Unit Kelab dan Persatuan</option>
+                      <option>Unit Badan Beruniform</option>
+                    </optgroup>
+                    <optgroup label="Hal Ehwal Murid (HEM)">
+                      <option>Unit Hal Ehwal Murid</option>
+                      <option>Unit Disiplin & Pengawas</option>
+                      <option>Unit SPBT & Kebajikan Murid</option>
+                      <option>Unit 3K (Keselamatan, Kesihatan & Kebersihan)</option>
+                    </optgroup>
+                    <option value="Lain-lain">Lain-lain (Nyatakan)</option>
+                  </select>
+
+                  <div id="other-wrap" class="hidden mt-2">
+                    <label class="field-label" for="anjuran-lain">Masukkan Anjuran Khas</label>
+                    <input id="anjuran-lain" class="form-control" type="text" placeholder="Cth: Kelab Robotik & Inovasi">
+                  </div>
+                </div>
+
+                <!-- Nama Program -->
+                <div class="sm:col-span-2">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="program">Nama Program / Aktiviti</label>
+                    <button type="button" id="btn-ai-generate-all" title="Jana draf lengkap (Objektif, Aktiviti, Kelemahan & Cadangan) secara serentak" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-blue-900 to-indigo-800 hover:from-blue-800 hover:to-indigo-700 text-amber-300 font-bold text-xs shadow-sm border border-amber-400/30 transition transform hover:-translate-y-0.5">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+                      <span>Jana Draf Penuh (AI)</span>
+                    </button>
+                  </div>
+                  <input id="program" class="form-control" type="text" placeholder="Cth: Sambutan Bulan Kemerdekaan & Hari Malaysia 2026">
+                </div>
+
+                <!-- Tarikh -->
+                <div>
+                  <label class="field-label" for="tarikh">Tarikh</label>
+                  <input id="tarikh" class="form-control" type="date">
+                </div>
+
+                <!-- Hari (Automatik) -->
+                <div>
+                  <label class="field-label" for="hari">Hari (Automatik)</label>
+                  <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh dahulu">
+                </div>
+
+                <!-- Masa Mula & Tamat -->
+                <div>
+                  <label class="field-label" for="masa-mula">Masa Mula</label>
+                  <input id="masa-mula" class="form-control" type="time">
+                </div>
+                <div>
+                  <label class="field-label" for="masa-tamat">Masa Tamat</label>
+                  <input id="masa-tamat" class="form-control" type="time">
+                </div>
+
+                <!-- Tempat -->
+                <div class="sm:col-span-2">
+                  <label class="field-label" for="tempat">Tempat / Lokasi</label>
+                  <input id="tempat" class="form-control" type="text" placeholder="Cth: Dewan Terbuka SK Tampasuk 1">
+                </div>
+
+                <!-- Kumpulan Sasaran -->
+                <div class="sm:col-span-2">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="sasaran">Kumpulan Sasaran / Bilangan Peserta</label>
+                    <button type="button" class="btn-ai-assist" data-ai-field="sasaran" title="Jana cadangan kumpulan sasaran dengan AI">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                      <span>Jana AI</span>
+                    </button>
+                  </div>
+                  <textarea id="sasaran" class="form-control" rows="2" placeholder="Cth: Semua murid Tahun 1 hingga Tahun 6, para guru dan staf sokongan (350 orang)."></textarea>
+                </div>
+
+                <!-- Objektif Program -->
+                <div class="sm:col-span-2">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="objektif">Objektif Program</label>
+                    <button type="button" class="btn-ai-assist" data-ai-field="objektif" title="Jana cadangan objektif dengan AI">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                      <span>Jana AI</span>
+                    </button>
+                  </div>
+                  <textarea id="objektif" class="form-control" rows="3" placeholder="1. Memupuk semangat patriotisme dalam kalangan murid.&#10;2. Mencungkil bakat seni dan pidato murid.&#10;3. Mengeratkan silaturahim warga sekolah."></textarea>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- SEKSYEN 2: RINGKASAN AKTIVITI -->
+            <section class="form-section">
+              <div class="flex items-center justify-between mb-1">
+                <p class="section-caption m-0">
+                  <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                  <span>Ringkasan Aktiviti Program</span>
+                </p>
+                <button type="button" class="btn-ai-assist" data-ai-field="aktiviti" title="Jana cadangan kronologi aktiviti dengan AI">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                  <span>Jana AI</span>
+                </button>
+              </div>
+              <label class="field-label" for="aktiviti">Pengisian & Kronologi Aktiviti</label>
+              <textarea id="aktiviti" class="form-control" rows="4" placeholder="1. Nyanyian lagu Negaraku dan Sabah Tanah Airku.&#10;2. Ucapan perasmian oleh Guru Besar.&#10;3. Persembahan deklamasi sajak dan koir kemerdekaan.&#10;4. Pertandingan pakaian tradisional murid.&#10;5. Penyampaian hadiah dan jamuan ringan."></textarea>
+            </section>
+
+            <!-- SEKSYEN 3: GAMBAR AKTIVITI -->
+            <section class="form-section">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <p class="section-caption m-0">
+                  <i data-lucide="images" class="w-3.5 h-3.5"></i>
+                  <span>Gambar Aktiviti Program</span>
+                </p>
+
+                <!-- Pilihan Bilangan Gambar -->
+                <div class="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 text-xs">
+                  <label for="photo-layout-select" class="font-bold text-slate-700">Susun Atur:</label>
+                  <select id="photo-layout-select" class="bg-transparent font-bold text-blue-900 outline-none">
+                    <option value="6" selected>6 Gambar (3x2)</option>
+                    <option value="4">4 Gambar (2x2)</option>
+                    <option value="2">2 Gambar (2x1)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                <span>Format sokongan: JPG, PNG, WebP (Automatik dimampatkan).</span>
+                <label class="text-blue-700 hover:text-blue-900 font-bold cursor-pointer inline-flex items-center gap-1">
+                  <i data-lucide="folder-up" class="w-3.5 h-3.5"></i>
+                  <span>Muat Naik Sekaligus</span>
+                  <input type="file" id="batch-upload-input" multiple accept="image/*" class="hidden">
+                </label>
+              </div>
+
+              <!-- Grid Kotak Muat Naik 6 Gambar -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                
+                <!-- Slot 1 -->
+                <div id="upload-col-1">
+                  <label id="upload-box-1" class="upload-tile">
+                    <input id="gambar-1" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 1</span>
+                    </div>
+                    <img id="form-img-1" alt="Gambar 1">
+                    <button class="remove-image" type="button" data-image-remove="1" title="Buang Gambar 1">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+                <!-- Slot 2 -->
+                <div id="upload-col-2">
+                  <label id="upload-box-2" class="upload-tile">
+                    <input id="gambar-2" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 2</span>
+                    </div>
+                    <img id="form-img-2" alt="Gambar 2">
+                    <button class="remove-image" type="button" data-image-remove="2" title="Buang Gambar 2">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+                <!-- Slot 3 -->
+                <div id="upload-col-3">
+                  <label id="upload-box-3" class="upload-tile">
+                    <input id="gambar-3" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 3</span>
+                    </div>
+                    <img id="form-img-3" alt="Gambar 3">
+                    <button class="remove-image" type="button" data-image-remove="3" title="Buang Gambar 3">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+                <!-- Slot 4 -->
+                <div id="upload-col-4">
+                  <label id="upload-box-4" class="upload-tile">
+                    <input id="gambar-4" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 4</span>
+                    </div>
+                    <img id="form-img-4" alt="Gambar 4">
+                    <button class="remove-image" type="button" data-image-remove="4" title="Buang Gambar 4">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+                <!-- Slot 5 -->
+                <div id="upload-col-5">
+                  <label id="upload-box-5" class="upload-tile">
+                    <input id="gambar-5" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 5</span>
+                    </div>
+                    <img id="form-img-5" alt="Gambar 5">
+                    <button class="remove-image" type="button" data-image-remove="5" title="Buang Gambar 5">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+                <!-- Slot 6 -->
+                <div id="upload-col-6">
+                  <label id="upload-box-6" class="upload-tile">
+                    <input id="gambar-6" type="file" accept="image/*">
+                    <div class="upload-empty flex flex-col items-center justify-center p-2 text-slate-400">
+                      <i data-lucide="image-plus" class="w-6 h-6 mb-1 text-slate-400"></i>
+                      <span class="text-xs font-bold text-slate-600">Gambar 6</span>
+                    </div>
+                    <img id="form-img-6" alt="Gambar 6">
+                    <button class="remove-image" type="button" data-image-remove="6" title="Buang Gambar 6">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </label>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- SEKSYEN 4: PENILAIAN PROGRAM -->
+            <section class="form-section">
+              <p class="section-caption">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                <span>Penilaian Program</span>
+              </p>
+              <div class="grid gap-3.5">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="kelemahan">Kelemahan / Kekangan / Isu Dihadapi</label>
+                    <button type="button" class="btn-ai-assist" data-ai-field="kelemahan" title="Jana cadangan kelemahan/isu dengan AI">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                      <span>Jana AI</span>
+                    </button>
+                  </div>
+                  <textarea id="kelemahan" class="form-control" rows="2" placeholder="Cth: Ruang dewan agak padat dan sistem audio mengalami sedikit gangguan teknikal pada awal majlis."></textarea>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="cadangan">Cadangan Penambahbaikan</label>
+                    <button type="button" class="btn-ai-assist" data-ai-field="cadangan" title="Jana cadangan penambahbaikan dengan AI">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                      <span>Jana AI</span>
+                    </button>
+                  </div>
+                  <textarea id="cadangan" class="form-control" rows="2" placeholder="Cth: Menyediakan pelan alternatif susun atur murid dan membuat pemeriksaan teknikal audio sehari lebih awal."></textarea>
+                </div>
+              </div>
+            </section>
+
+            <!-- SEKSYEN 5: MAKLUMAT PENGESAHAN & TANDATANGAN -->
+            <section class="form-section">
+              <p class="section-caption">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                <span>Maklumat Pengesahan Laporan</span>
+              </p>
+
+              <div class="grid gap-3">
+                <!-- Disediakan Oleh -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
+                  <p class="m-0 mb-2 font-bold text-xs uppercase tracking-wider text-blue-900">1. Disediakan Oleh</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="field-label" for="nama-penyedia">Nama Penyedia</label>
+                      <input id="nama-penyedia" class="form-control" type="text" placeholder="Nama Guru / Penyelaras">
+                    </div>
+                    <div>
+                      <label class="field-label" for="jawatan-penyedia">Jawatan Penyedia</label>
+                      <input id="jawatan-penyedia" class="form-control" type="text" placeholder="Cth: Penyelaras Program / Setiausaha">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Disemak Oleh -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
+                  <p class="m-0 mb-2 font-bold text-xs uppercase tracking-wider text-blue-900">2. Disemak Oleh</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="field-label" for="nama-penyemak">Nama Penyemak</label>
+                      <input id="nama-penyemak" class="form-control" type="text" placeholder="Nama Penolong Kanan / KP">
+                    </div>
+                    <div>
+                      <label class="field-label" for="jawatan-penyemak">Jawatan Penyemak</label>
+                      <input id="jawatan-penyemak" class="form-control" type="text" placeholder="Cth: Penolong Kanan Pentadbiran / HEM / Kokum">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Disahkan Oleh -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
+                  <p class="m-0 mb-2 font-bold text-xs uppercase tracking-wider text-blue-900">3. Disahkan Oleh</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="field-label" for="nama-pengesah">Nama Pengesah</label>
+                      <input id="nama-pengesah" class="form-control" type="text" placeholder="Nama Guru Besar">
+                    </div>
+                    <div>
+                      <label class="field-label" for="jawatan-pengesah">Jawatan Pengesah</label>
+                      <input id="jawatan-pengesah" class="form-control" type="text" value="Guru Besar" placeholder="Guru Besar">
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- NOTIFIKASI & BUTANG HANTAR -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200">
+              <div id="notice" class="notice hidden" role="status"></div>
+              
+              <div class="flex flex-wrap items-center gap-2.5">
+                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold py-3 px-4 shadow-md transition-transform hover:-translate-y-0.5 text-sm">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                  <span>JANA OPR</span>
+                </button>
+
+                <button id="btn-reset-opr" type="button" onclick="window.resetOPRForm && window.resetOPRForm()" class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold py-3 px-4 text-sm transition">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4 text-slate-500"></i>
+                  <span>KOSONGKAN</span>
+                </button>
+              </div>
+
+              <!-- Pilihan Tukar Logo Khas (Opsyenal untuk Sekolah) -->
+              <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                <span>Tukar Logo Sekolah (Jika perlu):</span>
+                <label class="text-blue-700 hover:text-blue-900 font-bold cursor-pointer inline-flex items-center gap-1">
+                  <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                  <span>Pilih Logo Baru</span>
+                  <input type="file" id="custom-logo-input" accept="image/*" class="hidden">
+                </label>
+              </div>
+            </div>
+
+          </form>
+        </aside>
+
+        <!-- ==================== PRATONTON LANGSUNG A4 (KANAN) ==================== -->
+        <section id="preview-area">
+          
+          <!-- Bar Tajuk Pratonton -->
+          <div class="no-print flex flex-wrap items-end justify-between gap-3 mb-3">
+            <div>
+              <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-800">PRATONTON KEMAS & TEPAT</span>
+              <h2 class="text-xl font-extrabold text-slate-900 m-0">Paparan Dokumen A4 Rasmi</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-slate-900 text-white px-3 py-1 text-[11px] font-bold tracking-wide shadow-sm">
+                A4 • POTRET • 1 MUKA SURAT TEPAT
+              </span>
+            </div>
+          </div>
+
+          <!-- Bekas Pratonton (Stage Berskala Automatik) -->
+          <div class="preview-stage">
+            
+            <!-- HALAMAN KERTAS A4 OPR RASMI -->
+            <article class="opr-paper" aria-label="One Page Report Rasmi SK Tampasuk 1">
+              
+              <!-- KEPALA LAPORAN (HEADER DIRAJA & SIJIL EKSKLUSIF) -->
+              <header class="opr-header" id="master-opr-header">
+                
+                <!-- Corak Latar Geometri Filigri Halus -->
+                <div class="header-luxury-bg" aria-hidden="true"></div>
+
+                <!-- Bucu Hiasan Emas Sudut Kanan Atas -->
+                <div class="header-corner-ornament" aria-hidden="true">
+                  <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="gold-corner-grad" x1="0" y1="0" x2="90" y2="90" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#fff4c2"/>
+                        <stop offset="40%" stop-color="#dfb753"/>
+                        <stop offset="75%" stop-color="#9a6f0d"/>
+                        <stop offset="100%" stop-color="#593e04"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M88 2 H45 C45 22 65 42 88 42 V2 Z" fill="url(#gold-corner-grad)" opacity="0.25"/>
+                    <path d="M88 2 L88 34 C72 34 58 20 58 2 L88 2 Z" stroke="url(#gold-corner-grad)" stroke-width="1.5" fill="none"/>
+                    <path d="M88 2 L88 65 C54 65 25 36 25 2 L88 2 Z" stroke="url(#gold-corner-grad)" stroke-width="1.8" fill="none" stroke-dasharray="4 2"/>
+                    <path d="M88 2 C80 18, 62 26, 44 26 C58 18, 70 8, 88 2 Z" fill="url(#gold-corner-grad)"/>
+                    <path d="M88 2 C72 20, 64 38, 64 56 C56 42, 66 22, 88 2 Z" fill="url(#gold-corner-grad)"/>
+                    <circle cx="76" cy="14" r="2.5" fill="#fef08a"/>
+                    <circle cx="62" cy="28" r="2" fill="#fef08a"/>
+                    <circle cx="48" cy="42" r="1.6" fill="#fef08a"/>
+                  </svg>
+                </div>
+
+                <!-- SEKSYEN KIRI: DWI-LOGO RASMI BERBENTUK BULAT -->
+                <div class="header-brand-logos">
+                  
+                  <!-- Logo 1: Jata Negara Malaysia (Bulat & Penuh) -->
+                  <div class="circular-logo-badge" title="Jata Negara Malaysia">
+                    <img src="assets/jata-negara.png" alt="Jata Negara Malaysia" class="circular-logo-img">
+                  </div>
+
+                  <!-- Logo 2: Logo Rasmi SK Tampasuk 1 (Bulat & Penuh) -->
+                  <div class="circular-logo-badge" title="Logo Rasmi SK Tampasuk 1 Kota Belud">
+                    <img id="school-logo-img" src="assets/logo-sekolah.png" alt="Logo Rasmi SK Tampasuk 1 Kota Belud" class="circular-logo-img">
+                  </div>
+
+                </div>
+
+                <!-- SEKSYEN TENGAH: Tipografi Diraja "ONE PAGE REPORT" -->
+                <div class="header-center-title-area">
+                  <div class="report-name-luxury">
+                    <span class="text-one-page">ONE PAGE</span>
+                    <span class="text-report">REPORT</span>
+                  </div>
+                  <div class="header-school-address">
+                    SK TAMPASUK 1, W.D.T. 158, 89150 KOTA BELUD, SABAH
+                  </div>
+                </div>
+
+                <!-- SEKSYEN KANAN: Plaque Emas Tergantung dengan Reben & Roset Pingat -->
+                <div class="header-gold-plaque-wrapper">
+                  
+                  <!-- Reben Diraja & Roset Pingat -->
+                  <div class="royal-ribbon-badge">
+                    <div class="ribbon-tail left"></div>
+                    <div class="ribbon-tail right"></div>
+                    <div class="ribbon-fold"></div>
+                    
+                    <!-- Roset Pingat Emas -->
+                    <div class="gold-rosette-medal">
+                      <div class="rosette-scallop"></div>
+                      <div class="rosette-core">
+                        <span class="rosette-star">★</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Plat Logam Emas (Plaque) Mengandungi #pv-theme-tag -->
+                  <div class="hanging-gold-plaque">
+                    <span class="plaque-rivet top-left"></span>
+                    <span class="plaque-rivet top-right"></span>
+                    <span class="plaque-rivet bottom-left"></span>
+                    <span class="plaque-rivet bottom-right"></span>
+                    <div class="plaque-bezel">
+                      <span id="pv-theme-tag" class="plaque-theme-title">PENTADBIRAN</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </header>
+
+              <!-- BADAN OPR (2 LAJUR) -->
+              <div class="opr-body">
+                
+                <!-- LAJUR KIRI: BUTIRAN & AKTIVITI -->
+                <div class="opr-column">
+                  
+                  <!-- Blok 1: Nama Program -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">1</div>
+                      <div class="block-title">
+                        <i data-lucide="bookmark" class="w-4 h-4"></i>
+                        <span>NAMA PROGRAM</span>
+                      </div>
+                    </div>
+                    <div class="block-content program-content">
+                      <p id="pv-program" class="preview-copy">Masukkan nama program</p>
+                    </div>
+                  </section>
+
+                  <!-- Blok 2: Butiran Program -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">2</div>
+                      <div class="block-title">
+                        <i data-lucide="calendar-check-2" class="w-4 h-4"></i>
+                        <span>BUTIRAN PROGRAM</span>
+                      </div>
+                    </div>
+                    <div class="block-content details-content">
+                      <div class="detail-item">
+                        <span class="detail-icon-pill"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></span>
+                        <span id="pv-date" class="detail-value">Masukkan tarikh</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-icon-pill"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></span>
+                        <span id="pv-day" class="detail-value">Masukkan hari</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-icon-pill"><i data-lucide="clock" class="w-3.5 h-3.5"></i></span>
+                        <span id="pv-time" class="detail-value">Masukkan masa</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-icon-pill"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i></span>
+                        <span id="pv-place" class="detail-value">Masukkan tempat</span>
+                      </div>
+                      <div class="detail-item wide">
+                        <span class="detail-icon-pill"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i></span>
+                        <span id="pv-organiser" class="detail-value">Masukkan anjuran</span>
+                      </div>
+                    </div>
+                  </section>
+
+                  <!-- Blok 3: Kumpulan Sasaran -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">3</div>
+                      <div class="block-title">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>KUMPULAN SASARAN</span>
+                      </div>
+                    </div>
+                    <div class="block-content target-content">
+                      <div class="target-icon-badge">
+                        <i data-lucide="target" class="w-5 h-5"></i>
+                      </div>
+                      <p id="pv-target" class="preview-copy">Masukkan kumpulan sasaran</p>
+                    </div>
+                  </section>
+
+                  <!-- Blok 4: Objektif Program -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">4</div>
+                      <div class="block-title">
+                        <i data-lucide="crosshair" class="w-4 h-4"></i>
+                        <span>OBJEKTIF PROGRAM</span>
+                      </div>
+                    </div>
+                    <div class="block-content objective-content">
+                      <p id="pv-objective" class="preview-copy">Masukkan objektif program</p>
+                    </div>
+                  </section>
+
+                  <!-- Blok 5: Aktiviti Program -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">5</div>
+                      <div class="block-title">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                        <span>AKTIVITI PROGRAM</span>
+                      </div>
+                    </div>
+                    <div class="block-content activity-content">
+                      <p id="pv-activity" class="preview-copy">Masukkan ringkasan aktiviti program</p>
+                    </div>
+                  </section>
+
+                </div>
+
+                <!-- LAJUR KANAN: GAMBAR & PENILAIAN -->
+                <div class="opr-column">
+                  
+                  <!-- Blok 6: Gambar Aktiviti (Grid 6 / 4 / 2) -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">6</div>
+                      <div class="block-title">
+                        <i data-lucide="camera" class="w-4 h-4"></i>
+                        <span>GAMBAR AKTIVITI</span>
+                      </div>
+                    </div>
+                    <div class="photo-grid grid-6">
+                      <div id="slot-1" class="photo-slot">
+                        <img id="pv-img-1" alt="Foto Aktiviti 1">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 01</span>
+                        </div>
+                      </div>
+                      <div id="slot-2" class="photo-slot">
+                        <img id="pv-img-2" alt="Foto Aktiviti 2">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 02</span>
+                        </div>
+                      </div>
+                      <div id="slot-3" class="photo-slot">
+                        <img id="pv-img-3" alt="Foto Aktiviti 3">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 03</span>
+                        </div>
+                      </div>
+                      <div id="slot-4" class="photo-slot">
+                        <img id="pv-img-4" alt="Foto Aktiviti 4">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 04</span>
+                        </div>
+                      </div>
+                      <div id="slot-5" class="photo-slot">
+                        <img id="pv-img-5" alt="Foto Aktiviti 5">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 05</span>
+                        </div>
+                      </div>
+                      <div id="slot-6" class="photo-slot">
+                        <img id="pv-img-6" alt="Foto Aktiviti 6">
+                        <div class="photo-placeholder">
+                          <i data-lucide="camera" class="w-5 h-5"></i>
+                          <span class="photo-pill">FOTO 06</span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <!-- Blok 7: Kelemahan / Kekangan -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">7</div>
+                      <div class="block-title">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        <span>KELEMAHAN / KEKANGAN</span>
+                      </div>
+                    </div>
+                    <div class="block-content short-content">
+                      <p id="pv-weakness" class="preview-copy">Masukkan kelemahan atau isu yang dihadapi</p>
+                    </div>
+                  </section>
+
+                  <!-- Blok 8: Cadangan Penambahbaikan -->
+                  <section class="opr-block">
+                    <div class="block-head">
+                      <div class="block-number">8</div>
+                      <div class="block-title">
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i>
+                        <span>CADANGAN PENAMBAHBAIKAN</span>
+                      </div>
+                    </div>
+                    <div class="block-content short-content">
+                      <p id="pv-suggestion" class="preview-copy">Masukkan cadangan penambahbaikan program</p>
+                    </div>
+                  </section>
+
+                </div>
+
+              </div>
+
+              <!-- MOTO RASMI SEKOLAH (SEBELUM PENGESAHAN LAPORAN) -->
+              <div class="school-motto-strip">
+                <span class="motto-line"></span>
+                <span class="motto-ornament">✦</span>
+                <p class="school-motto-text">“Sekata Melakar Kecemerlangan”</p>
+                <span class="motto-ornament">✦</span>
+                <span class="motto-line right"></span>
+              </div>
+
+              <!-- PENGESAHAN & TANDATANGAN (FOOTER) -->
+              <footer class="opr-footer">
+                
+                <div class="signature-card">
+                  <div class="signature-header">
+                    <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                    <span>Disediakan Oleh</span>
+                  </div>
+                  <div class="signature-line"></div>
+                  <p id="pv-prepared-name" class="signature-value">Nama Penyedia</p>
+                  <p id="pv-prepared-role" class="signature-role">Jawatan Penyedia</p>
+                </div>
+
+                <div class="signature-card">
+                  <div class="signature-header">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                    <span>Disemak Oleh</span>
+                  </div>
+                  <div class="signature-line"></div>
+                  <p id="pv-reviewed-name" class="signature-value">Nama Penyemak</p>
+                  <p id="pv-reviewed-role" class="signature-role">Jawatan Penyemak</p>
+                </div>
+
+                <div class="signature-card">
+                  <div class="signature-header">
+                    <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                    <span>Disahkan Oleh</span>
+                  </div>
+                  <div class="signature-line"></div>
+                  <p id="pv-certified-name" class="signature-value">Nama Pengesah</p>
+                  <p id="pv-certified-role" class="signature-role">Jawatan Pengesah</p>
+                </div>
+
+              </footer>
+
+            </article>
+          </div>
+
+          <!-- Butang Cetak Bawah Pratonton -->
+          <div id="print-controls" class="no-print mt-4 flex justify-center gap-3">
+            <button id="print-btn" type="button" class="inline-flex items-center gap-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 px-6 py-3.5 font-extrabold shadow-lg transition-transform hover:-translate-y-0.5 text-sm sm:text-base">
+              <i data-lucide="printer" class="w-5 h-5"></i>
+              <span>CETAK / SIMPAN SEBAGAI PDF A4</span>
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+      <!-- PENUTUP VIEW 1: PENJANA OPR -->
+      </div>
+
+      <!-- VIEW 2: SEJARAH OPR (ARKIB & KOLEKSI) -->
+      <div id="view-history" class="view-panel hidden space-y-6">
+        
+        <!-- Pengepala Halaman Sejarah -->
+        <div class="no-print bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 text-blue-900 font-extrabold text-xs uppercase tracking-wider">
+              <i data-lucide="archive" class="w-4 h-4 text-amber-500"></i>
+              <span>Arkib Pelaporan Rasmi Sekolah</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1 mb-0">Sejarah & Koleksi Janaan OPR</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-0">
+              Semua OPR yang telah dijana disimpan secara automatik di sini mengikut unit. Tekan mana-mana kad untuk memuatkannya kembali ke <strong>Page Utama</strong> untuk disunting.
+            </p>
+          </div>
+
+          <!-- Tindakan Cepat Arkib -->
+          <div class="flex items-center flex-wrap gap-2">
+            <button type="button" id="btn-new-opr-from-history" class="inline-flex items-center gap-2 bg-blue-950 hover:bg-blue-900 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition-transform hover:-translate-y-0.5">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i>
+              <span>Jana OPR Baharu</span>
+            </button>
+            <button type="button" id="btn-clear-all-history" class="inline-flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-2.5 rounded-xl text-xs border border-rose-200 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span>Kosongkan Arkib</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PALANG INTEGRASI AWAN DELIMA (GOOGLE SHEETS & DRIVE) -->
+        <div id="cloud-sync-banner" class="no-print p-4 sm:p-5 rounded-3xl border transition-all duration-200 bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/90 border-blue-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div id="cloud-status-icon" class="w-11 h-11 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center flex-none border border-blue-200 shadow-inner">
+              <i data-lucide="cloud" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="cloud-status-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-100 text-blue-900 border border-blue-200 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  <span>Mod Tempatan</span>
+                </span>
+                <span class="text-xs text-slate-500 font-semibold" id="cloud-last-sync-time">Belum disegerakkan</span>
+              </div>
+              <p class="text-xs text-slate-600 font-medium m-0 mt-0.5" id="cloud-status-desc">
+                Hubungkan ke Google Sheets akaun DELIMa sekolah untuk perkongsian arkib antara semua desktop guru.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-none">
+            <button type="button" id="btn-sync-cloud" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm transition-transform hover:-translate-y-0.5">
+              <i data-lucide="refresh-cw" id="sync-icon" class="w-3.5 h-3.5"></i>
+              <span id="sync-btn-text">Segerak Awan</span>
+            </button>
+            <button type="button" id="btn-open-cloud-modal" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs border border-slate-300 shadow-sm transition">
+              <i data-lucide="settings" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span>Tetapan Awan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bar Penapis & Carian (Filter & Search) -->
+        <div class="no-print bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex flex-col md:flex-row gap-3">
+            <!-- Carian Teks Segera -->
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="text" id="history-search-input" placeholder="Cari mengikut tajuk program, tarikh, tempat atau nama guru penyedia..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+            </div>
+
+            <!-- Pilihan Penapis Unit / Panitia -->
+            <div class="w-full md:w-80">
+              <select id="history-filter-unit" class="w-full py-2.5 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm">
+                <option value="all">🌟 Semua Unit & Panitia</option>
+                <optgroup label="Pengurusan & Pentadbiran">
+                  <option value="Pentadbiran">Pentadbiran</option>
+                  <option value="Kurikulum">Kurikulum</option>
+                  <option value="Hal Ehwal Murid (HEM)">Hal Ehwal Murid (HEM)</option>
+                  <option value="Kokurikulum">Kokurikulum</option>
+                </optgroup>
+                <optgroup label="Panitia Mata Pelajaran">
+                  <option value="Panitia Bahasa Melayu">Panitia Bahasa Melayu</option>
+                  <option value="Panitia Bahasa Inggeris">Panitia Bahasa Inggeris</option>
+                  <option value="Panitia Matematik">Panitia Matematik</option>
+                  <option value="Panitia Sains">Panitia Sains</option>
+                  <option value="Panitia Pendidikan Islam & Moral">Panitia Pendidikan Islam & Moral</option>
+                  <option value="Panitia Sejarah">Panitia Sejarah</option>
+                  <option value="Panitia PSV & Muzik">Panitia PSV & Muzik</option>
+                  <option value="Panitia RBT">Panitia RBT</option>
+                  <option value="Panitia Pendidikan Jasmani & Kesihatan (PJK)">Panitia Pendidikan Jasmani & Kesihatan (PJK)</option>
+                  <option value="Panitia B. Arab & BKD">Panitia B. Arab & BKD</option>
+                </optgroup>
+                <option value="other">Lain-lain / Unit Khas</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Butang Penapis Pantas (Pill Tabs) -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+            <span class="text-slate-400 font-bold whitespace-nowrap mr-1">Penapis:</span>
+            <button type="button" class="history-pill is-active px-3 py-1 rounded-full font-bold bg-blue-900 text-white" data-pill="all">Semua</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="Pentadbiran">Pentadbiran</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="Kurikulum">Kurikulum</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="Hal Ehwal Murid (HEM)">HEM</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="Kokurikulum">Kokurikulum</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="Panitia Pendidikan Jasmani & Kesihatan (PJK)">PJK</button>
+            <button type="button" class="history-pill px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pill="panitia">Panitia-Panitia</button>
+          </div>
+        </div>
+
+        <!-- Info & Kiraan Rekod -->
+        <div class="no-print flex items-center justify-between text-xs text-slate-500 font-semibold px-2">
+          <div id="history-results-count">Menunjukkan 0 rekod OPR</div>
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Simpanan Automatik Bersepadu Aktif</span>
+          </div>
+        </div>
+
+        <!-- Grid Kad Master Template OPR -->
+        <div id="history-grid" class="no-print grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <!-- Kad Master Template diisi secara dinamik -->
+        </div>
+
+        <!-- Keadaan Kosong (Empty State) -->
+        <div id="history-empty-state" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-dashed border-slate-300">
+          <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-sm">
+            <i data-lucide="folder-open" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-800 m-0">Tiada Rekod OPR Dijumpai</h3>
+          <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1 mb-5">
+            Belum ada OPR yang disimpan dalam kategori ini atau carian tidak sepadan. Klik butang "JANA OPR" di Halaman Utama untuk menjana dan menyimpan rekod secara automatik!
+          </p>
+          <button type="button" id="btn-empty-create" class="inline-flex items-center gap-2 bg-blue-950 hover:bg-blue-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition">
+            <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
+            <span>Buka Penjana OPR Sekarang</span>
+          </button>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- FOOTER APLIKASI -->
+    <footer class="no-print border-t border-slate-200 bg-white py-4 mt-12 text-center text-xs text-slate-500 font-medium">
+      <div class="w-full max-w-[1550px] mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
+        <p class="m-0">© 2026 SK Tampasuk 1, Kota Belud, Sabah. Hak Cipta Terpelihara.</p>
+        <p class="m-0 text-slate-400">Sistem e-OPR Pintar • Standard Pelaporan Kementerian Pendidikan Malaysia (KPM)</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Skrip Aplikasi Modular -->
+  <script src="js/image-tool.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Pendaftaran Service Worker & Pasang PWA -->
+  <script>
+    // Pendaftaran Service Worker untuk PWA
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").then((reg) => {
+          console.log("Service Worker e-OPR berjaya didaftarkan:", reg.scope);
+        }).catch((err) => {
+          console.warn("Pendaftaran Service Worker e-OPR:", err);
+        });
+      });
+    }
+
+    // Pengendalian Butang Pasang Aplikasi (PWA beforeinstallprompt)
+    let deferredPrompt;
+    const installBtn = document.getElementById("btn-install-pwa");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installBtn) {
+        installBtn.classList.remove("hidden");
+        installBtn.classList.add("inline-flex");
+      }
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) {
+          alert("Untuk memasang aplikasi ini:\n- Android (Chrome): Tekan menu 3 titik > 'Add to Home Screen'\n- iPhone (Safari): Tekan ikon Share > 'Add to Home Screen'\n- Komputer: Tekan ikon pasang di palang alamat pelayar.");
+          return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+          installBtn.classList.add("hidden");
+        }
+        deferredPrompt = null;
+      });
+    }
+  </script>
+
+  <!-- MODAL TETAPAN AWAN GOOGLE SHEETS DELIMA -->
+  <div id="modal-cloud-setup" class="hidden fixed inset-0 z-50 overflow-y-auto no-print">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <!-- Backdrop -->
+      <div id="cloud-modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+
+      <!-- Modal Card -->
+      <div class="relative bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-xl w-full border border-slate-200 z-10">
+        
+        <!-- Header Modal -->
+        <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 p-5 text-white flex items-center justify-between border-b-2 border-amber-400">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+              <i data-lucide="cloud-cog" class="w-5 h-5 text-amber-400"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-extrabold m-0 tracking-tight">Tetapan Pangkalan Data DELIMa</h3>
+              <p class="text-xs text-sky-200 m-0">Segerakkan Sejarah OPR ke Google Sheets & Google Drive Sekolah</p>
+            </div>
+          </div>
+          <button type="button" id="btn-close-cloud-modal" class="text-slate-300 hover:text-white p-1 rounded-lg transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Badan Modal -->
+        <div class="p-5 sm:p-6 space-y-5">
+          <!-- Penerangan Ringkas -->
+          <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 text-xs text-sky-950 leading-relaxed space-y-2">
+            <div class="font-extrabold text-sky-900 flex items-center gap-1.5">
+              <i data-lucide="info" class="w-4 h-4 text-sky-600"></i>
+              <span>Cara Sambungkan Akaun DELIMa Sekolah:</span>
+            </div>
+            <ol class="list-decimal list-inside space-y-1 text-slate-700">
+              <li>Buka Google Sheet baharu di akaun DELIMa sekolah anda.</li>
+              <li>Klik menu <strong>Extensions &gt; Apps Script</strong> dan masukkan kod fail <code>google-apps-script/Code.gs</code>.</li>
+              <li>Klik butang <strong>Deploy &gt; New deployment &gt; Web app</strong> (pilih <em>Who has access: Anyone</em>).</li>
+              <li>Salin URL Web App yang tertera dan tampalkan (*paste*) di bawah:</li>
+            </ol>
+          </div>
+
+          <!-- Input URL -->
+          <div>
+            <label for="input-cloud-url" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
+              URL Web App Google Apps Script
+            </label>
+            <div class="relative">
+              <input type="url" id="input-cloud-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Pastikan URL berakhir dengan <code>/exec</code>.</p>
+          </div>
+
+          <!-- Status Ujian Sambungan -->
+          <div id="cloud-test-status" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
+
+          <!-- Tindakan Butang -->
+          <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100">
+            <button type="button" id="btn-test-cloud-connection" class="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3.5 py-2.5 rounded-xl text-xs transition">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span id="test-btn-text">Uji Sambungan</span>
+            </button>
+
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-disconnect-cloud" class="hidden inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-2.5 rounded-xl text-xs border border-rose-200 transition">
+                <span>Putuskan</span>
+              </button>
+              <button type="button" id="btn-save-cloud-setup" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-md transition-transform hover:-translate-y-0.5">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Simpan & Segerak</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

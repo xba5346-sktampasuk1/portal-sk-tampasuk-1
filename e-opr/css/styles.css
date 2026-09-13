@@ -1,0 +1,1579 @@
+:root {
+  /* Default: Pentadbiran (Navy Diraja & Emas KPM) */
+  --primary: #06244a;
+  --primary-light: #0d3b75;
+  --accent: #f7b718;
+  --accent-warm: #d98b00;
+  --paper-bg: #fffdf7;
+  --card-bg: #ffffff;
+  --block-bg: #f3f6f9;
+  --block-border: #cbd7e4;
+  --ink: #0f1c2e;
+  --text-muted: #4b6382;
+  --a4-width: 794px;
+  --a4-height: 1123px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Libre Franklin', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+  background: #eaf0f6;
+  min-height: 100vh;
+}
+
+/* ==================== TEMA UNIT & PANITIA ==================== */
+body.theme-pentadbiran {
+  --primary: #06244a;
+  --primary-light: #0b3b73;
+  --accent: #f7b718;
+  --accent-warm: #d98b00;
+  --paper-bg: #fcfdfe;
+  --block-bg: #f0f4f9;
+  --block-border: #c8d7e6;
+  --hdr-bg-1: #030c18;
+  --hdr-bg-2: #0a2444;
+  --hdr-ribbon: #0a3160;
+}
+
+body.theme-kurikulum {
+  --primary: #1e5038;
+  --primary-light: #2c6e4e;
+  --accent: #e5b329;
+  --accent-warm: #c49419;
+  --paper-bg: #fbfdfb;
+  --block-bg: #f1f7f3;
+  --block-border: #bcd5c7;
+  --hdr-bg-1: #04140c;
+  --hdr-bg-2: #123d26;
+  --hdr-ribbon: #1b5335;
+}
+
+body.theme-kokurikulum {
+  --primary: #8a371c;
+  --primary-light: #ab4826;
+  --accent: #f29c38;
+  --accent-warm: #cf7919;
+  --paper-bg: #fffdfb;
+  --block-bg: #fcf3ee;
+  --block-border: #e6cbbe;
+  --hdr-bg-1: #1a0802;
+  --hdr-bg-2: #481b0c;
+  --hdr-ribbon: #6d2813;
+}
+
+body.theme-hem {
+  --primary: #751428;
+  --primary-light: #941e37;
+  --accent: #e58b88;
+  --accent-warm: #c4605d;
+  --paper-bg: #fffbfb;
+  --block-bg: #fbf2f3;
+  --block-border: #e7c6c9;
+  --hdr-bg-1: #180308;
+  --hdr-bg-2: #460c18;
+  --hdr-ribbon: #631222;
+}
+
+body.theme-panitia-bm {
+  --primary: #165b33;
+  --primary-light: #267a49;
+  --accent: #f4be40;
+  --accent-warm: #d99f24;
+  --paper-bg: #fdfefc;
+  --block-bg: #f0f7f2;
+  --block-border: #b8d9c3;
+  --hdr-bg-1: #03150a;
+  --hdr-bg-2: #0f3f22;
+  --hdr-ribbon: #175a32;
+}
+
+body.theme-panitia-bi {
+  --primary: #123c69;
+  --primary-light: #1f548f;
+  --accent: #ac3b61;
+  --accent-warm: #8c2b4b;
+  --paper-bg: #fbfbfe;
+  --block-bg: #f0f4fb;
+  --block-border: #cbd6ea;
+  --hdr-bg-1: #030d1a;
+  --hdr-bg-2: #0f2c4f;
+  --hdr-ribbon: #164070;
+}
+
+body.theme-panitia-math {
+  --primary: #0a3641;
+  --primary-light: #125161;
+  --accent: #e67e22;
+  --accent-warm: #c96512;
+  --paper-bg: #fcfefd;
+  --block-bg: #eef6f8;
+  --block-border: #b7d6dd;
+  --hdr-bg-1: #021116;
+  --hdr-bg-2: #092e37;
+  --hdr-ribbon: #0d414e;
+}
+
+body.theme-panitia-sains {
+  --primary: #4a235a;
+  --primary-light: #6c3483;
+  --accent: #58d68d;
+  --accent-warm: #28b463;
+  --paper-bg: #fdfcfe;
+  --block-bg: #f6f0fa;
+  --block-border: #d7bee6;
+  --hdr-bg-1: #110517;
+  --hdr-bg-2: #341440;
+  --hdr-ribbon: #4a1c5c;
+}
+
+body.theme-panitia-islam-moral {
+  --primary: #196f3d;
+  --primary-light: #229954;
+  --accent: #f39c12;
+  --accent-warm: #d68910;
+  --paper-bg: #fbfdfc;
+  --block-bg: #eef8f1;
+  --block-border: #bde5cb;
+  --hdr-bg-1: #03160c;
+  --hdr-bg-2: #114424;
+  --hdr-ribbon: #195f33;
+}
+
+body.theme-panitia-sejarah {
+  --primary: #6e2c00;
+  --primary-light: #873600;
+  --accent: #d4ac0d;
+  --accent-warm: #b7950b;
+  --paper-bg: #fffdfa;
+  --block-bg: #fbf5ef;
+  --block-border: #e2cebf;
+  --hdr-bg-1: #170801;
+  --hdr-bg-2: #421b02;
+  --hdr-ribbon: #5c2603;
+}
+
+body.theme-panitia-seni-muzik {
+  --primary: #6c1d45;
+  --primary-light: #90265c;
+  --accent: #f48fb1;
+  --accent-warm: #d81b60;
+  --paper-bg: #fffbfc;
+  --block-bg: #fdf0f4;
+  --block-border: #eecad7;
+  --hdr-bg-1: #17040f;
+  --hdr-bg-2: #43122b;
+  --hdr-ribbon: #5e193d;
+}
+
+body.theme-panitia-rbt {
+  --primary: #424949;
+  --primary-light: #5d6d7e;
+  --accent: #f1c40f;
+  --accent-warm: #d4ac0d;
+  --paper-bg: #fcfcfc;
+  --block-bg: #f2f4f4;
+  --block-border: #d0d7d7;
+  --hdr-bg-1: #0e1113;
+  --hdr-bg-2: #283034;
+  --hdr-ribbon: #3b464c;
+}
+
+body.theme-panitia-arab-bkd {
+  --primary: #114b5f;
+  --primary-light: #1a6f8c;
+  --accent: #e4b363;
+  --accent-warm: #c9933e;
+  --paper-bg: #fbfcff;
+  --block-bg: #f0f7f9;
+  --block-border: #bcd8e0;
+  --hdr-bg-1: #031318;
+  --hdr-bg-2: #0d3542;
+  --hdr-ribbon: #14495c;
+}
+
+body.theme-panitia-pjk {
+  --primary: #9b111e;
+  --primary-light: #c0292b;
+  --accent: #f5b041;
+  --accent-warm: #d35400;
+  --paper-bg: #fffcf9;
+  --block-bg: #fdf5f3;
+  --block-border: #edd2cd;
+  --hdr-bg-1: #1d0306;
+  --hdr-bg-2: #4e0a10;
+  --hdr-ribbon: #750f19;
+}
+
+/* ==================== WORKSPACE & SUSUN ATUR ==================== */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-bottom: 4px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 490px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.sticky-panel {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.sticky-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.sticky-panel::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* ==================== BORANG (FORM) ==================== */
+.form-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.form-card-head {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  padding: 18px 22px;
+  color: #ffffff;
+}
+
+.form-section {
+  padding: 18px 20px;
+  border-top: 1px solid #edf2f7;
+}
+
+.section-caption {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.form-control {
+  width: 100%;
+  min-height: 40px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(6, 36, 74, 0.12);
+}
+
+textarea.form-control {
+  min-height: 75px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* ==================== KOTAK MUAT NAIK GAMBAR ==================== */
+.upload-tile {
+  position: relative;
+  min-height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.upload-tile:hover {
+  border-color: var(--accent-warm);
+  background: #fffdfa;
+}
+
+.upload-tile input[type="file"] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-tile img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.upload-tile.has-image img {
+  display: block;
+}
+
+.upload-tile.has-image .upload-empty {
+  display: none;
+}
+
+.remove-image {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: 6px;
+  right: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 5px;
+  color: #ffffff;
+  background: rgba(220, 38, 38, 0.9);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  line-height: 0;
+  transition: background 0.15s;
+}
+
+.remove-image:hover {
+  background: #b91c1c;
+}
+
+.upload-tile.has-image .remove-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==================== PRATONTON (PREVIEW STAGE) ==================== */
+.preview-stage {
+  padding: 16px;
+  border-radius: 20px;
+  background: #cbd5e1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ==================== PRATONTON (PREVIEW STAGE) ==================== */
+.preview-stage {
+  padding: 16px;
+  border-radius: 20px;
+  background: #cbd5e1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dokumen A4 Rasmi Berhias & Sempadan Sijil */
+.opr-paper {
+  width: var(--a4-width);
+  height: var(--a4-height);
+  min-width: var(--a4-width);
+  background: var(--paper-bg);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top center;
+  border: 4px solid var(--primary);
+  outline: 2px solid var(--accent);
+  outline-offset: -6px;
+  color: #0f172a;
+  position: relative;
+}
+
+/* Watermark Rasmi di Latar Belakang Kertas */
+.opr-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/logo-sekolah.png');
+  background-repeat: no-repeat;
+  background-position: center 62%;
+  background-size: 360px 360px;
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==================== KEPALA LAPORAN (HEADER DIRAJA & SIJIL EKSKLUSIF) ==================== */
+.opr-header {
+  height: 124px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 0 12px;
+  color: #ffffff;
+  background: 
+    radial-gradient(ellipse 65% 70% at 50% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 65%),
+    linear-gradient(135deg, var(--hdr-bg-1, #030c18) 0%, var(--hdr-bg-2, #0a2444) 50%, var(--hdr-bg-1, #030c18) 100%);
+  border-top: 2.5px solid #dfb753;
+  border-bottom: 4px solid #b8860b;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Corak Latar Filigri & Geometri Mewah */
+.header-luxury-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(223, 183, 83, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(223, 183, 83, 0.06) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 0, transparent 12px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 0, transparent 12px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Hiasan Bucu Emas Sudut Kanan Atas */
+.header-corner-ornament {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 68px;
+  height: 68px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+.header-corner-ornament svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==================== SEKSYEN KIRI: DWI-LOGO RASMI BULAT (PENUH & SAMA SAIZ) ==================== */
+.header-brand-logos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  margin-left: 6px;
+  flex: none;
+}
+
+/* Badge Bulat bagi Setiap Logo */
+.circular-logo-badge {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #dfb753;
+  box-shadow: 
+    0 0 0 2px rgba(255, 255, 255, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  flex: none;
+  padding: 3px;
+}
+
+/* Gambar Logo Mengisi Penuh Ruangan Bulat */
+.circular-logo-img {
+  width: 94%;
+  height: 94%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* ==================== SEKSYEN TENGAH: TIPOGRAFI DIRAJA ==================== */
+.header-center-title-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.report-name-luxury {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.text-one-page {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #f8fafc;
+  text-shadow: 
+    0 1px 0 #ffffff,
+    0 2px 4px rgba(0, 0, 0, 0.85),
+    0 4px 10px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.text-report {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  background: linear-gradient(180deg, #fff3b8 0%, #dfb753 30%, #9a6f0d 65%, #fdefbe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.85)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+  white-space: nowrap;
+}
+
+.header-school-address {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  color: #e5c07b;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  opacity: 0.95;
+}
+
+/* ==================== SEKSYEN KANAN: PLAQUE EMAS TERGANTUNG ==================== */
+.header-gold-plaque-wrapper {
+  position: relative;
+  flex: none;
+  width: 156px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  padding-top: 10px;
+}
+
+/* Reben Diraja */
+.royal-ribbon-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.royal-ribbon-badge .ribbon-fold {
+  position: absolute;
+  top: 0;
+  width: 24px;
+  height: 28px;
+  background: linear-gradient(180deg, #d4af37 0%, var(--hdr-ribbon, #0a3160) 25%, var(--hdr-ribbon, #0a3160) 80%, #9a6f0d 100%);
+  border-left: 1.5px solid #dfb753;
+  border-right: 1.5px solid #dfb753;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.royal-ribbon-badge .ribbon-tail {
+  position: absolute;
+  bottom: 0;
+  width: 13px;
+  height: 20px;
+  background: var(--hdr-ribbon, #0a3160);
+  border-left: 1px solid #dfb753;
+  border-right: 1px solid #dfb753;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.royal-ribbon-badge .ribbon-tail.left {
+  left: 2px;
+  transform: rotate(10deg);
+}
+
+.royal-ribbon-badge .ribbon-tail.right {
+  right: 2px;
+  transform: rotate(-10deg);
+}
+
+/* Roset Pingat Emas */
+.gold-rosette-medal {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff2b2 0%, #dfb753 50%, #9a6f0d 100%);
+  box-shadow: 
+    0 0 0 1px #593e04,
+    0 0 0 2.5px #ffeaa7,
+    0 3px 8px rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+.rosette-core {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fffbe6 0%, #f39c12 70%, #784205 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.rosette-star {
+  color: #5c3803;
+  font-size: 9px;
+  line-height: 1;
+  text-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Plat Logam Emas (Plaque) */
+.hanging-gold-plaque {
+  position: relative;
+  width: 154px;
+  min-height: 58px;
+  max-height: 64px;
+  border-radius: 6px;
+  background: 
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 0, transparent 4px),
+    linear-gradient(135deg, #fcedc5 0%, #dfb753 25%, #a87d19 50%, #e5c36f 75%, #92660a 100%);
+  border: 2px solid #5a3f05;
+  box-shadow: 
+    0 0 0 1px #ffe89e,
+    0 6px 14px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  z-index: 2;
+  margin-top: 8px;
+}
+
+.plaque-rivet {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #d4af37 60%, #452b04 100%);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.6);
+  z-index: 3;
+}
+
+.plaque-rivet.top-left { top: 3px; left: 3px; }
+.plaque-rivet.top-right { top: 3px; right: 3px; }
+.plaque-rivet.bottom-left { bottom: 3px; left: 3px; }
+.plaque-rivet.bottom-right { bottom: 3px; right: 3px; }
+
+.plaque-bezel {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 1px solid rgba(92, 60, 4, 0.5);
+  box-shadow: inset 0 0 4px rgba(92, 60, 4, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 5px;
+  text-align: center;
+}
+
+.plaque-theme-title {
+  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #241402;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.15;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  word-break: break-word;
+  max-height: 52px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* ==================== BADAN OPR (BODY) ==================== */
+.opr-body {
+  height: 850px;
+  flex: none;
+  display: grid;
+  grid-template-columns: 0.98fr 1.02fr;
+  gap: 12px;
+  padding: 12px 18px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.opr-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.opr-block {
+  flex: none;
+  margin-bottom: 9px;
+}
+
+.opr-column .opr-block:last-child {
+  margin-bottom: 0;
+}
+
+.block-head {
+  height: 38px;
+  display: flex;
+  gap: 5px;
+}
+
+.block-number {
+  width: 42px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #06244a;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-warm) 100%);
+  border: 2px solid var(--primary);
+  font-family: 'Oswald', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  border-radius: 6px 0 0 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.block-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 2px 10px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border: 2px solid var(--primary);
+  font-family: 'Oswald', sans-serif;
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.block-title svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.block-content {
+  overflow: hidden;
+  margin-top: 5px;
+  background: linear-gradient(180deg, var(--block-bg) 0%, #ffffff 100%);
+  border: 1.5px solid var(--block-border);
+  border-left: 4.5px solid var(--primary);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.preview-copy {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  overflow: hidden;
+  color: #1e293b;
+  text-align: center;
+  font-size: 13.5px;
+  line-height: 1.38;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+/* Spesifik Ketinggian Bahagian Kiri */
+.program-content {
+  height: 68px;
+}
+.program-content .preview-copy {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.details-content {
+  height: 146px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 8px;
+  padding: 8px 10px;
+}
+
+.detail-item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--block-border);
+  border-radius: 6px;
+  padding: 4px 7px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.detail-item.wide {
+  grid-column: 1 / -1;
+}
+
+.detail-icon-pill {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--primary);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.detail-icon-pill svg {
+  width: 13px;
+  height: 13px;
+}
+
+.detail-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.target-content {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+}
+
+.target-icon-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--accent);
+}
+
+.target-icon-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+.target-content .preview-copy {
+  justify-content: flex-start;
+  text-align: left;
+  font-size: 13px;
+  padding: 0;
+}
+
+.objective-content {
+  height: 136px;
+}
+.activity-content {
+  height: 163px;
+}
+
+.objective-content .preview-copy,
+.activity-content .preview-copy {
+  font-size: 13px;
+  justify-content: flex-start;
+  text-align: left;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+
+/* Bahagian Kanan: Gambar & Penilaian */
+.photo-grid {
+  height: 485px;
+  display: grid;
+  gap: 7px;
+  margin-top: 5px;
+}
+
+/* Mod 6 Gambar (3 baris x 2 lajur) */
+.photo-grid.grid-6 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+/* Mod 4 Gambar (2 baris x 2 lajur) */
+.photo-grid.grid-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+/* Mod 2 Gambar (2 baris x 1 lajur) */
+.photo-grid.grid-2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.photo-slot {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid var(--block-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.photo-slot img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-slot.has-image img {
+  display: block;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #64748b;
+}
+
+.photo-placeholder svg {
+  width: 22px;
+  height: 22px;
+  opacity: 0.6;
+}
+
+.photo-pill {
+  background: var(--primary);
+  color: #ffffff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.photo-slot.has-image .photo-placeholder {
+  display: none;
+}
+
+.short-content {
+  height: 100px;
+}
+.short-content .preview-copy {
+  font-size: 12.5px;
+  justify-content: flex-start;
+  text-align: left;
+  align-items: flex-start;
+  line-height: 1.35;
+}
+
+/* ==================== MOTO RASMI SEKOLAH ==================== */
+.school-motto-strip {
+  height: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 24px;
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.motto-line {
+  flex: 1;
+  max-width: 140px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--primary));
+  border-radius: 999px;
+  opacity: 0.75;
+}
+
+.motto-line.right {
+  background: linear-gradient(90deg, var(--primary), var(--accent), transparent);
+}
+
+.motto-ornament {
+  color: var(--accent);
+  font-size: 13px;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  user-select: none;
+}
+
+.school-motto-text {
+  margin: 0;
+  font-family: 'Great Vibes', 'Pinyon Script', 'Alex Brush', 'Brush Script MT', 'Lucida Calligraphy', 'Segoe Script', cursive;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 1.5px;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== PENGESAHAN (FOOTER) ==================== */
+.opr-footer {
+  height: 98px;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 6px 24px 8px;
+  border-top: 2px dashed var(--block-border);
+  background: rgba(255, 255, 255, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.signature-card {
+  border: 1px solid var(--block-border);
+  border-radius: 6px;
+  padding: 6px 10px 5px;
+  background: rgba(255, 255, 255, 0.88);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.signature-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--primary);
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.signature-header svg {
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+}
+
+.signature-line {
+  height: 28px;
+  border-bottom: 1.5px dotted #94a3b8;
+  margin: 1px 8px 3px;
+}
+
+.signature-value {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.signature-role {
+  margin: 0;
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==================== BUTTONS & THEME TABS ==================== */
+.theme-btn {
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  transition: all 0.18s ease;
+  font-weight: 700;
+}
+
+.theme-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.theme-btn.is-active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.view-btn.is-active {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+/* ==================== RESPONSIVE VIEWS ==================== */
+body.view-tablet main {
+  max-width: 1000px;
+}
+body.view-tablet .workspace {
+  grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+body.view-phone main {
+  max-width: 640px;
+}
+body.view-phone .workspace {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+body.view-phone .sticky-panel {
+  position: static;
+  max-height: none;
+}
+
+@media (max-width: 1120px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .sticky-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ==================== PERATURAN CETAKAN A4 (PRINT MEDIA) ==================== */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+  }
+
+  /* Sembunyikan semua elemen kawalan UI, navigasi & borang */
+  .no-print,
+  .topbar,
+  #tab-nav-bar,
+  #editing-banner,
+  .view-modes,
+  #section-theme-panel,
+  aside,
+  .notice,
+  #print-controls,
+  #preview-area > .no-print,
+  #view-history {
+    display: none !important;
+  }
+
+  /* Reset semua bekas luaran (containers) agar tiada margin/padding pembawa anjakan */
+  .app-shell,
+  main,
+  #view-generator,
+  .workspace,
+  #preview-area,
+  .preview-stage {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  /* Neutralize Tailwind space-y-* dan margin adik-beradik dalam mod cetak */
+  .space-y-6 > :not([hidden]) ~ :not([hidden]),
+  #view-generator > *,
+  .workspace,
+  .workspace > *,
+  #preview-area,
+  #preview-area > *,
+  .preview-stage,
+  .preview-stage > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Kertas Dokumen A4 Rasmi - Pasak Tepat 210mm x 297mm */
+  .opr-paper {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 4px solid var(--primary) !important;
+    outline: 2px solid var(--accent) !important;
+    outline-offset: -6px !important;
+    transform: none !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    break-after: avoid !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .opr-header {
+    flex: none !important;
+  }
+
+  .opr-body {
+    flex: none !important;
+  }
+
+  .school-motto-strip {
+    flex: none !important;
+  }
+
+  .opr-footer {
+    flex: none !important;
+  }
+
+  .block-number,
+  .block-title,
+  .block-content,
+  .brand-mark,
+  .photo-slot {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* ==========================================================================
+   NAVIGASI TAB & HALAMAN SEJARAH OPR
+   ========================================================================== */
+
+.page-nav-tab {
+  background-color: transparent;
+  color: #64748b;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.page-nav-tab:hover {
+  color: #0f172a;
+  background-color: rgba(241, 245, 249, 0.6);
+}
+
+.page-nav-tab.is-active {
+  color: #0f2b48;
+  background-color: #ffffff;
+  border-bottom: 3px solid #d4af37;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.history-pill {
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.history-pill.is-active {
+  background-color: #0f2b48 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(15, 43, 72, 0.25);
+}
+
+/* KAD MASTER TEMPLATE DALAM SEJARAH */
+.history-opr-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.history-opr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
+}
+
+/* Master Template Miniatur Preview */
+.mini-master-paper {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 3.5px solid var(--primary, #0f2b48);
+  outline: 2px solid var(--accent, #d4af37);
+  outline-offset: -5px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.mini-master-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/logo-sekolah.png');
+  background-repeat: no-repeat;
+  background-position: center 60%;
+  background-size: 130px 130px;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mini-master-header {
+  background: linear-gradient(135deg, var(--primary, #0f2b48) 0%, var(--primary-light, #18426d) 100%);
+  border-bottom: 3.5px solid var(--accent, #d4af37);
+  padding: 8px 12px;
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
+}
+
+.mini-brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--accent, #d4af37);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.mini-brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mini-block {
+  border-radius: 6px;
+  border: 1px solid var(--block-border, #c8d7e6);
+  background: var(--block-bg, #f0f4f9);
+  overflow: hidden;
+}
+
+.mini-block-head {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px;
+  background: var(--primary, #0f2b48);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.mini-photo-slot {
+  aspect-ratio: 4 / 3;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mini-photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==================== BUTANG JANA AI (AI ASSISTANT) ==================== */
+.btn-ai-assist {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #1e3a8a;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-ai-assist:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(59, 130, 246, 0.15);
+}
+
+.btn-ai-assist:active {
+  transform: translateY(0);
+}
+
+.btn-ai-assist.is-generating {
+  pointer-events: none;
+  opacity: 0.7;
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+#btn-ai-generate-all.is-generating {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.ai-pulse-field {
+  animation: aiFieldGlow 1.2s ease;
+}
+
+@keyframes aiFieldGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+    border-color: #f59e0b;
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+    border-color: #d97706;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}

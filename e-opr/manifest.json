@@ -1,0 +1,18 @@
+{
+  "name": "e-OPR - SK Tampasuk 1",
+  "short_name": "e-OPR",
+  "description": "Sistem Penjana One Page Report (OPR) Automatik SK Tampasuk 1 Kota Belud",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#06244a",
+  "theme_color": "#06244a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/logo-sekolah.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

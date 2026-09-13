@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Bersepadu Sekolah Kebangsaan Tampasuk 1 | Kota Belud, Sabah</title>
+  <meta name="description" content="Portal Bersepadu Rasmi SK Tampasuk 1 Kota Belud, Sabah. Gerbang digital utama merangkumi Pengurusan Pentadbiran, Kurikulum, Hal Ehwal Murid (HEM), dan Kokurikulum.">
+  <meta name="keywords" content="SK Tampasuk 1, Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah, Portal Sekolah, e-Guru Ganti, Kurikulum, HEM, Kokurikulum">
+  <meta name="author" content="SK Tampasuk 1 Kota Belud">
+
+  <!-- Favicon & PWA -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo-sekolah.svg">
+  <link rel="apple-touch-icon" href="assets/images/logo-sekolah.jpg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e3a8a">
+
+  <!-- Tailwind CSS 3 CDN -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#0f172a',
+            },
+            gold: {
+              400: '#facc15',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/portal.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP BAR KERAJAAN & KPM -->
+  <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-medium tracking-wide">KEMENTERIAN PENDIDIKAN MALAYSIA • JPN SABAH • PPD KOTA BELUD</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <span class="hidden sm:inline">Kod Sekolah: <strong class="text-white font-mono">XBA5346</strong></span>
+        <span>Domain Utama: <strong class="text-amber-400 font-mono">sktampasuk1.edu.my</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER UTAMA DENGAN KACA (STICKY HEADER) -->
+  <header class="sticky top-0 z-40 glass-panel shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-4">
+        
+        <!-- Identiti Sekolah (Logo & Tajuk) -->
+        <a href="#utama" data-tab-target="utama" class="flex items-center gap-3.5 group flex-shrink-0">
+          <img src="assets/images/logo-sekolah.svg" alt="Logo SK Tampasuk 1" class="w-12 h-12 md:w-14 md:h-14 object-contain group-hover:scale-105 transition-transform">
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base md:text-lg font-black text-slate-900 dark:text-white leading-tight tracking-tight uppercase font-display">
+                SK TAMPASUK 1
+              </h1>
+              <span class="hidden md:inline-block status-chip bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200 text-[10px]">
+                KOTA BELUD
+              </span>
+            </div>
+            <p class="text-[11px] font-semibold text-blue-700 dark:text-blue-400 tracking-wider">
+              SEKATA MELAKAR KECEMERLANGAN
+            </p>
+          </div>
+        </a>
+
+        <!-- Bar Carian Interaktif -->
+        <div class="hidden lg:flex items-center flex-1 max-w-md mx-6">
+          <div class="relative w-full">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input 
+              type="text" 
+              id="global-search-input" 
+              placeholder="Cari guru, panitia, unit HEM, kokurikulum, takwim..." 
+              class="w-full pl-9 pr-8 py-2 text-xs rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all shadow-inner"
+            >
+            <button id="search-clear-btn" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Kosongkan carian">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Butang Tindakan Pantas & Sistem Guru Ganti -->
+        <div class="flex items-center gap-2.5">
+          
+          <!-- Butang Pautan Terus e-Guru Ganti -->
+          <a 
+            href="e-guru-ganti/index.html" 
+            target="_blank" 
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md hover:shadow-blue-500/25 hover:scale-105 transition-all"
+            title="Buka Sistem Pengurusan Jadual Guru Ganti (MMI)"
+          >
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
+            <span>e-Guru Ganti</span>
+          </a>
+
+          <!-- Butang Pautan Terus e-OPR -->
+          <a 
+            href="e-opr/index.html" 
+            target="_blank" 
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md hover:shadow-amber-500/25 hover:scale-105 transition-all"
+            title="Buka Sistem Penjanaan One Page Report (OPR)"
+          >
+            <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
+            <span>e-OPR</span>
+          </a>
+
+          <!-- Butang DELIMa KPM -->
+          <a 
+            href="https://d2.delima.edu.my" 
+            target="_blank" 
+            class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all"
+            title="Gerbang Pembelajaran Digital DELIMa"
+          >
+            <i data-lucide="laptop" class="w-3.5 h-3.5"></i>
+            <span>DELIMa</span>
+          </a>
+
+          <!-- Tukar Mod Gelap / Terang -->
+          <button 
+            id="theme-toggle-btn" 
+            class="p-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-sm" 
+            title="Tukar Mod Paparan"
+          >
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+            <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+          </button>
+
+          <!-- Butang Menu Mudah Alih (Mobile Toggle) -->
+          <button 
+            id="mobile-menu-btn" 
+            class="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200" 
+            aria-label="Buka Menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- BAR NAVIGASI TAB UTAMA (DESKTOP & TABLET) -->
+      <nav class="hidden lg:flex items-center gap-1 py-2 overflow-x-auto border-t border-slate-200/60 dark:border-slate-800/60 no-scrollbar">
+        <button data-tab-target="utama" class="nav-tab-btn active">
+          <i data-lucide="home" class="w-4 h-4"></i> Laman Utama
+        </button>
+        <button data-tab-target="pentadbiran" class="nav-tab-btn">
+          <i data-lucide="building-2" class="w-4 h-4 text-blue-500"></i> Pentadbiran
+        </button>
+        <button data-tab-target="kurikulum" class="nav-tab-btn">
+          <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-500"></i> Kurikulum
+        </button>
+        <button data-tab-target="hem" class="nav-tab-btn">
+          <i data-lucide="heart" class="w-4 h-4 text-purple-500"></i> Hal Ehwal Murid
+        </button>
+        <button data-tab-target="kokurikulum" class="nav-tab-btn">
+          <i data-lucide="trophy" class="w-4 h-4 text-teal-500"></i> Kokurikulum
+        </button>
+        <button data-tab-target="takwim" class="nav-tab-btn">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-500"></i> Takwim 2026
+        </button>
+        <button data-tab-target="berita" class="nav-tab-btn">
+          <i data-lucide="newspaper" class="w-4 h-4 text-pink-500"></i> Berita & Sorotan
+        </button>
+        <button data-tab-target="muatturun" class="nav-tab-btn">
+          <i data-lucide="download" class="w-4 h-4 text-rose-500"></i> Muat Turun
+        </button>
+        <button data-tab-target="hubungi" class="nav-tab-btn">
+          <i data-lucide="map-pin" class="w-4 h-4 text-sky-500"></i> Hubungi & PIBG
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- MENU MUDAH ALIH (DRAWER) -->
+  <div id="mobile-drawer" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col justify-end lg:hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/images/logo-sekolah.svg" alt="Logo" class="w-8 h-8">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">SK TAMPASUK 1</h3>
+            <p class="text-[10px] text-slate-500">Menu Navigasi Portal</p>
+          </div>
+        </div>
+        <button id="mobile-drawer-close" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Carian Mudah Alih -->
+      <div class="my-4">
+        <div class="relative w-full">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </span>
+          <input 
+            type="text" 
+            oninput="document.getElementById('global-search-input').value = this.value; document.getElementById('global-search-input').dispatchEvent(new Event('input'));" 
+            placeholder="Cari guru, unit, takwim..." 
+            class="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+          >
+        </div>
+      </div>
+
+      <!-- Senarai Pautan Tab -->
+      <div class="grid grid-cols-2 gap-2 my-4">
+        <button data-tab-target="utama" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-blue-50 dark:hover:bg-blue-900/30">
+          <i data-lucide="home" class="w-4 h-4 text-blue-600"></i> Laman Utama
+        </button>
+        <button data-tab-target="pentadbiran" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-blue-50 dark:hover:bg-blue-900/30">
+          <i data-lucide="building-2" class="w-4 h-4 text-blue-600"></i> Pentadbiran
+        </button>
+        <button data-tab-target="kurikulum" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
+          <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-600"></i> Kurikulum
+        </button>
+        <button data-tab-target="hem" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-purple-50 dark:hover:bg-purple-900/30">
+          <i data-lucide="heart" class="w-4 h-4 text-purple-600"></i> Hal Ehwal Murid
+        </button>
+        <button data-tab-target="kokurikulum" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-teal-50 dark:hover:bg-teal-900/30">
+          <i data-lucide="trophy" class="w-4 h-4 text-teal-600"></i> Kokurikulum
+        </button>
+        <button data-tab-target="takwim" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-amber-50 dark:hover:bg-amber-900/30">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-600"></i> Takwim 2026
+        </button>
+        <button data-tab-target="berita" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-pink-50 dark:hover:bg-pink-900/30">
+          <i data-lucide="newspaper" class="w-4 h-4 text-pink-600"></i> Berita Sekolah
+        </button>
+        <button data-tab-target="muatturun" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold text-left hover:bg-rose-50 dark:hover:bg-rose-900/30">
+          <i data-lucide="download" class="w-4 h-4 text-rose-600"></i> Muat Turun
+        </button>
+      </div>
+
+      <!-- Pautan e-Guru Ganti, e-OPR & DELIMa di Mobile -->
+      <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+        <a href="e-guru-ganti/index.html" target="_blank" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md">
+          <i data-lucide="calendar-clock" class="w-4 h-4"></i> Sistem e-Guru Ganti V2
+        </a>
+        <a href="e-opr/index.html" target="_blank" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i> Sistem e-OPR Pintar V2
+        </a>
+        <a href="https://d2.delima.edu.my" target="_blank" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs font-bold bg-emerald-600 text-white">
+          <i data-lucide="laptop" class="w-4 h-4"></i> Portal DELIMa KPM
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANCHOR UNTUK SCROLL KANDUNGAN -->
+  <div id="main-content-anchor"></div>
+
+  <!-- HERO SECTION BERWARNA-WARNI & MEGA SHOWCASE -->
+  <section class="hero-gradient text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 border-b-4 border-amber-400">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Kolum Kiri: Mesej & Sorotan Utama -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span class="text-amber-300 font-bold">PORTAL BERSEPADU RASMI</span>
+            <span class="text-white/60">•</span>
+            <span class="text-white/90">SESI PERSEKOLAHAN 2026</span>
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+            SEKOLAH KEBANGSAAN <br class="hidden sm:block">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400">
+              TAMPASUK 1
+            </span>
+          </h2>
+
+          <p class="text-base sm:text-lg text-slate-200 max-w-2xl leading-relaxed">
+            Selamat datang ke Gerbang Rasmi SK Tampasuk 1 Kota Belud, Sabah. Ekosistem pendidikan berwibawa yang menyepadukan empat teras utama: 
+            <strong class="text-white">Pentadbiran</strong>, <strong class="text-emerald-300">Kurikulum</strong>, <strong class="text-purple-300">Hal Ehwal Murid</strong>, dan <strong class="text-teal-300">Kokurikulum</strong> demi kemenjadian modal insan holistik.
+          </p>
+
+          <!-- Moto & Sub-Moto Badge Ribbon -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs sm:text-sm font-bold shadow-sm">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              <span>SEKATA MELAKAR KECEMERLANGAN</span>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs sm:text-sm font-bold shadow-sm">
+              <i data-lucide="flame" class="w-4 h-4 text-amber-400"></i>
+              <span>ILMU CAHAYA HIDUP</span>
+            </div>
+          </div>
+
+          <!-- Butang Terokai & Pautan Pantas -->
+          <div class="flex flex-wrap items-center gap-3 pt-4">
+            <button onclick="document.querySelector('[data-tab-target=pentadbiran]').click()" class="btn-gold">
+              <i data-lucide="compass" class="w-4 h-4"></i>
+              <span>Terokai 4 Teras Utama</span>
+            </button>
+            <a href="e-guru-ganti/index.html" target="_blank" class="btn-primary">
+              <i data-lucide="calendar-clock" class="w-4 h-4"></i>
+              <span>e-Guru Ganti</span>
+            </a>
+            <a href="e-opr/index.html" target="_blank" class="btn-primary bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 font-extrabold shadow-amber-500/20">
+              <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+              <span>e-OPR Pintar</span>
+            </a>
+            <button onclick="document.querySelector('[data-tab-target=takwim]').click()" class="btn-outline text-white border-white/30 hover:bg-white/10">
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+              <span>Takwim Sekolah 2026</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kolum Kanan: Lambang Sekolah & Kad Ringkas Pentadbir -->
+        <div class="lg:col-span-4 flex flex-col items-center">
+          <div class="relative group">
+            <!-- Glow Bulatan -->
+            <div class="absolute -inset-1 bg-gradient-to-r from-amber-400 via-blue-500 to-teal-400 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+            <div class="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full p-2 bg-slate-900 border-4 border-amber-400 flex items-center justify-center shadow-2xl">
+              <img src="assets/images/logo-sekolah.svg" alt="Lencana SK Tampasuk 1" class="w-full h-full object-contain filter drop-shadow-md">
+            </div>
+          </div>
+
+          <div class="mt-6 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-blue-900/80 border border-blue-400/40 text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">
+              GURU BESAR
+            </span>
+            <h3 class="text-lg font-black text-white">En. Mudah Hj. Admaim</h3>
+            <p class="text-xs text-slate-300 italic max-w-xs mt-1">
+              "Permuafakatan padu warga sekolah pemangkin kecemerlangan masa depan anak didik."
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BAR STATISTIK PANTAS (6 STATS TICKER) -->
+      <div class="mt-14 pt-8 border-t border-white/15 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+        
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-amber-300">26</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Guru Berwibawa</div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-emerald-300">5</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Staf Pelaksana (AKP)</div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-sky-300">348</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Murid Terbilang</div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-purple-300">12 + 2</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Kelas & Prasekolah</div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-rose-300">96.4%</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Purata Kehadiran</div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+          <div class="text-2xl sm:text-3xl font-black text-teal-300">GRED A</div>
+          <div class="text-[11px] font-semibold text-slate-300 uppercase mt-1">Kantin Sihat 3K</div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SEKSYEN HASIL CARIAN PINTAR (MUNCUL APABILA CARIAN DILAKUKAN) -->
+  <section id="search-results-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 hidden">
+    <div class="mb-6 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div>
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">Hasil Carian Langsung</h3>
+        <p id="search-results-count" class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-0.5"></p>
+      </div>
+      <button onclick="document.getElementById('global-search-input').value=''; document.getElementById('search-clear-btn').click();" class="btn-outline text-xs">
+        Kembali ke Paparan Asal
+      </button>
+    </div>
+    <div id="search-results-list" class="space-y-3">
+      <!-- Hasil Carian Dijana Dinamik Oleh portal-app.js -->
+    </div>
+  </section>
+
+  <!-- KANDUNGAN TAB 1: LAMAN UTAMA -->
+  <main id="tab-utama" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    
+    <!-- 4 KAD TERAS UTAMA (SHOWCASE PILAR BERWARNA-WARNI) -->
+    <section>
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <span class="status-chip bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 mb-2">
+          EMPAT TONGGAK KECEMERLANGAN
+        </span>
+        <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          Struktur Pengurusan Bersepadu Sekolah
+        </h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Penyelarasan menyeluruh mengikut standard Kementerian Pendidikan Malaysia bagi menjamin kualiti pendidikan bertaraf cemerlang.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Pilar 1: Pentadbiran -->
+        <div class="pillar-card pillar-pentadbiran group cursor-pointer" onclick="document.querySelector('[data-tab-target=pentadbiran]').click()">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="building-2" class="w-6 h-6"></i>
+            </div>
+            <span class="status-chip badge-pentadbiran mb-2">TERAS 1</span>
+            <h4 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
+              Pentadbiran & Pengurusan
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-3">
+              Kepimpinan instruksional, tadbir urus kewangan telus, inventori aset, pengurusan data e-Operasi & HRMIS, serta perancangan strategik sekolah.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
+            <span>Terokai Pentadbiran</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Pilar 2: Kurikulum -->
+        <div class="pillar-card pillar-kurikulum group cursor-pointer" onclick="document.querySelector('[data-tab-target=kurikulum]').click()">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+            </div>
+            <span class="status-chip badge-kurikulum mb-2">TERAS 2</span>
+            <h4 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+              Pengurusan Kurikulum
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-3">
+              10 Panitia Mata Pelajaran, pemantauan Pentaksiran Bilik Darjah (PBD), peperiksaan UASA, pembudayaan STEM, PSS Cahaya Ilmu, dan jadual waktu rasmi.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Terokai Kurikulum</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Pilar 3: Hal Ehwal Murid -->
+        <div class="pillar-card pillar-hem group cursor-pointer" onclick="document.querySelector('[data-tab-target=hem]').click()">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="heart" class="w-6 h-6"></i>
+            </div>
+            <span class="status-chip badge-hem mb-2">TERAS 3</span>
+            <h4 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 transition-colors">
+              Hal Ehwal Murid (HEM)
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-3">
+              Disiplin & SSDM, Bimbingan & Kaunseling (UBK), Bantuan RMT & BAP, Skim SPBT, amalan 3K (Kebersihan, Kesihatan, Keselamatan), dan kantin sihat.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+            <span>Terokai HEM</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Pilar 4: Kokurikulum -->
+        <div class="pillar-card pillar-koko group cursor-pointer" onclick="document.querySelector('[data-tab-target=kokurikulum]').click()">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950 text-teal-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <i data-lucide="trophy" class="w-6 h-6"></i>
+            </div>
+            <span class="status-chip badge-koko mb-2">TERAS 4</span>
+            <h4 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 transition-colors">
+              Pengurusan Kokurikulum
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-3">
+              5 Pasukan Badan Beruniform, 5 Kelab & Persatuan, 6 Sukan 1M1S, pentaksiran PAJSK, serta kejohanan peringkat daerah Kota Belud dan negeri Sabah.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-teal-600 dark:text-teal-400">
+            <span>Terokai Kokurikulum</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- BARISAN 4 KEPIMPINAN TERTINGGI SEKOLAH -->
+    <section class="p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white border border-blue-900/50 shadow-xl">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="status-chip bg-amber-400 text-slate-950 font-black mb-2">PENGURUSAN TERTINGGI</span>
+          <h3 class="text-2xl sm:text-3xl font-black text-white">Barisan Kepimpinan SK Tampasuk 1</h3>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">Empat pentadbir utama yang menerajui pengoperasian holistik sekolah.</p>
+        </div>
+        <button onclick="document.querySelector('[data-tab-target=pentadbiran]').click()" class="btn-outline text-xs text-white border-white/30 hover:bg-white/10 self-start md:self-auto">
+          Lihat Struktur Penuh <i data-lucide="chevron-right" class="w-3.5 h-3.5 inline"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Guru Besar -->
+        <div class="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-400 transition-colors flex flex-col justify-between">
+          <div>
+            <span class="status-chip bg-amber-500 text-slate-950 text-[10px] mb-2">GURU BESAR</span>
+            <h4 class="text-base font-bold text-white">En. Mudah Hj. Admaim</h4>
+            <p class="text-xs text-amber-300 font-semibold">Pemimpin Instruksional</p>
+            <p class="text-xs text-slate-300 mt-3 italic leading-relaxed">
+              "Kejayaan bermula dengan permuafakatan yang utuh antara guru, murid dan ibu bapa."
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400 font-mono">
+            mudah.admaim@moe-dl.edu.my
+          </div>
+        </div>
+
+        <!-- PK Pentadbiran -->
+        <div class="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-rose-400 transition-colors flex flex-col justify-between">
+          <div>
+            <span class="status-chip bg-rose-500 text-white text-[10px] mb-2">PK PENTADBIRAN</span>
+            <h4 class="text-base font-bold text-white">Datin Razana Hj. Abd. Wahid</h4>
+            <p class="text-xs text-rose-300 font-semibold">Kurikulum & Akademik</p>
+            <p class="text-xs text-slate-300 mt-3 italic leading-relaxed">
+              "Melahirkan murid berdaya fikir aras tinggi menerusi pengajaran bilik darjah yang inovatif."
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400 font-mono">
+            razana.wahid@moe-dl.edu.my
+          </div>
+        </div>
+
+        <!-- PK HEM -->
+        <div class="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-400 transition-colors flex flex-col justify-between">
+          <div>
+            <span class="status-chip bg-purple-500 text-white text-[10px] mb-2">PK HAL EHWAL MURID</span>
+            <h4 class="text-base font-bold text-white">Pn. Hamisah Janah</h4>
+            <p class="text-xs text-purple-300 font-semibold">Sahsiah & Kebajikan</p>
+            <p class="text-xs text-slate-300 mt-3 italic leading-relaxed">
+              "Murid berdisiplin dan sihat emosi adalah kunci utama kejayaan penguasaan ilmu."
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400 font-mono">
+            hamisah.janah@moe-dl.edu.my
+          </div>
+        </div>
+
+        <!-- PK Kokurikulum -->
+        <div class="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-teal-400 transition-colors flex flex-col justify-between">
+          <div>
+            <span class="status-chip bg-teal-500 text-white text-[10px] mb-2">PK KOKURIKULUM</span>
+            <h4 class="text-base font-bold text-white">Pn. Jennet Gindawa</h4>
+            <p class="text-xs text-teal-300 font-semibold">Bakat & Kepimpinan</p>
+            <p class="text-xs text-slate-300 mt-3 italic leading-relaxed">
+              "Kokurikulum membentuk ketahanan fizikal dan melatih sifat kepimpinan anak watan."
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400 font-mono">
+            jennet.gindawa@moe-dl.edu.my
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAUTAN PINTAS SISTEM UTAMA KPM & e-GURU GANTI -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <span class="status-chip bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200 mb-1">
+            INTEGRASI SISTEM DIGITAL
+          </span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Gerbang Sistem Dalam Talian</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <!-- e-Guru Ganti Card Khusus -->
+        <a href="e-guru-ganti/index.html" target="_blank" class="glass-card p-5 border-l-4 border-l-blue-600 flex items-start gap-4 hover:border-blue-500 group">
+          <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="calendar-clock" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 mb-1 text-[10px]">SISTEM SEKOLAH</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">e-Guru Ganti V2</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sistem Penjadualan MMI & slip gantian guru SK Tampasuk 1.</p>
+          </div>
+        </a>
+
+        <!-- e-OPR Card Khusus -->
+        <a href="e-opr/index.html" target="_blank" class="glass-card p-5 border-l-4 border-l-amber-500 flex items-start gap-4 hover:border-amber-400 group">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 mb-1 text-[10px]">SISTEM SEKOLAH</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 transition-colors">e-OPR Pintar V2</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sistem Penjana One Page Report (OPR) Automatik & Cetakan A4.</p>
+          </div>
+        </a>
+
+        <!-- DELIMa KPM -->
+        <a href="https://d2.delima.edu.my" target="_blank" class="glass-card p-5 border-l-4 border-l-emerald-600 flex items-start gap-4 hover:border-emerald-500 group">
+          <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="laptop" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 mb-1 text-[10px]">KPM RASMI</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">DELIMa 2.0</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Google Classroom, Canva, dan bahan PdP digital guru & murid.</p>
+          </div>
+        </a>
+
+        <!-- APDM KPM -->
+        <a href="https://apdm.moe.gov.my" target="_blank" class="glass-card p-5 border-l-4 border-l-purple-600 flex items-start gap-4 hover:border-purple-500 group">
+          <div class="w-12 h-12 rounded-xl bg-purple-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 mb-1 text-[10px]">KPM RASMI</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-purple-600 transition-colors">APDM Kehadiran</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aplikasi Pangkalan Data Murid & e-Kehadiran harian kelas.</p>
+          </div>
+        </a>
+
+        <!-- e-Operasi KPM -->
+        <a href="https://eoperasi.moe.gov.my" target="_blank" class="glass-card p-5 border-l-4 border-l-amber-600 flex items-start gap-4 hover:border-amber-500 group">
+          <div class="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="briefcase" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 mb-1 text-[10px]">KPM RASMI</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 transition-colors">e-Operasi Guru</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pengurusan maklumat guru, perjawatan dan subjek ajar.</p>
+          </div>
+        </a>
+
+        <!-- HRMIS JPA -->
+        <a href="https://hrmis2.eghrmis.gov.my" target="_blank" class="glass-card p-5 border-l-4 border-l-cyan-600 flex items-start gap-4 hover:border-cyan-500 group">
+          <div class="w-12 h-12 rounded-xl bg-cyan-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="file-text" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-cyan-100 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300 mb-1 text-[10px]">JPA KERAJAAN</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 transition-colors">HRMIS 2.0</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sistem Maklumat Pengurusan Sumber Manusia perkhidmatan awam.</p>
+          </div>
+        </a>
+
+        <!-- SPLKPM -->
+        <a href="https://splkpm.moe.gov.my" target="_blank" class="glass-card p-5 border-l-4 border-l-rose-600 flex items-start gap-4 hover:border-rose-500 group">
+          <div class="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="award" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="status-chip bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-300 mb-1 text-[10px]">KPM RASMI</span>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors">SPLKPM (LDP)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Perekodan mata kredit latihan dalam perkhidmatan guru & staf.</p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- PREVIEW 4 KUMPULAN GURU BERTUGAS MINGGUAN -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <span class="status-chip bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 mb-1">
+            DISIPLIN & KAWALAN SEKOLAH
+          </span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Kumpulan Guru Bertugas Mingguan</h3>
+        </div>
+      </div>
+      <div id="duty-groups-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- KANDUNGAN TAB 2: BAHAGIAN PENTADBIRAN -->
+  <section id="tab-pentadbiran" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 hidden">
+    
+    <!-- Header Pentadbiran -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white shadow-xl">
+      <span class="status-chip bg-amber-400 text-slate-950 font-black mb-2">TERAS 1 • PENTADBIRAN</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Pengurusan & Pentadbiran Sekolah</h2>
+      <p class="text-slate-200 text-sm max-w-2xl mt-2">
+        Menerajui tadbir urus sumber manusia, pematuhan tatacara kewangan, pengurusan aset, dan pembangunan infrastruktur sekolah ke arah piawaian kualiti tertinggi.
+      </p>
+    </div>
+
+    <!-- Profil, Visi, Misi & Piagam Pelanggan -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Profil & Sejarah Ringkas -->
+      <div class="glass-card p-6 border-t-4 border-t-blue-600 space-y-3">
+        <div class="flex items-center gap-2 text-blue-600 font-bold text-sm">
+          <i data-lucide="info" class="w-5 h-5"></i> Profil SK Tampasuk 1
+        </div>
+        <h4 class="text-lg font-bold text-slate-900 dark:text-white">Identiti & Penubuhan</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          Ditubuhkan pada tahun <strong>1964</strong> di perkampungan Tampasuk, Kota Belud. Sekolah ini terus teguh mendidik anak bangsa dari pelbagai latar belakang dengan moto keramat <em>"Sekata Melakar Kecemerlangan"</em>.
+        </p>
+        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs space-y-1 text-slate-600 dark:text-slate-400">
+          <div>📍 <strong>Alamat:</strong> W.D.T 158, 89150, Kota Belud, Sabah</div>
+          <div>📞 <strong>Telefon:</strong> 088-976214</div>
+          <div>✉️ <strong>Emel:</strong> xba5346@moe.edu.my</div>
+        </div>
+      </div>
+
+      <!-- Visi & Misi KPM -->
+      <div class="glass-card p-6 border-t-4 border-t-emerald-600 space-y-3">
+        <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+          <i data-lucide="target" class="w-5 h-5"></i> Visi & Misi KPM
+        </div>
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Visi KPM:</span>
+          <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+            "Pendidikan Berkualiti, Insan Terdidik, Negara Sejahtera."
+          </p>
+        </div>
+        <div class="pt-2">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Misi KPM:</span>
+          <p class="text-xs text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed">
+            "Melestarikan Sistem Pendidikan Yang Berkualiti Untuk Membangunkan Potensi Individu Bagi Memenuhi Aspirasi Negara."
+          </p>
+        </div>
+      </div>
+
+      <!-- Piagam Pelanggan -->
+      <div class="glass-card p-6 border-t-4 border-t-amber-500 space-y-3">
+        <div class="flex items-center gap-2 text-amber-600 font-bold text-sm">
+          <i data-lucide="file-check" class="w-5 h-5"></i> Piagam Pelanggan
+        </div>
+        <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2">
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0"></i>
+            <span>PdP berkualiti dilaksanakan mengikut jadual pada setiap hari.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0"></i>
+            <span>Layanan mesra kaunter pentadbiran dalam tempoh 15 minit.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0"></i>
+            <span>Bantuan murid (RMT, SPBT, BAP) diagih adil dan telus.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- SENARAI DIREKTORI 26 GURU RASMI MASTER -->
+    <div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <span class="status-chip bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 mb-1">
+            DIREKTORI WARGA PENDIDIK
+          </span>
+          <h3 class="text-2xl font-black text-slate-900 dark:text-white">Senarai 26 Guru Rasmi Master</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Klik pada mana-mana kad guru untuk melihat profil terperinci.</p>
+        </div>
+
+        <!-- Filter Kumpulan Guru -->
+        <div class="flex items-center gap-1.5 p-1 bg-slate-200 dark:bg-slate-800 rounded-xl overflow-x-auto text-xs font-bold">
+          <button data-group-filter="Semua" class="px-3 py-1.5 rounded-lg active bg-blue-600 text-white">Semua (26)</button>
+          <button data-group-filter="Kumpulan 1" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300">Kump 1</button>
+          <button data-group-filter="Kumpulan 2" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300">Kump 2</button>
+          <button data-group-filter="Kumpulan 3" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300">Kump 3</button>
+          <button data-group-filter="Kumpulan 4" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300">Kump 4</button>
+        </div>
+      </div>
+
+      <div id="teachers-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+    <!-- ANGGOTA KUMPULAN PELAKSANA (AKP) -->
+    <div class="glass-card p-6">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+        <i data-lucide="user-check" class="w-5 h-5 text-blue-600"></i>
+        Anggota Kumpulan Pelaksana (AKP / Staf Sokongan)
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h5 class="text-sm font-bold text-slate-900 dark:text-white">Pn. Norhasimah Binti Salleh</h5>
+          <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Ketua Pembantu Tadbir (N22)</p>
+          <span class="text-[10px] text-slate-400 block mt-1">Urusan Kewangan & Perjawatan</span>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h5 class="text-sm font-bold text-slate-900 dark:text-white">En. Jasni Bin Marali</h5>
+          <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Pembantu Operasi (N11)</p>
+          <span class="text-[10px] text-slate-400 block mt-1">Pengurusan Fail & Pejabat</span>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h5 class="text-sm font-bold text-slate-900 dark:text-white">Pn. Maryati Binti Ondoi</h5>
+          <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Pembantu Pengurusan Murid (N19)</p>
+          <span class="text-[10px] text-slate-400 block mt-1">Pengurusan Kelas Prasekolah</span>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h5 class="text-sm font-bold text-slate-900 dark:text-white">En. Azlan Bin Sabli</h5>
+          <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Juruteknik Komputer (FT19)</p>
+          <span class="text-[10px] text-slate-400 block mt-1">Penyelenggaraan Makmal & Rangkaian</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 3: BAHAGIAN KURIKULUM -->
+  <section id="tab-kurikulum" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 hidden">
+    
+    <!-- Header Kurikulum -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 text-white shadow-xl">
+      <span class="status-chip bg-emerald-400 text-slate-950 font-black mb-2">TERAS 2 • KURIKULUM</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Pengurusan Kurikulum & Akademik</h2>
+      <p class="text-emerald-100 text-sm max-w-2xl mt-2">
+        Memperkasakan kualiti pengajaran bilik darjah melalui kepelbagaian pendekatan PAK-21, pengukuhan literasi dan numerasi, serta integrasi teknologi STEM.
+      </p>
+    </div>
+
+    <!-- 3 Sorotan Inisiatif Akademik -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <div class="glass-card p-6 border-l-4 border-l-emerald-600">
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center mb-3">
+          <i data-lucide="check-square" class="w-5 h-5"></i>
+        </div>
+        <h4 class="text-base font-bold text-slate-900 dark:text-white">Pentaksiran Bilik Darjah (PBD)</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+          Penilaian formatif dan sumatif secara holistik berasaskan Standard Kandungan (SK) dan Standard Pembelajaran (SP) bagi memastikan murid menguasai sekurang-kurangnya TP3 ke atas.
+        </p>
+      </div>
+
+      <div class="glass-card p-6 border-l-4 border-l-teal-600">
+        <div class="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/50 text-teal-600 flex items-center justify-center mb-3">
+          <i data-lucide="book-marked" class="w-5 h-5"></i>
+        </div>
+        <h4 class="text-base font-bold text-slate-900 dark:text-white">Pusat Sumber "Cahaya Ilmu"</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+          Penyelaras: <strong>Pn. Yunizah Esun</strong>. Menggerakkan Program NILAM harian, penyediaan stesen komputer berinternet, dan aktiviti pameran buku bertema.
+        </p>
+      </div>
+
+      <div class="glass-card p-6 border-l-4 border-l-blue-600">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center mb-3">
+          <i data-lucide="cpu" class="w-5 h-5"></i>
+        </div>
+        <h4 class="text-base font-bold text-slate-900 dark:text-white">Pembudayaan STEM & Inovasi</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+          Menerapkan kemahiran berfikir secara saintifik melalui amali makmal sains, projek rekacipta bahan kitar semula, dan penyertaan pertandingan inovasi negeri.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- 10 PANITIA MATA PELAJARAN SEKOLAH -->
+    <div>
+      <div class="mb-6">
+        <span class="status-chip bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200 mb-1">
+          PANITIA AKADEMIK
+        </span>
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">10 Panitia Mata Pelajaran Rasmi</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Ketua Panitia dan aktiviti utama bagi setiap mata pelajaran kurikulum kebangsaan.</p>
+      </div>
+
+      <div id="kurikulum-panitia-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 4: BAHAGIAN HAL EHWAL MURID (HEM) -->
+  <section id="tab-hem" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 hidden">
+    
+    <!-- Header HEM -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-purple-900 via-violet-900 to-purple-950 text-white shadow-xl">
+      <span class="status-chip bg-purple-400 text-slate-950 font-black mb-2">TERAS 3 • HAL EHWAL MURID</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Pengurusan Hal Ehwal Murid (HEM)</h2>
+      <p class="text-purple-100 text-sm max-w-2xl mt-2">
+        Memelihara kebajikan murid, mengukuhkan disiplin dan sahsiah terpuji, serta menyediakan persekitaran sekolah yang selamat, bersih, dan sihat berteraskan konsep Anak Yang Baik lagi Cerdik (ABC).
+      </p>
+    </div>
+
+    <!-- 6 UNIT UTAMA HEM -->
+    <div id="hem-units-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dijana Dinamik Oleh portal-app.js -->
+    </div>
+
+    <!-- PANDUAN PENDAFTARAN & KEMASUKAN MURID -->
+    <div class="glass-card p-6 border-l-4 border-l-purple-600">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="status-chip bg-purple-100 text-purple-900 dark:bg-purple-900 dark:text-purple-200 mb-1">
+            PENDAFTARAN & KEMASUKAN
+          </span>
+          <h4 class="text-lg font-bold text-slate-900 dark:text-white">Pendaftaran Murid Tahun 1 & Prasekolah</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 max-w-xl">
+            Ibu bapa dan penjaga yang ingin mendaftarkan anak bagi sesi persekolahan baharu boleh memuat turun borang senarai semak dokumen rasmi di Pusat Muat Turun atau hadir terus ke Pejabat Pentadbiran SK Tampasuk 1.
+          </p>
+        </div>
+        <button onclick="document.querySelector('[data-tab-target=muatturun]').click()" class="btn-primary text-xs whitespace-nowrap">
+          <i data-lucide="download" class="w-4 h-4"></i> Muat Turun Borang Pendaftaran
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 5: BAHAGIAN KOKURIKULUM -->
+  <section id="tab-kokurikulum" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 hidden">
+    
+    <!-- Header Kokurikulum -->
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-teal-900 via-emerald-900 to-teal-950 text-white shadow-xl">
+      <span class="status-chip bg-teal-400 text-slate-950 font-black mb-2">TERAS 4 • KOKURIKULUM</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Pengurusan Kokurikulum & Sukan</h2>
+      <p class="text-teal-100 text-sm max-w-2xl mt-2">
+        Mengasah bakat kepimpinan, ketangkasan fizikal, dan semangat patriotisme murid melalui aktiviti berkala Pasukan Badan Beruniform, Kelab & Persatuan, serta 1Murid 1Sukan.
+      </p>
+    </div>
+
+    <!-- DEWAN JUARA & PENCAPAIAN SEKOLAH -->
+    <div>
+      <div class="mb-4">
+        <span class="status-chip bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200 mb-1">
+          DEWAN JUARA & PENCAPAIAN
+        </span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white">Arkib Kejayaan SK Tampasuk 1</h3>
+      </div>
+      <div id="koko-fame-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+    <!-- 1. PASUKAN BADAN BERUNIFORM -->
+    <div>
+      <div class="mb-4">
+        <span class="status-chip bg-emerald-100 text-emerald-900 dark:bg-emerald-900/50 dark:text-emerald-200 mb-1">
+          UNIT DISIPLIN & KAWAD
+        </span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white">Pasukan Badan Beruniform (5 Unit)</h3>
+      </div>
+      <div id="koko-uniform-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+    <!-- 2. KELAB & PERSATUAN -->
+    <div>
+      <div class="mb-4">
+        <span class="status-chip bg-teal-100 text-teal-900 dark:bg-teal-900/50 dark:text-teal-200 mb-1">
+          KO-AKADEMIK & HOBI
+        </span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white">Kelab & Persatuan (5 Unit)</h3>
+      </div>
+      <div id="koko-clubs-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+    <!-- 3. SUKAN & PERMAINAN (1M1S) -->
+    <div>
+      <div class="mb-4">
+        <span class="status-chip bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200 mb-1">
+          KECERGASAN 1MURID 1SUKAN
+        </span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white">Sukan & Permainan (6 Kelab)</h3>
+      </div>
+      <div id="koko-sports-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Dijana Dinamik Oleh portal-app.js -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 6: TAKWIM PERSEKOLAHAN 2026 -->
+  <section id="tab-takwim" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 hidden">
+    
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white shadow-xl">
+      <span class="status-chip bg-slate-950 text-amber-400 font-black mb-2">KALENDAR TAHUNAN</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Takwim Persekolahan & Aktiviti 2026</h2>
+      <p class="text-amber-100 text-sm max-w-2xl mt-2">
+        Rujukan rasmi tarikh-tarikh penting persekolahan, mesyuarat jawatankuasa, temasya sukan, ujian pentaksiran, dan cuti persekolahan KPM bagi sesi 2026.
+      </p>
+    </div>
+
+    <!-- Penapis Kategori Takwim -->
+    <div class="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <button data-takwim-filter="Semua" class="px-4 py-2 rounded-full text-xs font-bold active bg-blue-600 text-white">Semua Aktiviti</button>
+      <button data-takwim-filter="Pentadbiran" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Pentadbiran</button>
+      <button data-takwim-filter="Kurikulum" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Kurikulum</button>
+      <button data-takwim-filter="HEM" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">HEM</button>
+      <button data-takwim-filter="Kokurikulum" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Kokurikulum</button>
+    </div>
+
+    <!-- Senarai Takwim Bulanan -->
+    <div id="takwim-list-container" class="space-y-3">
+      <!-- Dijana Dinamik Oleh portal-app.js -->
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 7: BERITA & PENGUMUMAN RASMI -->
+  <section id="tab-berita" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 hidden">
+    
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-pink-900 via-rose-900 to-pink-950 text-white shadow-xl">
+      <span class="status-chip bg-pink-400 text-slate-950 font-black mb-2">BULETIN & MAKLUMAN</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Berita & Sorotan Terkini Sekolah</h2>
+      <p class="text-pink-100 text-sm max-w-2xl mt-2">
+        Koleksi pengumuman rasmi pihak pentadbiran sekolah, liputan aktiviti semasa, dan kejayaan warga SK Tampasuk 1 Kota Belud.
+      </p>
+    </div>
+
+    <!-- Grid Berita -->
+    <div id="news-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Dijana Dinamik Oleh portal-app.js -->
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 8: PUSAT MUAT TURUN DOKUMEN -->
+  <section id="tab-muatturun" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 hidden">
+    
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-rose-900 via-red-900 to-rose-950 text-white shadow-xl">
+      <span class="status-chip bg-rose-400 text-slate-950 font-black mb-2">DOKUMEN & FORMAT</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Pusat Muat Turun Dokumen Rasmi</h2>
+      <p class="text-rose-100 text-sm max-w-2xl mt-2">
+        Dapatkan borang rasmi cuti, surat kebenaran ibu bapa, format templat RPH KSSR, dan takwim persekolahan untuk simpanan guru, staf, serta waris murid.
+      </p>
+    </div>
+
+    <!-- Filter Muat Turun -->
+    <div class="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <button data-dl-filter="Semua" class="px-4 py-2 rounded-full text-xs font-bold active bg-blue-600 text-white">Semua Dokumen</button>
+      <button data-dl-filter="Pentadbiran" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Pentadbiran</button>
+      <button data-dl-filter="Kurikulum" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Kurikulum</button>
+      <button data-dl-filter="HEM" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">HEM</button>
+      <button data-dl-filter="Kokurikulum" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Kokurikulum</button>
+    </div>
+
+    <!-- Senarai Dokumen Muat Turun -->
+    <div id="downloads-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Dijana Dinamik Oleh portal-app.js -->
+    </div>
+
+  </section>
+
+  <!-- KANDUNGAN TAB 9: PIBG & HUBUNGI KAMI -->
+  <section id="tab-hubungi" class="portal-tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 hidden">
+    
+    <div class="p-8 rounded-3xl bg-gradient-to-r from-sky-900 via-blue-900 to-slate-900 text-white shadow-xl">
+      <span class="status-chip bg-sky-400 text-slate-950 font-black mb-2">SARANA IBU BAPA & HUBUNGI</span>
+      <h2 class="text-3xl sm:text-4xl font-black">Komuniti PIBG & Hubungi Kami</h2>
+      <p class="text-sky-100 text-sm max-w-2xl mt-2">
+        Mengukuhkan jalinan permuafakatan antara pihak sekolah dan Persatuan Ibu Bapa & Guru (PIBG) demi kebaikan dan kebajikan murid SK Tampasuk 1.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Kolum Kiri: Info PIBG & Maklumat Hubungi -->
+      <div class="lg:col-span-6 space-y-6">
+        
+        <!-- Kad PIBG -->
+        <div class="glass-card p-6 border-l-4 border-l-amber-500">
+          <span class="status-chip bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-200 mb-2">JAWATANKUASA PIBG</span>
+          <h4 class="text-lg font-bold text-slate-900 dark:text-white">Persatuan Ibu Bapa & Guru (PIBG)</h4>
+          <div class="mt-3 text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
+            <div>👑 <strong>YDP PIBG:</strong> En. Raimin Bin Ginsos</div>
+            <div>🤝 <strong>Naib YDP PIBG:</strong> Pn. Normah Binti Jalil</div>
+            <div>📝 <strong>Setiausaha:</strong> En. Amriee Abdullah</div>
+            <div>💰 <strong>Bendahari:</strong> Pn. Anna Octavia Ninteh</div>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-4 italic">
+            "Sokongan padu ibu bapa adalah tiang seri kepada kemajuan sekolah dan kejayaan anak-anak kita."
+          </p>
+        </div>
+
+        <!-- Info Perhubungan Rasmi -->
+        <div class="glass-card p-6 space-y-4">
+          <h4 class="text-base font-bold text-slate-900 dark:text-white">Maklumat Perhubungan Rasmi</h4>
+          
+          <div class="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">Alamat Surat-Menyurat:</span>
+              <span>Sekolah Kebangsaan Tampasuk 1, W.D.T 158, 89150, Kota Belud, Sabah.</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="phone" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">Nombor Telefon Pejabat:</span>
+              <span>088-976214</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 text-purple-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">Alamat Emel Rasmi:</span>
+              <span class="font-mono">xba5346@moe.edu.my</span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">Waktu Pejabat Pentadbiran:</span>
+              <span>Isnin – Jumaat: 7.30 Pagi – 4.30 Petang</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Kolum Kanan: Borang Maklum Balas Pelanggan -->
+      <div class="lg:col-span-6">
+        <div class="glass-card p-6 md:p-8">
+          <span class="status-chip bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200 mb-2">MAKLUM BALAS & ADUAN</span>
+          <h4 class="text-xl font-bold text-slate-900 dark:text-white">Hubungi Pentadbiran Sekolah</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-6">
+            Sila kemukakan sebarang pertanyaan, cadangan penambahbaikan, atau maklum balas kepada pihak pengurusan sekolah.
+          </p>
+
+          <form id="portal-contact-form" class="space-y-4">
+            <div>
+              <label for="contact-name" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Penuh *</label>
+              <input type="text" id="contact-name" required placeholder="Cth: Encik Ahmad Bin Ali" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="contact-phone" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nombor Telefon / WhatsApp *</label>
+                <input type="tel" id="contact-phone" required placeholder="01X-XXXXXXX" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+              </div>
+
+              <div>
+                <label for="contact-role" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Kategori Pelanggan *</label>
+                <select id="contact-role" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+                  <option value="Ibu Bapa / Penjaga">Ibu Bapa / Penjaga</option>
+                  <option value="Guru / Staf">Guru / Staf</option>
+                  <option value="Alumni SK Tampasuk 1">Alumni SK Tampasuk 1</option>
+                  <option value="Komuniti Awam">Komuniti Awam</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="contact-message" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Mesej / Maklum Balas *</label>
+              <textarea id="contact-message" rows="4" required placeholder="Tuliskan perkara atau mesej anda di sini..." class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary w-full py-3 text-xs">
+              <i data-lucide="send" class="w-4 h-4"></i> Hantar Maklum Balas
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER PORTAL RASMI -->
+  <footer class="bg-slate-950 text-slate-400 text-xs pt-16 pb-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-slate-800">
+        
+        <!-- Kolum 1: Profil Sekolah -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <img src="assets/images/logo-sekolah.svg" alt="Logo" class="w-10 h-10">
+            <div>
+              <h4 class="text-white font-black text-sm">SK TAMPASUK 1</h4>
+              <p class="text-[10px] text-amber-400 font-semibold">KOTA BELUD, SABAH</p>
+            </div>
+          </div>
+          <p class="text-[11px] leading-relaxed text-slate-400">
+            Portal Bersepadu Sekolah Kebangsaan Tampasuk 1 berfungsi sebagai domain utama rasmi menghubungkan komuniti sekolah dengan maklumat terkini.
+          </p>
+          <div class="pt-2 text-[10px] text-slate-500 font-mono">
+            Kod KPM: XBA5346 | Zon Tampasuk
+          </div>
+        </div>
+
+        <!-- Kolum 2: Navigasi 4 Teras -->
+        <div>
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Empat Teras Utama</h5>
+          <ul class="space-y-2 text-[11px]">
+            <li><a href="#pentadbiran" onclick="document.querySelector('[data-tab-target=pentadbiran]').click()" class="hover:text-blue-400 transition-colors">1. Pentadbiran & Pengurusan</a></li>
+            <li><a href="#kurikulum" onclick="document.querySelector('[data-tab-target=kurikulum]').click()" class="hover:text-emerald-400 transition-colors">2. Pengurusan Kurikulum & Panitia</a></li>
+            <li><a href="#hem" onclick="document.querySelector('[data-tab-target=hem]').click()" class="hover:text-purple-400 transition-colors">3. Hal Ehwal Murid (HEM)</a></li>
+            <li><a href="#kokurikulum" onclick="document.querySelector('[data-tab-target=kokurikulum]').click()" class="hover:text-teal-400 transition-colors">4. Kokurikulum & Sukan 1M1S</a></li>
+          </ul>
+        </div>
+
+        <!-- Kolum 3: Pautan Rasmi KPM & JPN -->
+        <div>
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Pautan Agensi Kerajaan</h5>
+          <ul class="space-y-2 text-[11px]">
+            <li><a href="https://www.moe.gov.my" target="_blank" class="hover:text-white transition-colors">Kementerian Pendidikan Malaysia (KPM)</a></li>
+            <li><a href="https://jpnsabah.moe.gov.my" target="_blank" class="hover:text-white transition-colors">Jabatan Pendidikan Negeri Sabah (JPNS)</a></li>
+            <li><a href="https://d2.delima.edu.my" target="_blank" class="hover:text-white transition-colors">Portal Pembelajaran DELIMa 2.0</a></li>
+            <li><a href="e-guru-ganti/index.html" target="_blank" class="hover:text-blue-400 font-semibold transition-colors">Sistem e-Guru Ganti SK Tampasuk 1</a></li>
+            <li><a href="e-opr/index.html" target="_blank" class="hover:text-amber-400 font-semibold transition-colors">Sistem e-OPR Pintar SK Tampasuk 1</a></li>
+          </ul>
+        </div>
+
+        <!-- Kolum 4: Hubungi Kami -->
+        <div>
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Lokasi & Maklumat</h5>
+          <p class="text-[11px] leading-relaxed text-slate-400">
+            W.D.T 158, 89150, Kota Belud, Sabah, Malaysia.<br>
+            Telefon: 088-976214<br>
+            Emel: xba5346@moe.edu.my
+          </p>
+          <div class="mt-4 p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[10px] text-amber-300">
+            ⭐ Moto: <em>"Sekata Melakar Kecemerlangan"</em>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bar Bawah Hak Cipta -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+        <div>
+          © 2026 <strong>Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah</strong>. Hak Cipta Terpelihara.
+        </div>
+        <div class="flex items-center gap-4">
+          <span>Domain Utama: <strong class="text-slate-300 font-mono">sktampasuk1.edu.my</strong></span>
+          <span>Versi Portal: <strong class="text-slate-300">3.0.0</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- MODAL POPUP DETAIL (GURU, UNIT, BERITA) -->
+  <div id="portal-modal-overlay" class="modal-overlay">
+    <div class="modal-content relative" id="portal-modal-container">
+      <!-- Diisi Secara Dinamik oleh portal-app.js -->
+    </div>
+    <button id="portal-modal-close" class="hidden" aria-label="Tutup"></button>
+  </div>
+
+  <!-- SKRIP DATA & APLIKASI -->
+  <script src="assets/js/portal-data.js"></script>
+  <script src="assets/js/portal-app.js"></script>
+</body>
+</html>

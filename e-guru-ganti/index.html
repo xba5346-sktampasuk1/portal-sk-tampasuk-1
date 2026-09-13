@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Guru Ganti | SK Tampasuk 1 Kota Belud</title>
+  <meta name="description" content="Sistem Pengurusan & Penjadualan Guru Ganti Automatik SK Tampasuk 1 Kota Belud, Sabah">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo-sekolah.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="app-shell" id="app-shell">
+    <!-- Header Utama Sekolah -->
+    <header class="hero-band w-full">
+      <div style="max-width:1280px; margin:0 auto; padding:1.5rem 1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:1.25rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <div class="school-logo-wrapper" style="width:74px; height:74px; border-radius:50%; background:#ffffff; padding:3px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.25); border:3px solid #ffffff; overflow:hidden; flex-shrink:0;">
+              <img src="assets/images/logo-sekolah.jpg" alt="Lencana SK Tampasuk 1" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;">
+            </div>
+            <div>
+              <h1 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.75rem; font-weight:800; line-height:1.2; letter-spacing:-0.02em;">E-Guru Ganti</h1>
+              <p style="font-size:0.88rem; color:#bfdbfe; font-weight:600; margin-top:2px;">SK TAMPASUK 1 KOTA BELUD, SABAH</p>
+              <p style="font-size:0.75rem; color:#93c5fd; opacity:0.85;">W.D.T 158, 89150, KOTA BELUD</p>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+            <!-- Pautan Kembali ke Portal Utama Sekolah -->
+            <a href="../index.html" class="action-btn" style="background:#f59e0b; color:#0f172a; font-weight:800; text-decoration:none; padding:0.5rem 0.9rem; border-radius:10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem; box-shadow:0 3px 10px rgba(0,0,0,0.15);" title="Kembali ke Laman Web Portal Rasmi SK Tampasuk 1">
+              <i data-lucide="home" style="width:15px;height:15px"></i>
+              <span>Portal Utama</span>
+            </a>
+            <!-- Mod Peranti (Komputer / Tablet / Telefon - Ikon Sahaja) -->
+            <div id="device-mode-group" class="device-toggle-group" role="group" aria-label="Pilihan Mod Paparan Peranti">
+              <button id="btn-device-desktop" type="button" class="device-mode-btn active" title="Mod Komputer (Desktop)" aria-label="Mod Komputer">
+                <i data-lucide="monitor" style="width:17px;height:17px"></i>
+              </button>
+              <button id="btn-device-tablet" type="button" class="device-mode-btn" title="Mod Tablet" aria-label="Mod Tablet">
+                <i data-lucide="tablet" style="width:17px;height:17px"></i>
+              </button>
+              <button id="btn-device-mobile" type="button" class="device-mode-btn" title="Mod Telefon Bimbit (Phone)" aria-label="Mod Telefon Bimbit">
+                <i data-lucide="smartphone" style="width:17px;height:17px"></i>
+              </button>
+            </div>
+
+            <button id="dark-mode-toggle" type="button" class="action-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#ffffff;" aria-label="Tukar tema">
+              <i id="dark-mode-icon" data-lucide="moon" style="width:16px;height:16px"></i>
+              <span id="dark-mode-label">Mod Gelap</span>
+            </button>
+
+            <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:9999px; padding:0.45rem 1rem; font-size:0.85rem; font-weight:600;">
+              <i data-lucide="calendar" style="width:16px;height:16px; color:#facc15"></i>
+              <span id="today-display">Memuatkan tarikh...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigasi Tab Modul -->
+    <nav class="nav-container">
+      <div class="nav-tabs-wrapper" role="tablist">
+        <button type="button" class="nav-tab active" data-page="page1">
+          <i data-lucide="edit-3" style="width:15px;height:15px"></i> Kemasukan
+        </button>
+        <button type="button" class="nav-tab" data-page="page2">
+          <i data-lucide="layout-grid" style="width:15px;height:15px"></i> Jadual Kelas
+        </button>
+        <button type="button" class="nav-tab" data-page="page3">
+          <i data-lucide="users" style="width:15px;height:15px"></i> Jadual Guru
+        </button>
+        <button type="button" class="nav-tab" data-page="page7">
+          <i data-lucide="calendar-days" style="width:15px;height:15px"></i> Jadual Induk
+        </button>
+        <button type="button" class="nav-tab" data-page="page5">
+          <i data-lucide="bar-chart-3" style="width:15px;height:15px"></i> Statistik
+        </button>
+        <button type="button" class="nav-tab" data-page="page6">
+          <i data-lucide="user-check" style="width:15px;height:15px"></i> Kehadiran Guru
+        </button>
+      </div>
+    </nav>
+
+    <!-- PAGE 1: Kemasukan (Entry Form) -->
+    <main id="page1" style="max-width:1280px; width:100%; margin:0 auto; padding:0 1.25rem 2rem;">
+      <h1 class="main-page-title">JADUAL GURU GANTI</h1>
+
+      <section class="section-card overflow-hidden">
+        <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.85rem;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#f5f3ff; color:#8b5cf6; display:flex; align-items:center; justify-content:center; border:1px solid #ede9fe; flex-shrink:0;">
+            <i data-lucide="repeat" style="width:20px;height:20px"></i>
+          </div>
+          <div>
+            <h3 style="font-weight:700; font-size:1.15rem; color:var(--text-primary);">Maklumat Jadual Guru Ganti</h3>
+            <p style="font-size:0.825rem; color:var(--text-secondary); margin-top:2px;">Pilih tarikh dan nama guru tidak hadir untuk mengisi waktu, kelas serta mata pelajaran secara automatik.</p>
+          </div>
+        </div>
+
+        <form id="schedule-form" style="padding:1.5rem 1.75rem;" novalidate>
+          <!-- Grid Minggu, Tarikh, Hari -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
+            <div>
+              <label for="minggu" class="teacher-field-label">Minggu Persekolahan</label>
+              <select id="minggu" class="field-control" required>
+                <option value="">Pilih minggu</option>
+                <script>
+                  for(let i=1; i<=42; i++) document.write(`<option value="Minggu ${i}">Minggu ${i}</option>`);
+                </script>
+              </select>
+            </div>
+
+            <div>
+              <label for="tarikh" class="teacher-field-label">Tarikh</label>
+              <input id="tarikh" type="date" class="field-control" required>
+            </div>
+
+            <div>
+              <label for="hari" class="teacher-field-label">Hari</label>
+              <input id="hari" type="text" class="field-control bg-slate-50 dark:bg-slate-800" readonly>
+            </div>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <!-- Seksyen Guru Tidak Hadir -->
+          <div>
+            <div class="section-heading-row">
+              <div class="section-heading-title">
+                <i data-lucide="user" class="text-blue-600 dark:text-blue-400" style="width:18px;height:18px"></i>
+                <span>Maklumat Guru Tidak Hadir</span>
+              </div>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button id="reset-teachers" type="button" class="section-ghost-btn">
+                  <i data-lucide="rotate-ccw" style="width:15px;height:15px"></i> Reset
+                </button>
+                <button id="add-teacher" type="button" class="section-ghost-btn" style="font-weight:700;">
+                  <i data-lucide="plus" style="width:15px;height:15px"></i> Tambah Guru
+                </button>
+              </div>
+            </div>
+
+            <div id="absent-teachers-container" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+
+            <!-- Kumpulan Bertugas -->
+            <div style="margin-top:1.5rem;">
+              <label for="kumpulan" class="teacher-field-label">Kumpulan Bertugas</label>
+              <select id="kumpulan" class="field-control" required style="width:100%;">
+                <option value="">Pilih kumpulan</option>
+                <option value="Kumpulan 1">Kumpulan 1</option>
+                <option value="Kumpulan 2">Kumpulan 2</option>
+                <option value="Kumpulan 3">Kumpulan 3</option>
+                <option value="Kumpulan 4">Kumpulan 4</option>
+              </select>
+            </div>
+
+            <!-- Senarai Guru Bertugas -->
+            <div style="margin-top:1.5rem;">
+              <label class="teacher-field-label" style="margin-bottom:0.6rem;">Senarai Guru Bertugas</label>
+              <div id="group-members-display" class="group-members-grid"></div>
+            </div>
+          </div>
+
+          <!-- Seksyen Jadual Penggantian Automatik -->
+          <div class="sub-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i data-lucide="table" class="text-purple-600 dark:text-purple-400" style="width:19px;height:19px"></i>
+                <h4>Jadual Automatik Waktu Guru Ganti</h4>
+              </div>
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <button id="reset-rows" type="button" class="action-btn btn-secondary">
+                  <i data-lucide="refresh-cw" style="width:15px;height:15px"></i> Reset Jadual
+                </button>
+                <button id="add-row" type="button" class="action-btn btn-secondary">
+                  <i data-lucide="plus" style="width:15px;height:15px"></i> Tambah Baris
+                </button>
+              </div>
+            </div>
+
+            <!-- Banner Notifikasi & Amaran Overload -->
+            <div id="overload-banner" class="hidden" style="background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:12.5px;" aria-live="polite"></div>
+            <div id="auto-message" class="hidden" style="background:#eef2ff; border-left:4px solid #6366f1; border-top:1px solid #c7d2fe; border-right:1px solid #c7d2fe; border-bottom:1px solid #c7d2fe; color:#3730a3; border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:12.5px; font-weight:600;" aria-live="polite"></div>
+
+            <div class="schedule-table-wrap">
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th style="width: 22%;">MASA / WAKTU</th>
+                    <th style="width: 20%;">MATA PELAJARAN</th>
+                    <th style="width: 20%;">KELAS</th>
+                    <th>GURU PENGGANTI</th>
+                    <th style="width: 46px; text-align: center;"></th>
+                  </tr>
+                </thead>
+                <tbody id="entry-rows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Butang Simpan & Tindakan Cetak -->
+          <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:0.75rem; flex-wrap:wrap;">
+            <button id="btn-open-wa-modal" type="button" class="action-btn btn-whatsapp-action">
+              <i data-lucide="message-circle" style="width:17px;height:17px"></i> HANTAR WHATSAPP GURU GANTI
+            </button>
+            <button id="print-pdf-btn" type="button" class="action-btn btn-success">
+              <i data-lucide="printer" style="width:17px;height:17px"></i> Jana Laporan Penuh (PDF)
+            </button>
+            <button id="save-sheet-btn" type="submit" class="action-btn btn-primary">
+              <i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN KE GOOGLE SHEET
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- PAGE 2: Jadual Kelas (Class Timetable) -->
+    <main id="page2" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem;">
+      <div class="page-header-panel">
+        <div>
+          <h2 class="page-title">JADUAL KELAS &mdash; STATUS GURU</h2>
+          <p class="page-subtitle">Semakan status kehadiran guru dan penugasan guru ganti bagi setiap kelas mengikut hari.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <label for="page2-hari" style="font-size:0.85rem; font-weight:700;">Pilih Hari:</label>
+            <select id="page2-hari" class="field-control" style="width:150px;">
+              <option value="">Pilih Hari</option>
+              <option value="Isnin">Isnin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Khamis">Khamis</option>
+              <option value="Jumaat">Jumaat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Ahad">Ahad</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:0.6rem; font-size:12px; font-weight:600; flex-wrap:wrap;">
+            <span class="legend-badge tt-cell-absent">
+              <span class="legend-dot" style="background:#ef4444"></span> Guru Tidak Hadir
+            </span>
+            <span class="legend-badge tt-cell-replaced">
+              <span class="legend-dot" style="background:#22c55e"></span> Diganti Guru Lain
+            </span>
+            <span class="legend-badge tt-cell-present">
+              <span class="legend-dot" style="background:#3b82f6"></span> Guru Hadir
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id="timetable-container" class="timetable-grid"></div>
+    </main>
+
+    <!-- PAGE 3: Jadual Guru (Teacher Timetable) -->
+    <main id="page3" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem;">
+      <div class="page-header-panel">
+        <div>
+          <h2 class="page-title">JADUAL PERSENDIRIAN GURU</h2>
+          <p class="page-subtitle">Paparan jadual waktu persendirian guru bertugas dan guru ganti mengikut hari.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <label for="page3-hari" style="font-size:0.85rem; font-weight:700;">Pilih Hari:</label>
+          <select id="page3-hari" class="field-control" style="width:150px;">
+            <option value="">Pilih Hari</option>
+            <option value="Isnin">Isnin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Khamis">Khamis</option>
+            <option value="Jumaat">Jumaat</option>
+            <option value="Sabtu">Sabtu</option>
+            <option value="Ahad">Ahad</option>
+          </select>
+        </div>
+      </div>
+      <div id="guru-timetable-container" style="display:flex; flex-direction:column; gap:0.5rem; width:100%;"></div>
+    </main>
+
+    <!-- PAGE 5: Statistik & Laporan -->
+    <main id="page5" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem;">
+      <div class="page-header-panel" style="margin-bottom:1.25rem;">
+        <div>
+          <h2 class="page-title">STATISTIK & LAPORAN PENGGANTIAN</h2>
+          <p class="page-subtitle">Analisis kekerapan gantian, status beban tugas mingguan dan agihan guru ganti SK Tampasuk 1.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          <button id="monthly-pdf-btn" type="button" class="action-btn btn-purple" style="box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);">
+            <i data-lucide="printer" style="width:16px;height:16px"></i>
+            <span id="monthly-pdf-btn-label">Laporan Bulanan PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bar Penapis Interaktif: Bulan & Minggu -->
+      <div class="section-card" style="padding:1.15rem 1.5rem; margin-bottom:1.5rem; border-left:4px solid var(--accent); background:var(--bg-card-solid);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <div style="width:36px; height:36px; border-radius:10px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center; border:1px solid #bfdbfe;">
+              <i data-lucide="filter" style="width:18px;height:18px"></i>
+            </div>
+            <div>
+              <div style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">Pilihan Penapis Laporan</div>
+              <div style="font-size:0.75rem; color:var(--text-secondary);">Tapis laporan mengikut bulan dan minggu persekolahan</div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <!-- Dropdown Pilihan Bulan -->
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <label for="stat-bulan-filter" style="font-size:0.85rem; font-weight:700; color:var(--text-secondary); white-space:nowrap;">
+                <i data-lucide="calendar" style="width:14px;height:14px; display:inline-block; vertical-align:middle; margin-right:2px; color:var(--accent);"></i> Bulan:
+              </label>
+              <select id="stat-bulan-filter" class="field-control" style="min-width:165px; font-weight:600;">
+                <option value="">Semua Bulan</option>
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Mac</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Jun</option>
+                <option value="7">Julai</option>
+                <option value="8">Ogos</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Disember</option>
+              </select>
+            </div>
+
+            <!-- Dropdown Pilihan Minggu -->
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <label for="stat-minggu-filter" style="font-size:0.85rem; font-weight:700; color:var(--text-secondary); white-space:nowrap;">
+                <i data-lucide="calendar-range" style="width:14px;height:14px; display:inline-block; vertical-align:middle; margin-right:2px; color:#8b5cf6;"></i> Minggu:
+              </label>
+              <select id="stat-minggu-filter" class="field-control" style="min-width:160px; font-weight:600;">
+                <option value="">Semua Minggu</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kad Ringkasan Statistik Ceria -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div class="stat-card stat-card-blue">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary);">Jumlah Rekod</span>
+            <div class="stat-icon-pill pill-blue"><i data-lucide="calendar-check" style="width:16px;height:16px"></i></div>
+          </div>
+          <div class="stat-number text-blue-600 dark:text-blue-400" id="stat-total-records">0</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;" id="stat-records-sub">Rekod gantian berdaftar</div>
+        </div>
+
+        <div class="stat-card stat-card-rose">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary);">Guru Tidak Hadir</span>
+            <div class="stat-icon-pill pill-rose"><i data-lucide="user-x" style="width:16px;height:16px"></i></div>
+          </div>
+          <div class="stat-number text-rose-600 dark:text-rose-400" id="stat-total-absent">0</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;">Orang guru terlibat</div>
+        </div>
+
+        <div class="stat-card stat-card-emerald">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary);">Waktu Diganti</span>
+            <div class="stat-icon-pill pill-emerald"><i data-lucide="check-circle-2" style="width:16px;height:16px"></i></div>
+          </div>
+          <div class="stat-number text-emerald-600 dark:text-emerald-400" id="stat-total-replaced">0</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;">Waktu kelas terlaksana</div>
+        </div>
+
+        <div class="stat-card stat-card-purple">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary);">Paling Kerap Ganti</span>
+            <div class="stat-icon-pill pill-purple"><i data-lucide="award" style="width:16px;height:16px"></i></div>
+          </div>
+          <div class="stat-number text-purple-600 dark:text-purple-400" style="font-size:1.25rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="stat-top-guru">—</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;">Komitmen penggantian tertinggi</div>
+        </div>
+      </div>
+
+      <!-- Seksyen Ringkasan Penggantian Mengikut Minggu (Ceria & Profesional) -->
+      <div class="section-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(99,102,241,0.25);">
+              <i data-lucide="layers" style="width:20px;height:20px"></i>
+            </div>
+            <div>
+              <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary); letter-spacing:-0.01em;">Ringkasan Penggantian Mengikut Minggu</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Analisis agihan beban tugas mingguan guru ganti (Had siling amaran: 8 waktu seminggu).</p>
+            </div>
+          </div>
+          <div id="stat-active-filter-badge" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.4rem 0.85rem; border-radius:9999px; background:var(--bg-subtle); border:1px solid var(--border-card); font-size:0.78rem; font-weight:700; color:var(--text-secondary);">
+            <i data-lucide="info" style="width:14px;height:14px; color:var(--accent);"></i>
+            <span id="stat-filter-label">Semua Bulan</span>
+          </div>
+        </div>
+
+        <!-- Bekas Paparan Kandungan Mingguan (Dinamik) -->
+        <div id="weekly-report-container"></div>
+      </div>
+    </main>
+
+    <!-- PAGE 6: Kehadiran Guru & Pemantauan Pentadbir -->
+    <main id="page6" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem;">
+      <!-- Header Panel -->
+      <div class="page-header-panel">
+        <div>
+          <h2 class="page-title">REKOD & STATUS KEHADIRAN GURU</h2>
+          <p class="page-subtitle">Pemantauan kehadiran guru harian, sebab ketidakhadiran, dan pengurusan pentadbir sekolah.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <button id="att-print-btn" type="button" class="action-btn" style="background:#059669; color:#ffffff; font-weight:700;">
+            <i data-lucide="printer" style="width:16px;height:16px"></i>
+            <span>Cetak Penyata Kehadiran (PDF)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bar Kawalan Tarikh Harian & Navigasi -->
+      <div class="section-card" style="padding:1.25rem; margin-bottom:1.25rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <button id="att-prev-day" type="button" class="action-btn btn-secondary" title="Hari Sebelumnya" style="padding:0.45rem 0.8rem;">
+              <i data-lucide="chevron-left" style="width:16px;height:16px"></i>
+              <span class="hidden sm:inline">Hari Sebelumnya</span>
+            </button>
+            <div style="position:relative; display:inline-flex; align-items:center;">
+              <input id="att-date" type="date" class="field-control" style="padding:0.45rem 0.85rem; font-weight:700; font-size:0.92rem; min-width:160px;">
+            </div>
+            <button id="att-next-day" type="button" class="action-btn btn-secondary" title="Hari Seterusnya" style="padding:0.45rem 0.8rem;">
+              <span class="hidden sm:inline">Hari Seterusnya</span>
+              <i data-lucide="chevron-right" style="width:16px;height:16px"></i>
+            </button>
+            <button id="att-today-btn" type="button" class="action-btn btn-secondary" style="padding:0.45rem 0.85rem; font-weight:700; background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">
+              <i data-lucide="calendar" style="width:15px;height:15px"></i>
+              <span>Hari Ini</span>
+            </button>
+          </div>
+
+          <div style="display:inline-flex; align-items:center; gap:0.6rem; padding:0.4rem 0.9rem; border-radius:9999px; background:var(--bg-subtle); border:1px solid var(--border-subtle); font-size:0.85rem; font-weight:700;">
+            <i data-lucide="calendar-check" style="width:16px;height:16px; color:#2563eb;"></i>
+            <span id="att-date-display-label">Memuatkan tarikh...</span>
+          </div>
+        </div>
+
+        <!-- Kad Ringkasan KPI Eksekutif Kehadiran -->
+        <div class="att-kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--border-subtle);">
+          <!-- Kad 1: Jumlah Guru -->
+          <div class="att-kpi-card att-kpi-total">
+            <div class="att-kpi-icon-wrap" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">
+              <i data-lucide="users" style="width:22px;height:22px"></i>
+            </div>
+            <div>
+              <div class="att-kpi-num" id="kpi-total-teachers">27</div>
+              <div class="att-kpi-label">Jumlah Guru Sekolah</div>
+            </div>
+          </div>
+
+          <!-- Kad 2: Guru Hadir -->
+          <div class="att-kpi-card att-kpi-present">
+            <div class="att-kpi-icon-wrap" style="background:#ecfdf5; color:#059669; border-color:#a7f3d0;">
+              <i data-lucide="user-check" style="width:22px;height:22px"></i>
+            </div>
+            <div>
+              <div style="display:flex; align-items:baseline; gap:0.4rem;">
+                <span class="att-kpi-num" id="kpi-present-count">0</span>
+                <span class="att-kpi-pct" id="kpi-present-pct" style="font-size:0.82rem; font-weight:700; color:#059669;">(0%)</span>
+              </div>
+              <div class="att-kpi-label">Guru Hadir Bertugas</div>
+            </div>
+          </div>
+
+          <!-- Kad 3: Guru Tidak Hadir -->
+          <div class="att-kpi-card att-kpi-absent">
+            <div class="att-kpi-icon-wrap" style="background:#fef2f2; color:#dc2626; border-color:#fca5a5;">
+              <i data-lucide="user-x" style="width:22px;height:22px"></i>
+            </div>
+            <div>
+              <div style="display:flex; align-items:baseline; gap:0.4rem;">
+                <span class="att-kpi-num" id="kpi-absent-count">0</span>
+                <span class="att-kpi-pct" id="kpi-absent-pct" style="font-size:0.82rem; font-weight:700; color:#dc2626;">(0%)</span>
+              </div>
+              <div class="att-kpi-label">Guru Tidak Hadir</div>
+            </div>
+          </div>
+
+          <!-- Kad 4: Waktu Diganti -->
+          <div class="att-kpi-card att-kpi-relief">
+            <div class="att-kpi-icon-wrap" style="background:#f5f3ff; color:#7c3aed; border-color:#ddd6fe;">
+              <i data-lucide="repeat" style="width:22px;height:22px"></i>
+            </div>
+            <div>
+              <div class="att-kpi-num" id="kpi-relief-periods">0 Waktu</div>
+              <div class="att-kpi-label">Jumlah Waktu Diganti</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ruangan Roster Kehadiran Guru Harian -->
+      <div class="section-card" style="padding:1.5rem; margin-bottom:1.75rem;">
+        <!-- Header Roster dengan Penapis & Carian -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+          <div>
+            <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary);">Roster Status Kehadiran Guru</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Senarai lengkap status guru hadir, guru tidak hadir, dan perincian sebab ketidakhadiran harian.</p>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+            <!-- Butang Penapis Status Tab -->
+            <div class="att-filter-tabs" role="tablist" style="display:inline-flex; background:var(--bg-subtle); padding:3px; border-radius:10px; border:1px solid var(--border-subtle); gap:2px;">
+              <button type="button" class="att-filter-tab active" data-att-filter="all">Semua (<span id="filter-count-all">27</span>)</button>
+              <button type="button" class="att-filter-tab" data-att-filter="absent"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ef4444; margin-right:4px;"></span>Tidak Hadir (<span id="filter-count-absent">0</span>)</button>
+              <button type="button" class="att-filter-tab" data-att-filter="present"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; margin-right:4px;"></span>Hadir (<span id="filter-count-present">27</span>)</button>
+              <button type="button" class="att-filter-tab" data-att-filter="relief"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#8b5cf6; margin-right:4px;"></span>Guru Ganti (<span id="filter-count-relief">0</span>)</button>
+            </div>
+
+            <!-- Carian Guru -->
+            <div style="position:relative; min-width:200px;">
+              <input id="att-search-guru" type="text" class="field-control" placeholder="Cari nama guru..." style="padding:0.4rem 0.75rem; font-size:0.85rem;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bekas Senarai Kad Guru Harian -->
+        <div id="attendance-roster-container"></div>
+        <div id="attendance-roster-empty" class="hidden"></div>
+      </div>
+
+      <!-- Ruangan Arkib Log Sejarah Kehadiran Terdahulu -->
+      <div class="section-card" style="padding:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <div style="width:32px; height:32px; border-radius:8px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="archive" style="width:16px;height:16px"></i>
+              </div>
+              <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary);">Arkib Rekod Ketidakhadiran Terdahulu</h3>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">Rekod sejarah ketidakhadiran guru dan sebab yang tersimpan dalam sistem mengikut tarikh.</p>
+          </div>
+
+          <!-- Penapis Minggu / Carian Arkib -->
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <select id="hist-minggu" class="field-control" style="font-size:0.82rem; padding:0.4rem 0.75rem; min-width:140px; font-weight:700;">
+              <option value="">Semua Minggu</option>
+            </select>
+            <select id="hist-sebab-filter" class="field-control" style="font-size:0.82rem; padding:0.4rem 0.75rem; min-width:150px; font-weight:700;">
+              <option value="">Semua Sebab</option>
+              <option value="Cuti Sakit (MC)">Cuti Sakit (MC)</option>
+              <option value="Cuti Rehat Khas (CRK)">Cuti Rehat Khas (CRK)</option>
+              <option value="Cuti Rehat (CR)">Cuti Rehat (CR)</option>
+              <option value="Cuti Tanpa Rekod (CTR)">Cuti Tanpa Rekod (CTR)</option>
+              <option value="Cuti Umrah">Cuti Umrah</option>
+              <option value="Cuti Haji">Cuti Haji</option>
+              <option value="Menghadiri Mesyuarat / Bengkel">Menghadiri Mesyuarat / Bengkel</option>
+              <option value="Menjalankan Tugas Luar">Menjalankan Tugas Luar</option>
+              <option value="Kursus Profesionalisme">Kursus Profesionalisme</option>
+              <option value="Cuti Bersalin">Cuti Bersalin</option>
+              <option value="Berpencen">Berpencen</option>
+              <option value="Pengendali Program Rasmi Sekolah">Pengendali Program Rasmi Sekolah</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="attendance-archive-container"></div>
+        <div id="attendance-archive-empty" class="hidden"></div>
+      </div>
+    </main>
+
+    <!-- PAGE 7: Jadual Induk (Jadual Keseluruhan Sekolah) -->
+    <main id="page7" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem;">
+      <div class="page-header-panel">
+        <div>
+          <h2 class="page-title">JADUAL INDUK</h2>
+          <p class="page-subtitle">Jadual waktu induk sekolah dan semakan gantian guru harian mengikut tarikh.</p>
+        </div>
+      </div>
+
+      <!-- Kotak Kalendar Mini Kompak (Pilihan Tarikh) -->
+      <div class="cal-picker-card">
+        <div class="cal-header-bar">
+          <button id="cal-prev" type="button" class="action-btn btn-secondary" style="padding:0.35rem 0.65rem;" title="Bulan Terdahulu"><i data-lucide="chevron-left" style="width:16px;height:16px"></i></button>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <i data-lucide="calendar" style="width:16px;height:16px; color:#2563eb;"></i>
+            <h3 id="cal-month-label" style="font-weight:800; font-size:1.05rem; font-family:'Plus Jakarta Sans',sans-serif;"></h3>
+            <button id="cal-today-btn" type="button" class="action-btn btn-secondary" style="padding:0.2rem 0.55rem; font-size:11px; font-weight:700; border-radius:6px;" title="Kembali ke Hari Ini">Hari Ini</button>
+          </div>
+          <button id="cal-next" type="button" class="action-btn btn-secondary" style="padding:0.35rem 0.65rem;" title="Bulan Seterusnya"><i data-lucide="chevron-right" style="width:16px;height:16px"></i></button>
+        </div>
+
+        <div class="cal-weekdays-grid">
+          <div>Ahd</div><div>Isn</div><div>Sel</div><div>Rab</div><div>Kha</div><div>Jum</div><div>Sab</div>
+        </div>
+        <div id="cal-grid"></div>
+      </div>
+
+      <!-- Seksyen Utama: Jadual Keseluruhan Harian (Master Timetable) -->
+      <div class="section-card" style="padding:1.25rem;">
+        <div id="cal-detail">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <span id="cal-day-badge" style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.3rem 0.8rem; border-radius:9999px; background:#1e3a8a; color:#ffffff; font-size:0.78rem; font-weight:800;">
+                  <i data-lucide="calendar" style="width:13px;height:13px"></i>
+                  <span id="cal-day-text">Hari</span>
+                </span>
+                <h3 id="cal-detail-title" style="font-weight:800; font-size:1.15rem; color:var(--text-primary); letter-spacing:-0.01em;">JADUAL KESELURUHAN SEKOLAH</h3>
+              </div>
+              <p id="cal-detail-sub" style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">
+                Status pengajaran 12 kelas mengikut waktu dari 7:10 pagi sehingga 12:40++ petang.
+              </p>
+            </div>
+
+            <!-- Petunjuk Warna & Pilihan Kawalan -->
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <div style="display:flex; gap:0.5rem; font-size:11.5px; font-weight:700; flex-wrap:wrap;">
+                <span class="legend-badge" style="background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:0.35rem 0.75rem; border-radius:8px;">
+                  <span class="legend-dot" style="background:#10b981"></span> Guru Asal Mengajar
+                </span>
+                <span class="legend-badge" style="background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; padding:0.35rem 0.75rem; border-radius:8px;">
+                  <span class="legend-dot" style="background:#ef4444"></span> Guru Ganti Mengajar
+                </span>
+                <span class="legend-badge" style="background:var(--bg-subtle); border:1px solid var(--border-subtle); color:var(--text-muted); padding:0.35rem 0.75rem; border-radius:8px;">
+                  <span class="legend-dot" style="background:#94a3b8"></span> Waktu Rehat (9:40-10:10)
+                </span>
+              </div>
+
+              <!-- Pilihan Tapis Kelas -->
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <select id="cal-class-filter" class="field-control" style="font-size:0.82rem; padding:0.4rem 0.75rem; min-width:140px; font-weight:700;">
+                  <option value="">Semua 12 Kelas</option>
+                  <option value="1A">1 Arif</option>
+                  <option value="1B">1 Bestari</option>
+                  <option value="2A">2 Arif</option>
+                  <option value="2B">2 Bestari</option>
+                  <option value="3A">3 Arif</option>
+                  <option value="3B">3 Bestari</option>
+                  <option value="4A">4 Arif</option>
+                  <option value="4B">4 Bestari</option>
+                  <option value="5A">5 Arif</option>
+                  <option value="5B">5 Bestari</option>
+                  <option value="6A">6 Arif</option>
+                  <option value="6B">6 Bestari</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bekas Jadual Keseluruhan -->
+          <div id="cal-detail-content"></div>
+        </div>
+      </div>
+    </main>
+
+
+    <!-- Footer -->
+    <footer style="width:100%; border-top:1px solid var(--border-card); padding:1.5rem; text-align:center; font-size:0.82rem; color:var(--text-secondary); margin-top:auto; background:var(--bg-card-solid);">
+      <p style="font-weight:700; letter-spacing:0.04em; color:var(--text-primary);" class="dark:text-slate-200">SEKATA MELAKAR KECEMERLANGAN</p>
+      <p style="margin-top:4px;">&copy; SK Tampasuk 1 Kota Belud &bull; Sistem e-Guru Ganti V2</p>
+    </footer>
+  </div>
+
+  <!-- HTML Templates -->
+  <template id="entry-row-template">
+    <tr class="schedule-row">
+      <td style="padding-left:14px;"><input class="row-pill-input row-masa" aria-label="Masa" required placeholder="cth: 7.40-8.10"></td>
+      <td><input class="row-pill-input row-subjek" aria-label="Mata pelajaran" required placeholder="cth: BM"></td>
+      <td><input class="row-pill-input row-kelas" aria-label="Kelas" required placeholder="cth: 4A"></td>
+      <td>
+        <div class="custom-ganti-wrapper">
+          <button type="button" class="custom-ganti-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="custom-ganti-label">Pilih guru ganti</span>
+            <i data-lucide="chevron-down" class="custom-ganti-arrow" style="width:16px;height:16px;"></i>
+          </button>
+          <div class="custom-ganti-menu hidden" role="listbox"></div>
+          <select class="row-select-ganti row-ganti hidden" aria-label="Guru ganti" required><option value="">Pilih guru ganti</option></select>
+        </div>
+      </td>
+      <td style="text-align:center;"><button type="button" class="remove-row row-remove-btn" aria-label="Buang baris"><i data-lucide="x" style="width:18px;height:18px"></i></button></td>
+    </tr>
+  </template>
+
+  <template id="teacher-row-template">
+    <div class="teacher-row">
+      <div class="teacher-col-name">
+        <label class="teacher-field-label">Nama Guru Tidak Hadir</label>
+        <select class="field-control teacher-select" required></select>
+      </div>
+      <div class="teacher-col-reason">
+        <label class="teacher-field-label">Sebab</label>
+        <select class="field-control reason-select" required>
+          <option value="">Pilih sebab</option>
+          <option value="Cuti Sakit (MC)">Cuti Sakit (MC)</option>
+          <option value="Cuti Rehat Khas (CRK)">Cuti Rehat Khas (CRK)</option>
+          <option value="Cuti Rehat (CR)">Cuti Rehat (CR)</option>
+          <option value="Cuti Tanpa Rekod (CTR)">Cuti Tanpa Rekod (CTR)</option>
+          <option value="Cuti Umrah">Cuti Umrah</option>
+          <option value="Cuti Haji">Cuti Haji</option>
+          <option value="Menghadiri Mesyuarat / Bengkel">Menghadiri Mesyuarat / Bengkel</option>
+          <option value="Menjalankan Tugas Luar">Menjalankan Tugas Luar</option>
+          <option value="Kursus Profesionalisme">Kursus Profesionalisme</option>
+          <option value="Cuti Bersalin">Cuti Bersalin</option>
+          <option value="Berpencen">Berpencen</option>
+          <option value="Pengendali Program Rasmi Sekolah">Pengendali Program Rasmi Sekolah</option>
+        </select>
+      </div>
+      <button type="button" class="remove-teacher" aria-label="Buang guru">
+        <i data-lucide="trash-2" style="width:18px;height:18px"></i>
+      </button>
+    </div>
+  </template>
+
+  <!-- Modal Hantar WhatsApp Individu Guru Ganti -->
+  <div id="modal-whatsapp-individu" class="wa-modal-backdrop hidden" aria-hidden="true">
+    <div class="wa-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="wa-modal-title">
+      <!-- Modal Header -->
+      <div class="wa-modal-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div class="wa-modal-icon-badge">
+            <i data-lucide="message-circle" style="width:22px;height:22px; color:#ffffff;"></i>
+          </div>
+          <div>
+            <h3 id="wa-modal-title" class="wa-modal-title">Hantar WhatsApp Guru Ganti</h3>
+            <p id="wa-modal-subtitle" class="wa-modal-subtitle">Hantar makluman teks rasmi terus kepada telefon bimbit setiap guru pengganti.</p>
+          </div>
+        </div>
+        <button type="button" id="wa-modal-close" class="wa-modal-close-btn" aria-label="Tutup modal">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Tarikh & Makluman Ringkas -->
+      <div class="wa-modal-info-bar">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <i data-lucide="calendar" style="width:16px;height:16px; color:#10b981;"></i>
+          <span id="wa-modal-date-display" style="font-weight:700;">Tarikh: —</span>
+        </div>
+        <div id="wa-modal-count-badge" class="wa-count-badge">0 Guru Pengganti</div>
+      </div>
+
+      <!-- Modal Body (Senarai Kad Guru) -->
+      <div id="wa-modal-body" class="wa-modal-body">
+        <!-- Kad guru ganti akan dijana melalui JavaScript -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="wa-modal-footer">
+        <p style="font-size:0.78rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+          <i data-lucide="info" style="width:15px;height:15px;display:inline-block;vertical-align:-2px;color:#0ea5e9;margin-right:4px;"></i><em>Klik butang hijau untuk membuka chat WhatsApp dengan teks rasmi yang siap ditaip. Nombor telefon yang dimasukkan disimpan secara automatik.</em>
+        </p>
+        <button type="button" id="wa-modal-btn-done" class="action-btn" style="background:#64748b; color:#ffffff; border-radius:10px; padding:0.5rem 1.25rem; border:none; cursor:pointer; font-weight:600;">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Timetable Hover Popover -->
+  <div id="teacher-hover-popover" class="teacher-hover-popover hidden" aria-hidden="true"></div>
+
+  <!-- Skrip Aplikasi (Mengikut Urutan Betul) -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/timetable-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
