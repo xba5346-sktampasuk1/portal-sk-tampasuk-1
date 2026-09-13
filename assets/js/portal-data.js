@@ -1,7 +1,7 @@
 /**
  * Portal Bersepadu Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah
  * Data Utama & Pangkalan Maklumat Sekolah (Sesi Persekolahan 2026)
- * Domain Utama: sktampasuk1.edu.my
+ * Domain Utama: xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1
  */
 
 const SCHOOL_DATA = {
@@ -16,7 +16,7 @@ const SCHOOL_DATA = {
     phone: "088-976214",
     email: "xba5346@moe.edu.my",
     altEmail: "sktampasuk1.kotabelud@gmail.com",
-    domain: "sktampasuk1.edu.my",
+    domain: "xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1",
     systemGuruGantiUrl: "e-guru-ganti/index.html",
     systemOprUrl: "e-opr/index.html",
     motto: "SEKATA MELAKAR KECEMERLANGAN",
@@ -1134,7 +1134,7 @@ const SCHOOL_DATA = {
       date: "13 September 2026",
       author: "Unit ICT & Data SK Tampasuk 1",
       tagColor: "bg-blue-600 text-white",
-      summary: "SK Tampasuk 1 melakar sejarah dengan pelancaran portal bersepadu rasmi di domain utama sktampasuk1.edu.my yang menggabungkan seluruh teras sekolah.",
+      summary: "SK Tampasuk 1 melakar sejarah dengan pelancaran portal bersepadu rasmi di domain utama xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1 yang menggabungkan seluruh teras sekolah.",
       content: "Portal bersepadu ini menyediakan akses pantas kepada warga pendidik, ibu bapa, dan murid terhadap maklumat Pentadbiran, Kurikulum, Hal Ehwal Murid, dan Kokurikulum. Sistem ini turut menyepadukan sistem dalaman sekolah seperti e-Guru Ganti dan pautan terus ke perkhidmatan KPM seperti DELIMa, APDM, dan HRMIS. Diharapkan langkah pendigitalan ini memperkukuh ketercapaian maklumat secara profesional dan telus."
     },
     {

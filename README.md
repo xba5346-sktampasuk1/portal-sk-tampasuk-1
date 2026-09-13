@@ -1,7 +1,7 @@
 # Portal Bersepadu Sekolah Kebangsaan Tampasuk 1 Kota Belud, Sabah
 
 Selamat datang ke repositori rasmi **Portal Bersepadu Sekolah Kebangsaan Tampasuk 1, Kota Belud, Sabah**.  
-Laman web portal ini bertindak sebagai **domain utama sekolah** (`sktampasuk1.edu.my`) yang menggabungkan seluruh ekosistem digital sekolah secara profesional, moden, kemas, dan kaya dengan warna-warna korporat pendidikan yang harmoni.
+Laman web portal ini bertindak sebagai **domain utama sekolah** (`xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1`) yang menggabungkan seluruh ekosistem digital sekolah secara profesional, moden, kemas, dan kaya dengan warna-warna korporat pendidikan yang harmoni.
 
 ---
 
@@ -14,7 +14,7 @@ Laman web portal ini bertindak sebagai **domain utama sekolah** (`sktampasuk1.ed
    - **Pengurusan Kokurikulum:** 5 Pasukan Badan Beruniform, 5 Kelab & Persatuan, 6 Sukan & Permainan (1M1S), serta Dewan Juara & Arkib Kejayaan sekolah.
 
 2. **Integrasi Ekosistem Digital Berpusat:**
-   - Pautan pantas terus ke sistem dalaman sekolah: **e-Guru Ganti V2** (`guruganti.sktampasuk1.edu.my`).
+   - Pautan pantas terus ke sistem dalaman sekolah: **e-Guru Ganti V2** (`guruganti.xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1`).
    - Pautan gerbang rasmi KPM: DELIMa 2.0, APDM, e-Operasi, HRMIS, SPLKPM, dan MoEIS.
 
 3. **Carian Pintar Masa Nyata (Live Instant Search):**
@@ -55,9 +55,9 @@ Laman web portal ini bertindak sebagai **domain utama sekolah** (`sktampasuk1.ed
 
 ---
 
-## 🌐 Menghubungkan Domain Utama Sekolah (`sktampasuk1.edu.my`)
+## 🌐 Menghubungkan Domain Utama Sekolah (`xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1`)
 
-Jika sekolah anda memiliki domain rasmi `sktampasuk1.edu.my` melalui pembekal domain (MYNIC, Cloudflare, atau Web Hosting):
+Jika sekolah anda memiliki domain rasmi `xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1` melalui pembekal domain (MYNIC, Cloudflare, atau Web Hosting):
 
 1. **Tetapan DNS di Pengurus Domain (Cloudflare / MYNIC / cPanel):**
    - Tambah rekod **A** (menghala ke pelayan GitHub Pages):
@@ -76,7 +76,7 @@ Jika sekolah anda memiliki domain rasmi `sktampasuk1.edu.my` melalui pembekal do
 
 2. **Tetapan di GitHub Pages:**
    - Di tab **Settings > Pages** repositori portal:
-   - Pada bahagian **Custom domain**, masukkan `sktampasuk1.edu.my`.
+   - Pada bahagian **Custom domain**, masukkan `xba5346-sktampasuk1.github.io/portal-sk-tampasuk-1`.
    - Klik **Save**.
    - Tandakan kotak **"Enforce HTTPS"** untuk sijil SSL keselamatan percuma (ikon mangga hijau).
 
