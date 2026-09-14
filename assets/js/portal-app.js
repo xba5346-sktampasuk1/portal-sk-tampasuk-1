@@ -930,7 +930,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // PWA Service Worker Registration
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js").catch(err => {
+      navigator.serviceWorker.register("service-worker.js").then((reg) => {
+        reg.update();
+      }).catch(err => {
         console.log("Service Worker registration notice:", err);
       });
     });
