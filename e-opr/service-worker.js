@@ -3,7 +3,7 @@
  * Menyokong pemuatan pantas dan penggunaan luar talian (offline)
  */
 
-const CACHE_NAME = "eopr-sktampasuk1-v2";
+const CACHE_NAME = "eopr-sktampasuk1-v2.4";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -12,6 +12,7 @@ const ASSETS_TO_CACHE = [
   "./js/app.js",
   "./js/image-tool.js",
   "./js/storage.js",
+  "./js/ai-assistant.js",
   "./assets/logo-sekolah.png",
   "./assets/logo-sekolah.jpg",
   "./assets/jata-negara.png"
@@ -46,6 +47,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  const url = new URL(event.request.url);
+  const isCodeAsset = url.pathname.endsWith(".js") || url.pathname.endsWith(".html") || url.pathname.endsWith("/");
+
+  // Strategi Network-First untuk fail kod & dokumen (sentiasa ambil versi terkini jika dalam talian)
+  if (isCodeAsset) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Strategi Cache-First untuk aset media & font
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

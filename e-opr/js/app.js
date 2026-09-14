@@ -66,8 +66,21 @@ const themeColorMap = {
  */
 function formatDate(value) {
   if (!value) return placeholders.date;
-  const parts = value.split("-");
-  if (parts.length !== 3) return value;
+  let val = String(value).trim();
+  if (val.includes("T")) {
+    try {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${day}/${m}/${y}`;
+      }
+    } catch (e) {}
+    val = val.split("T")[0];
+  }
+  const parts = val.split("-");
+  if (parts.length !== 3) return val;
   return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
@@ -76,14 +89,31 @@ function formatDate(value) {
  */
 function formatTime(timeStr) {
   if (!timeStr) return "";
-  const [hStr, mStr] = timeStr.split(":");
-  const h = parseInt(hStr, 10);
-  const m = mStr || "00";
+  let raw = String(timeStr).trim();
+  let h, m;
+
+  if (raw.includes("T") || raw.includes("-")) {
+    try {
+      const d = new Date(raw);
+      if (!isNaN(d.getTime())) {
+        h = d.getHours();
+        m = String(d.getMinutes()).padStart(2, "0");
+      }
+    } catch (e) {}
+  }
+
+  if (h === undefined) {
+    const parts = raw.split(":");
+    h = parseInt(parts[0], 10);
+    m = parts[1] || "00";
+  }
+
+  if (isNaN(h)) return raw;
 
   let period = "pagi";
   if (h === 12) period = "tengah hari";
   else if (h > 12 && h < 19) period = "petang";
-  else if (h >= 19) period = "malam";
+  else if (h >= 19 || h < 5) period = "malam";
 
   const displayH = h % 12 || 12;
   return `${displayH}:${m} ${period}`;
@@ -396,7 +426,7 @@ function loadOPRToEditor(recordId) {
 /**
  * Cetak rekod tertentu terus daripada arkib sejarah
  */
-function printRecordFromHistory(recordId) {
+async function printRecordFromHistory(recordId) {
   if (!window.StorageTool) return;
   const record = window.StorageTool.getRecordById(recordId);
   if (!record) return;
@@ -404,6 +434,26 @@ function printRecordFromHistory(recordId) {
   window.StorageTool.loadData(record);
   window.StorageTool.setCurrentEditingId(record.id);
   switchView("generator");
+  showNotice("Menyediakan dokumen dan imej untuk cetakan PDF...", false);
+
+  // Tunggu imej selesai dimuatkan (jika daripada Google Drive)
+  const imgPromises = [];
+  for (let i = 1; i <= 6; i++) {
+    const pvImg = $(`pv-img-${i}`);
+    if (pvImg && pvImg.src && pvImg.src.startsWith("http")) {
+      if (!pvImg.complete) {
+        imgPromises.push(new Promise(resolve => {
+          pvImg.onload = resolve;
+          pvImg.onerror = resolve;
+          setTimeout(resolve, 2500);
+        }));
+      }
+    }
+  }
+  if (imgPromises.length > 0) {
+    await Promise.all(imgPromises);
+  }
+
   setTimeout(() => {
     window.print();
   }, 350);
@@ -501,8 +551,8 @@ function renderHistoryView() {
       photosHtml = `
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 my-2">
           ${displayPhotos.map(([, src], idx) => `
-            <div class="mini-photo-slot relative group">
-              <img src="${src}" alt="Foto ${idx + 1}" class="w-full h-full object-cover">
+            <div class="mini-photo-slot relative group aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+              <img src="${src}" alt="Foto ${idx + 1}" loading="lazy" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-[9px] text-slate-400 font-bold\\'>Foto ${idx + 1}</div>'">
             </div>
           `).join("")}
         </div>
@@ -1275,17 +1325,27 @@ async function syncCloudHistory(showNoticeMsg = true) {
       const nowStr = new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
       if (lastSyncTime) {
         lastSyncTime.textContent = `Disemak jam ${nowStr} (${res.count} rekod)`;
+        lastSyncTime.className = "text-xs text-slate-500 font-semibold";
       }
       if (showNoticeMsg) {
         showNotice(`✅ Arkib berjaya disegerakkan! ${res.count} rekod OPR sedia diakses.`, false);
       }
     } else {
+      const nowStr = new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
+      if (lastSyncTime) {
+        lastSyncTime.textContent = `⚠️ Gagal disegerak jam ${nowStr}`;
+        lastSyncTime.className = "text-xs text-rose-600 font-bold";
+      }
       if (showNoticeMsg) {
         showNotice(`⚠️ Gagal menyegerak: ${res.error || res.reason || "Sila semak URL Web App anda."}`, true);
       }
     }
   } catch (err) {
     console.warn("syncCloudHistory error:", err);
+    if (lastSyncTime) {
+      lastSyncTime.textContent = `⚠️ Ralat sambungan Awan`;
+      lastSyncTime.className = "text-xs text-rose-600 font-bold";
+    }
     if (showNoticeMsg) {
       showNotice("⚠️ Ralat semasa menyambung ke Awan DELIMa.", true);
     }
@@ -1296,6 +1356,35 @@ async function syncCloudHistory(showNoticeMsg = true) {
     if (window.lucide) window.lucide.createIcons();
   }
 }
+
+// Pendengar Acara Segerak Awan DELIMa daripada StorageTool
+window.addEventListener("eopr:cloud-syncing", (e) => {
+  const syncBtn = $("btn-sync-cloud");
+  const syncIcon = $("sync-icon");
+  const syncText = $("sync-btn-text");
+  if (syncIcon) syncIcon.classList.add("animate-spin");
+  if (syncText) syncText.textContent = "Menyimpan ke Awan...";
+  const progName = e.detail?.record?.program || "Laporan OPR";
+  showNotice(`📤 Sedang menghantar "${progName}" dan foto aktiviti ke Google Drive & Sheets DELIMa...`, false);
+});
+
+window.addEventListener("eopr:cloud-synced", (e) => {
+  const syncBtn = $("btn-sync-cloud");
+  const syncIcon = $("sync-icon");
+  const syncText = $("sync-btn-text");
+  if (syncIcon) syncIcon.classList.remove("animate-spin");
+  if (syncText) syncText.textContent = "Segerak Awan";
+
+  if (e.detail?.success) {
+    const progName = e.detail?.record?.program || "Laporan OPR";
+    showNotice(`☁️ "${progName}" dan foto berjaya disegerakkan ke Google Drive & Sheets DELIMa!`, false);
+    renderHistoryView();
+    updateHistoryCountBadge();
+  } else {
+    showNotice(`💾 OPR telah disimpan di pelayar tempatan. (Awan: ${e.detail?.error || 'Sedang memproses'})`, false);
+  }
+  if (window.lucide) window.lucide.createIcons();
+});
 
 function openCloudModal() {
   const modal = $("modal-cloud-setup");

@@ -203,18 +203,65 @@ function getAllRecords() {
       images = {};
     }
 
+    // Format Tarikh & Masa dengan tepat mengikut zon waktu Malaysia
+    let tarikhStr = "";
+    if (row[7]) {
+      if (row[7] instanceof Date) {
+        tarikhStr = Utilities.formatDate(row[7], "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+      } else {
+        tarikhStr = String(row[7]).trim();
+      }
+    }
+
+    let masaMulaStr = "";
+    if (row[9]) {
+      if (row[9] instanceof Date) {
+        masaMulaStr = Utilities.formatDate(row[9], "Asia/Kuala_Lumpur", "HH:mm");
+      } else {
+        masaMulaStr = String(row[9]).trim();
+      }
+    }
+
+    let masaTamatStr = "";
+    if (row[10]) {
+      if (row[10] instanceof Date) {
+        masaTamatStr = Utilities.formatDate(row[10], "Asia/Kuala_Lumpur", "HH:mm");
+      } else {
+        masaTamatStr = String(row[10]).trim();
+      }
+    }
+
+    let timestampStr = "";
+    let updatedAtStr = new Date().toISOString();
+    if (row[1]) {
+      try {
+        if (row[1] instanceof Date) {
+          timestampStr = Utilities.formatDate(row[1], "Asia/Kuala_Lumpur", "yyyy-MM-dd HH:mm:ss");
+          updatedAtStr = row[1].toISOString();
+        } else {
+          timestampStr = String(row[1]);
+          const d = new Date(row[1]);
+          if (!isNaN(d.getTime())) {
+            updatedAtStr = d.toISOString();
+          }
+        }
+      } catch (e) {
+        timestampStr = String(row[1]);
+      }
+    }
+
     records.push({
       id: recordId,
-      timestamp: row[1],
+      timestamp: timestampStr,
       theme: row[2] || "pentadbiran",
       category: row[3] || "Umum",
       anjuran: row[4] || "",
       anjuranLain: row[5] || "",
       program: row[6] || "",
-      tarikh: row[7] || "",
+      tarikh: tarikhStr,
       hari: row[8] || "",
-      masaMula: row[9] || "",
-      masaTamat: row[10] || "",
+      masaMula: masaMulaStr,
+      masaTamat: masaTamatStr,
       tempat: row[11] || "",
       sasaran: row[12] || "",
       objektif: row[13] || "",
@@ -230,7 +277,7 @@ function getAllRecords() {
       photoLayout: row[23] || "6",
       panitiaSelect: row[24] || "",
       images: images,
-      updatedAt: row[1] ? new Date(row[1]).toISOString() : new Date().toISOString()
+      updatedAt: updatedAtStr
     });
   }
 
