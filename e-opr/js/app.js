@@ -1022,6 +1022,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // 14. Integrasi Awan DELIMa (Google Sheets & Drive)
   setupCloudSync();
 
+  // 14.1 Segerak automatik arkib awan di latar belakang pada permulaan
+  if (window.StorageTool && window.StorageTool.isCloudEnabled()) {
+    setTimeout(() => {
+      syncCloudHistory(false);
+    }, 1200);
+  }
+
   // 15. Penskalaan paparan & Pengendali Cetakan A4 Sempurna
   window.addEventListener("resize", fitPreviewToPage);
   fitPreviewToPage();
