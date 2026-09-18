@@ -6,7 +6,7 @@
  */
 
 // Senarai 26 Guru Rasmi Master
-const MASTER_TEACHERS = [
+let MASTER_TEACHERS = [
   "En. Mudah Hj. Admaim",
   "Datin Razana Hj. Abd. Wahid",
   "Pn. Hamisah Janah",
@@ -37,7 +37,7 @@ const MASTER_TEACHERS = [
 ];
 
 // 4 Kumpulan Guru Bertugas
-const TEACHER_GROUPS = {
+let TEACHER_GROUPS = {
   "Kumpulan 1": [
     "En. Mudah Hj. Admaim",
     "Pn. Milnah Namih",
@@ -352,7 +352,7 @@ function splitTimeSlot(s) {
 
 // Jadual Individu Guru Rasmi Sesi 2026 (Format: slotIndex|subjek|kelas)
 // Dijana terus daripada PDF Rasmi SK Tampasuk 1 (Zero Clash Guaranteed)
-const JADUAL_INDIVIDU_GURU = {
+let JADUAL_INDIVIDU_GURU = {
   "En. Mudah Hj. Admaim": {
     Isnin: "9|PI|5B",
     Selasa: "3|PI|5B",
@@ -649,7 +649,7 @@ const CLASS_TIMETABLES = {
 };
 
 // Bina Jadual Waktu Penuh Guru (TIMETABLE)
-const TIMETABLE = {};
+let TIMETABLE = {};
 MASTER_TEACHERS.forEach(guru => { TIMETABLE[guru] = {}; });
 
 Object.entries(JADUAL_INDIVIDU_GURU).forEach(([guru, days]) => {

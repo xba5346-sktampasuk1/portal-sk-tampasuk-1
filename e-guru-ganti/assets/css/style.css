@@ -2904,3 +2904,366 @@ html[data-device-mode="mobile"] .wa-modal-footer {
     display: none !important;
   }
 }
+
+/* =========================================================================
+   Gaya Cetakan Slip Mini Fizikal (3-4 Slip Sehelai A4)
+   ========================================================================= */
+.mini-slip-wrapper {
+  background: #ffffff;
+  color: #0f172a;
+}
+.mini-slip-card {
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: #ffffff;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  position: relative;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+}
+.mini-slip-cut-line {
+  border-top: 1.5px dashed #94a3b8;
+  margin: 16px 0;
+  position: relative;
+  text-align: center;
+}
+.mini-slip-cut-line::after {
+  content: "✂ Potong Di Sini";
+  position: absolute;
+  top: -9px;
+  right: 24px;
+  background: #ffffff;
+  padding: 0 8px;
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 600;
+}
+.mini-slip-sign-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dotted #cbd5e1;
+}
+.mini-slip-sign-box {
+  border-top: 1px solid #94a3b8;
+  margin-top: 24px;
+  padding-top: 4px;
+  text-align: center;
+  font-size: 9.5px;
+  color: #475569;
+}
+
+/* =========================================================================
+   GAYA SKRIN LOG MASUK BERSEPADU (LOGIN OVERLAY)
+   ========================================================================= */
+.login-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(circle at 50% 20%, #1e3a8a 0%, #0f172a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  overflow-y: auto;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.login-overlay-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.login-card-container {
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  animation: loginSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loginSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  color: #1e293b;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .login-card {
+  background: #1e293b;
+  color: #f1f5f9;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.login-logo-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 3px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 3px solid #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-school-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.login-system-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.dark .login-system-title {
+  color: #60a5fa;
+}
+
+.login-school-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  margin: 3px 0 10px;
+  letter-spacing: 0.02em;
+}
+
+.dark .login-school-name {
+  color: #94a3b8;
+}
+
+.login-badge-secure {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.dark .login-badge-secure {
+  background: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+  border-color: rgba(5, 150, 105, 0.4);
+}
+
+.login-error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 1.5px solid #f87171;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  animation: loginShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.dark .login-error-alert {
+  background: rgba(185, 28, 28, 0.25);
+  color: #fca5a5;
+  border-color: #ef4444;
+}
+
+@keyframes loginShake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.login-field-group {
+  margin-bottom: 1.1rem;
+  text-align: left;
+}
+
+.login-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.dark .login-label {
+  color: #cbd5e1;
+}
+
+.login-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 12px;
+  width: 17px;
+  height: 17px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.75rem 0.85rem 0.75rem 2.4rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: inherit;
+  background: #f8fafc;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.dark .login-input {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.login-input:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.dark .login-input:focus {
+  background: #1e293b;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+.login-toggle-pw {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-toggle-pw:hover {
+  color: #334155;
+}
+
+.dark .login-toggle-pw:hover {
+  color: #f1f5f9;
+}
+
+.login-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem;
+}
+
+.login-remember-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #475569;
+  font-weight: 500;
+}
+
+.dark .login-remember-label {
+  color: #94a3b8;
+}
+
+.login-hint-text {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  transition: all 0.2s ease;
+}
+
+.login-submit-btn:hover {
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+}
+
+.login-submit-btn:active {
+  transform: translateY(0);
+}
+
+.login-footer-info {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.dark .login-footer-info {
+  border-top-color: #334155;
+  color: #94a3b8;
+}
+
+.login-copyright {
+  margin-top: 2px;
+  font-weight: 600;
+}

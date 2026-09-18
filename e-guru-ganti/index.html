@@ -20,6 +20,71 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
+  <!-- Skrin Log Masuk Bersepadu (Login Screen Overlay) -->
+  <div id="login-overlay" class="login-overlay-backdrop hidden" aria-hidden="true">
+    <div class="login-card-container">
+      <div class="login-card">
+        <!-- Logo & Tajuk Sekolah -->
+        <div class="login-header text-center">
+          <div class="login-logo-wrapper">
+            <img src="assets/images/logo-sekolah.jpg" alt="Lencana SK Tampasuk 1" class="login-school-logo">
+          </div>
+          <h2 class="login-system-title">E-GURU GANTI</h2>
+          <p class="login-school-name">SK TAMPASUK 1 KOTA BELUD</p>
+          <div class="login-badge-secure">
+            <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Akses Kawalan Pentadbiran
+          </div>
+        </div>
+
+        <!-- Mesej Ralat (Jika Salah) -->
+        <div id="login-error-alert" class="login-error-alert hidden" role="alert">
+          <i data-lucide="alert-circle" style="width:18px;height:18px; flex-shrink:0;"></i>
+          <span id="login-error-text">ID Pengguna atau Kata Laluan tidak tepat!</span>
+        </div>
+
+        <!-- Borang Log Masuk -->
+        <form id="login-form" novalidate>
+          <div class="login-field-group">
+            <label for="login-username" class="login-label">ID Pengguna (Kod Sekolah / ID):</label>
+            <div class="login-input-wrapper">
+              <i data-lucide="user" class="login-input-icon"></i>
+              <input type="text" id="login-username" class="login-input" placeholder="Masukkan ID (cth: xba5346)" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <label for="login-password" class="login-label">Kata Laluan:</label>
+            <div class="login-input-wrapper">
+              <i data-lucide="lock" class="login-input-icon"></i>
+              <input type="password" id="login-password" class="login-input" placeholder="Masukkan kata laluan" required autocomplete="current-password">
+              <button type="button" id="btn-toggle-password" class="login-toggle-pw" aria-label="Tunjuk kata laluan">
+                <i id="icon-toggle-password" data-lucide="eye" style="width:16px;height:16px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-options-row">
+            <label class="login-remember-label">
+              <input type="checkbox" id="login-remember-me" checked>
+              <span>Ingat sesi log masuk</span>
+            </label>
+            <span class="login-hint-text">Akses Rasmi</span>
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="login-submit-btn">
+            <span>LOG MASUK SISTEM</span>
+            <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+          </button>
+        </form>
+
+        <div class="login-footer-info">
+          <p>Sistem Pengurusan &amp; Penjadualan Guru Ganti (MMI)</p>
+          <p class="login-copyright">&copy; SK Tampasuk 1 Kota Belud &bull; Versi 2.5.0</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="app-shell" id="app-shell">
     <!-- Header Utama Sekolah -->
     <header class="hero-band w-full">
@@ -37,11 +102,6 @@
           </div>
 
           <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-            <!-- Pautan Kembali ke Portal Utama Sekolah -->
-            <a href="../index.html" class="action-btn" style="background:#f59e0b; color:#0f172a; font-weight:800; text-decoration:none; padding:0.5rem 0.9rem; border-radius:10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem; box-shadow:0 3px 10px rgba(0,0,0,0.15);" title="Kembali ke Laman Web Portal Rasmi SK Tampasuk 1">
-              <i data-lucide="home" style="width:15px;height:15px"></i>
-              <span>Portal Utama</span>
-            </a>
             <!-- Mod Peranti (Komputer / Tablet / Telefon - Ikon Sahaja) -->
             <div id="device-mode-group" class="device-toggle-group" role="group" aria-label="Pilihan Mod Paparan Peranti">
               <button id="btn-device-desktop" type="button" class="device-mode-btn active" title="Mod Komputer (Desktop)" aria-label="Mod Komputer">
@@ -58,6 +118,11 @@
             <button id="dark-mode-toggle" type="button" class="action-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#ffffff;" aria-label="Tukar tema">
               <i id="dark-mode-icon" data-lucide="moon" style="width:16px;height:16px"></i>
               <span id="dark-mode-label">Mod Gelap</span>
+            </button>
+
+            <button id="btn-logout" type="button" class="action-btn" style="background:rgba(239,68,68,0.25); border:1px solid rgba(239,68,68,0.45); color:#fee2e2;" aria-label="Log Keluar Sistem" title="Log Keluar Sistem">
+              <i data-lucide="log-out" style="width:16px;height:16px; color:#fca5a5;"></i>
+              <span>Log Keluar</span>
             </button>
 
             <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:9999px; padding:0.45rem 1rem; font-size:0.85rem; font-weight:600;">
@@ -89,6 +154,9 @@
         </button>
         <button type="button" class="nav-tab" data-page="page6">
           <i data-lucide="user-check" style="width:15px;height:15px"></i> Kehadiran Guru
+        </button>
+        <button type="button" class="nav-tab" data-page="page-import">
+          <i data-lucide="upload-cloud" style="width:15px;height:15px"></i> Urus & Import Jadual
         </button>
       </div>
     </nav>
@@ -213,6 +281,9 @@
           <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:0.75rem; flex-wrap:wrap;">
             <button id="btn-open-wa-modal" type="button" class="action-btn btn-whatsapp-action">
               <i data-lucide="message-circle" style="width:17px;height:17px"></i> HANTAR WHATSAPP GURU GANTI
+            </button>
+            <button id="print-mini-slips-btn" type="button" class="action-btn" style="background:#0284c7; color:#ffffff; font-weight:700;">
+              <i data-lucide="scissors" style="width:17px;height:17px"></i> Cetak Slip Mini (A4)
             </button>
             <button id="print-pdf-btn" type="button" class="action-btn btn-success">
               <i data-lucide="printer" style="width:17px;height:17px"></i> Jana Laporan Penuh (PDF)
@@ -665,6 +736,121 @@
       </div>
     </main>
 
+    <!-- PAGE IMPORT: Urus & Import Jadual Waktu (CSV / JSON) -->
+    <main id="page-import" class="page-hidden" style="max-width:1280px; width:100%; margin:0 auto; padding:1.5rem 1.25rem 3rem;">
+      <div class="page-header-panel">
+        <div>
+          <h2 class="page-title">URUS &amp; IMPORT JADUAL WAKTU</h2>
+          <p class="page-subtitle">Urus senarai guru dan import jadual waktu sesi persekolahan terus melalui fail CSV/JSON tanpa perlu menyunting kod sumber.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+          <button id="btn-export-backup-json" type="button" class="action-btn" style="background:#0284c7; color:#ffffff; font-size:0.85rem; padding:0.5rem 1rem;">
+            <i data-lucide="download" style="width:16px;height:16px;"></i> Muat Turun Backup (JSON)
+          </button>
+          <button id="btn-reset-default-schedule" type="button" class="action-btn" style="background:#ef4444; color:#ffffff; font-size:0.85rem; padding:0.5rem 1rem;">
+            <i data-lucide="rotate-ccw" style="width:16px;height:16px;"></i> Pulihkan Jadual Asal
+          </button>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; margin-top:1.5rem;">
+        
+        <!-- Kad 1: Status Sistem & Muat Turun Templat -->
+        <section class="section-card" style="padding:1.5rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+            <div style="width:38px; height:38px; border-radius:10px; background:#e0f2fe; color:#0369a1; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i data-lucide="file-spreadsheet" style="width:20px;height:20px;"></i>
+            </div>
+            <div>
+              <h3 style="font-weight:700; font-size:1.05rem; color:var(--text-primary); margin:0;">1. Templat Rasmi CSV</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Muat turun fail templat untuk mengisi jadual waktu sekolah anda.</p>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-subtle); border:1px solid var(--border-subtle); border-radius:10px; padding:1rem; margin-bottom:1.25rem;">
+            <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">Status Pangkalan Data Semasa:</div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.82rem; color:var(--text-secondary);">
+              <div>• Status: <span id="import-status-source" style="font-weight:700; color:#16a34a;">Jadual Asal (SK Tampasuk 1)</span></div>
+              <div>• Jumlah Guru Berdaftar: <strong id="import-status-teachers-count">26 Guru</strong></div>
+              <div>• Jumlah Slot Berjadual: <strong id="import-status-slots-count">—</strong></div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <button id="btn-download-csv-timetable" type="button" class="action-btn" style="background:#16a34a; color:#ffffff; justify-content:center;">
+              <i data-lucide="file-down" style="width:16px;height:16px;"></i> Muat Turun Templat Jadual Guru (CSV)
+            </button>
+            <button id="btn-download-csv-teachers" type="button" class="action-btn" style="background:#0d9488; color:#ffffff; justify-content:center;">
+              <i data-lucide="users" style="width:16px;height:16px;"></i> Muat Turun Templat Senarai Guru &amp; No. Tel (CSV)
+            </button>
+          </div>
+
+          <div style="margin-top:1.25rem; font-size:0.78rem; color:var(--text-muted); line-height:1.5;">
+            <strong>Format Lajur CSV Jadual:</strong><br>
+            <code>Nama Guru, Hari, Slot Waktu (1-13), Mata Pelajaran, Kelas</code><br>
+            <em>Contoh:</em> <code>En. Amriee Abdullah, Isnin, 2, SEJ, 6B</code>
+          </div>
+        </section>
+
+        <!-- Kad 2: Muat Naik / Import Jadual Baharu -->
+        <section class="section-card" style="padding:1.5rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+            <div style="width:38px; height:38px; border-radius:10px; background:#fef3c7; color:#d97706; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i data-lucide="upload-cloud" style="width:20px;height:20px;"></i>
+            </div>
+            <div>
+              <h3 style="font-weight:700; font-size:1.05rem; color:var(--text-primary); margin:0;">2. Muat Naik &amp; Import</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Pilih fail CSV atau JSON jadual waktu untuk dikemaskini.</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom:1rem;">
+            <label for="import-file-input" class="teacher-field-label">Pilih Fail (CSV atau JSON):</label>
+            <input id="import-file-input" type="file" accept=".csv,.json" class="field-control" style="padding:0.5rem; background:var(--bg-subtle);">
+          </div>
+
+          <div style="margin-bottom:1rem;">
+            <label for="import-text-paste" class="teacher-field-label">Atau Tampal Teks CSV / JSON Di Sini:</label>
+            <textarea id="import-text-paste" rows="4" class="field-control" placeholder="Tampal kandungan fail CSV atau JSON di sini..." style="font-family:monospace; font-size:0.8rem;"></textarea>
+          </div>
+
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button id="btn-parse-preview" type="button" class="action-btn btn-primary" style="flex:1; justify-content:center;">
+              <i data-lucide="eye" style="width:16px;height:16px;"></i> Semak &amp; Pratonton
+            </button>
+            <button id="btn-confirm-save-import" type="button" class="action-btn btn-success" style="flex:1; justify-content:center;" disabled>
+              <i data-lucide="check-circle" style="width:16px;height:16px;"></i> Simpan &amp; Aktifkan
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Kotak Pratonton Data Yang Diimport -->
+      <div id="import-preview-section" class="section-card hidden" style="margin-top:1.5rem; padding:1.5rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">
+          <div>
+            <h3 style="font-weight:700; font-size:1.05rem; color:var(--text-primary); margin:0;">Pratonton Data Import</h3>
+            <p id="import-preview-summary" style="font-size:0.82rem; color:var(--text-secondary); margin-top:2px;">Membaca data...</p>
+          </div>
+          <span class="legend-badge" style="background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; font-weight:700;">Format Sah</span>
+        </div>
+        <div style="max-height:280px; overflow-y:auto; border:1px solid var(--border-subtle); border-radius:8px;">
+          <table class="schedule-table" style="font-size:0.8rem; width:100%;">
+            <thead>
+              <tr>
+                <th style="padding:6px 10px;">Guru</th>
+                <th style="padding:6px 10px;">Hari</th>
+                <th style="padding:6px 10px;">Slot / Masa</th>
+                <th style="padding:6px 10px;">Mata Pelajaran</th>
+                <th style="padding:6px 10px;">Kelas</th>
+              </tr>
+            </thead>
+            <tbody id="import-preview-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
 
     <!-- Footer -->
     <footer style="width:100%; border-top:1px solid var(--border-card); padding:1.5rem; text-align:center; font-size:0.82rem; color:var(--text-secondary); margin-top:auto; background:var(--bg-card-solid);">
@@ -749,6 +935,33 @@
           <span id="wa-modal-date-display" style="font-weight:700;">Tarikh: —</span>
         </div>
         <div id="wa-modal-count-badge" class="wa-count-badge">0 Guru Pengganti</div>
+      </div>
+
+      <!-- Kotak Hebahan Rasmi WhatsApp Group Sekolah -->
+      <div class="wa-group-broadcast-box" style="margin: 0.75rem 1.25rem 0.5rem; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #86efac; border-radius: 12px; padding: 1rem 1.25rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <div style="background:#16a34a; color:#fff; width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i data-lucide="send" style="width:18px;height:18px;"></i>
+            </div>
+            <div>
+              <h4 style="font-size:0.95rem; font-weight:800; color:#14532d; margin:0;">Siaran Group WhatsApp Sekolah</h4>
+              <p style="font-size:0.78rem; color:#166534; margin:2px 0 0;">Salin atau hantar ringkasan jadual guru ganti harian ke Group Rasmi Guru SK Tampasuk 1.</p>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <button type="button" id="btn-wa-copy-group" class="action-btn" style="background:#16a34a; color:#ffffff; font-size:0.8rem; padding:0.45rem 0.9rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px;">
+              <i data-lucide="copy" style="width:14px;height:14px;"></i> Salin Teks Ringkasan
+            </button>
+            <button type="button" id="btn-wa-open-group" class="action-btn" style="background:#059669; color:#ffffff; font-size:0.8rem; padding:0.45rem 0.9rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px;">
+              <i data-lucide="share-2" style="width:14px;height:14px;"></i> Buka WhatsApp Web/App
+            </button>
+            <button type="button" id="btn-wa-preview-group" class="action-btn" style="background:#e2e8f0; color:#334155; font-size:0.8rem; padding:0.45rem 0.75rem; border-radius:8px; display:inline-flex; align-items:center; gap:4px;">
+              <i data-lucide="eye" style="width:14px;height:14px;"></i> <span id="label-preview-group">Lihat Teks</span>
+            </button>
+          </div>
+        </div>
+        <div id="wa-group-preview-box" class="wa-preview-text-box hidden" style="margin-top:0.75rem; max-height:160px; overflow-y:auto; font-size:12px; background:#ffffff; border:1px solid #bbf7d0; color:#1f2937; padding:10px; border-radius:8px; white-space:pre-wrap; font-family:monospace;"></div>
       </div>
 
       <!-- Modal Body (Senarai Kad Guru) -->

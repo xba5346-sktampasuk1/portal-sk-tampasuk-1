@@ -161,12 +161,13 @@ function setupNavigation() {
       if (pageId === "page5") renderPage5();
       if (pageId === "page6") renderPage6();
       if (pageId === "page7") renderCalendar();
+      if (pageId === "page-import") renderImportPage();
     });
   });
 }
 
 function showPage(pageId) {
-  ["page1", "page2", "page3", "page5", "page6", "page7"].forEach(id => {
+  ["page1", "page2", "page3", "page5", "page6", "page7", "page-import"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add("page-hidden");
   });
@@ -2918,6 +2919,9 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
 
 // Prapemuatan Sistem (Initialization)
 document.addEventListener("DOMContentLoaded", async () => {
+  // Inisialisasi Kawalan Akses & Skrin Log Masuk
+  setupAuth();
+
   setupDarkMode();
   setupNavigation();
   setupDeviceModeToggle();
@@ -2955,10 +2959,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     statBulanEl.value = String(today.getMonth() + 1);
   }
 
+  // Inisialisasi Semakan Jadual Khas daripada Storan Tempatan
+  initActiveTimetable();
+
   renderPage5();
 
   // Permulaan Modul WhatsApp Guru Ganti
   setupWhatsAppModalEvents();
+
+  // Permulaan Cetakan Slip Mini A4
+  setupMiniSlipsPrint();
+
+  // Permulaan Modul Import Jadual Waktu
+  setupImportPageEvents();
 });
 
 /* ========================================================
@@ -3371,5 +3384,636 @@ function setupWhatsAppModalEvents() {
       closeWhatsAppModal();
     }
   });
+
+  // Butang Siaran WhatsApp Group Sekolah
+  const btnCopyGroup = document.getElementById("btn-wa-copy-group");
+  if (btnCopyGroup) {
+    btnCopyGroup.addEventListener("click", () => {
+      const summaryText = generateDailyFullWhatsAppSummary();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summaryText).then(() => {
+          showToast("Ringkasan jadual untuk Group WhatsApp sekolah berjaya disalin!", "success");
+        }).catch(() => {
+          fallbackCopyText(summaryText);
+        });
+      } else {
+        fallbackCopyText(summaryText);
+      }
+    });
+  }
+
+  const btnOpenGroup = document.getElementById("btn-wa-open-group");
+  if (btnOpenGroup) {
+    btnOpenGroup.addEventListener("click", () => {
+      const summaryText = generateDailyFullWhatsAppSummary();
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(summaryText)}`;
+      window.open(url, "_blank");
+      showToast("Membuka WhatsApp untuk menghantar siaran...", "success");
+    });
+  }
+
+  const btnPreviewGroup = document.getElementById("btn-wa-preview-group");
+  const boxGroup = document.getElementById("wa-group-preview-box");
+  const labelGroup = document.getElementById("label-preview-group");
+  if (btnPreviewGroup && boxGroup) {
+    btnPreviewGroup.addEventListener("click", () => {
+      const isHidden = boxGroup.classList.contains("hidden");
+      if (isHidden) {
+        boxGroup.textContent = generateDailyFullWhatsAppSummary();
+        boxGroup.classList.remove("hidden");
+        if (labelGroup) labelGroup.textContent = "Tutup Teks";
+      } else {
+        boxGroup.classList.add("hidden");
+        if (labelGroup) labelGroup.textContent = "Lihat Teks";
+      }
+    });
+  }
 }
+
+// Penjana Teks Ringkasan Penuh Jadual Harian untuk WhatsApp Group Sekolah
+function generateDailyFullWhatsAppSummary() {
+  const dateStr = dateInput.value || "";
+  const dayStr = dayInput.value || "Isnin";
+  const dDisplay = formatDateDisplay(dateStr) || dateStr;
+  const mingguStr = mingguSelect.value || "—";
+  const kumpulanStr = kumpulanSelect.value || "—";
+
+  const trs = [...teachersContainer.querySelectorAll(".teacher-row")];
+  const absentList = trs.map(r => {
+    const n = r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value.trim() : "";
+    const re = r.querySelector(".reason-select") ? r.querySelector(".reason-select").value.trim() : "";
+    return n ? `• *${n}* (${re || "Tiada Catatan"})` : null;
+  }).filter(Boolean);
+
+  const grouped = collectReliefAssignments();
+  const reliefTeachers = Object.keys(grouped);
+
+  let text = `*JADUAL GURU GANTI (MMI)*\n`;
+  text += `*${APP_CONFIG.schoolName}*\n\n`;
+  text += `📅 *Tarikh:* ${dDisplay} (${dayStr})\n`;
+  text += `🗓️ *Minggu:* ${mingguStr}\n`;
+  text += `👥 *Kumpulan Bertugas:* ${kumpulanStr}\n\n`;
+
+  text += `📋 *GURU TIDAK HADIR (${absentList.length} Orang):*\n`;
+  if (absentList.length === 0) {
+    text += `_Tiada guru tidak hadir._\n`;
+  } else {
+    text += absentList.join("\n") + `\n`;
+  }
+  text += `\n`;
+
+  text += `📌 *PENUGASAN GURU GANTI (${reliefTeachers.length} Guru):*\n`;
+  if (reliefTeachers.length === 0) {
+    text += `_Tiada penugasan guru ganti ditetapkan._\n`;
+  } else {
+    reliefTeachers.forEach((tName, i) => {
+      const slots = grouped[tName];
+      const slotLines = slots.map(s => `  ↳ ${s.masa} | *${s.kelas}* (${s.subjek}) [Ganti: ${s.guruAsal || "—"}]${s.isCantum ? ' _(Cantum)_' : ''}`).join("\n");
+      text += `${i + 1}. *${tName}* (${slots.length} Waktu):\n${slotLines}\n`;
+    });
+  }
+
+  text += `\n_Kerjasama semua guru amat dihargai demi memastikan MMI sentiasa terpelihara._\n`;
+  text += `*${APP_CONFIG.schoolMotto}*`;
+  return text;
+}
+
+/* ========================================================
+   MODUL CETAKAN SLIP MINI FIZIKAL (3-4 SLIP SEHELAI A4)
+   ======================================================== */
+function setupMiniSlipsPrint() {
+  const btn = document.getElementById("print-mini-slips-btn");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    const grouped = collectReliefAssignments();
+    const teachers = Object.keys(grouped);
+    if (teachers.length === 0) {
+      showToast("Sila lengkapkan sekurang-kurangnya satu penugasan guru ganti sebelum mencetak slip mini.", "error");
+      return;
+    }
+
+    const tarikhStr = dateInput.value ? formatDateDisplay(dateInput.value) : "—";
+    const hariStr = dayInput.value || "—";
+    const mingguStr = mingguSelect.value || "—";
+    const kumpulanStr = kumpulanSelect.value || "—";
+
+    let cardsHtml = "";
+    teachers.forEach((tName, idx) => {
+      const slots = grouped[tName];
+      const absentNames = [...new Set(slots.map(s => s.guruAsal).filter(Boolean))].join(", ") || "—";
+      const reasons = [...new Set(slots.map(s => s.sebab).filter(Boolean))].join(", ") || "—";
+
+      let rowsHtml = slots.map(s => `
+        <tr style="border-bottom: 1px solid #cbd5e1;">
+          <td style="padding: 5px 8px; font-weight: bold; font-family: monospace; font-size: 11px;">${s.masa}</td>
+          <td style="padding: 5px 8px; font-weight: 700; font-size: 11px;">${s.kelas}</td>
+          <td style="padding: 5px 8px; font-size: 11px; font-weight: 600; color: #1d4ed8;">${s.subjek}</td>
+          <td style="padding: 5px 8px; font-size: 10px; color: #475569;">${s.guruAsal ? `Ganti: ${s.guruAsal}` : '—'} ${s.isCantum ? '<strong style="color:#16a34a;">(Cantum)</strong>' : ''}</td>
+        </tr>
+      `).join("");
+
+      cardsHtml += `
+        <div class="mini-slip-card" style="border: 1.5px solid #1e293b; border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; background: #fff; page-break-inside: avoid; break-inside: avoid; font-family: 'Plus Jakarta Sans', Arial, sans-serif;">
+          <!-- Header Slip -->
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Logo" style="width: 42px; height: 42px; object-fit: contain; border-radius: 50%;">
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">${APP_CONFIG.schoolName}</div>
+                <div style="font-size: 10px; font-weight: 700; color: #0284c7; letter-spacing: 0.05em;">SLIP GURU GANTI (MMI)</div>
+              </div>
+            </div>
+            <div style="text-align: right; font-size: 10px; color: #475569;">
+              <div><strong>${tarikhStr}</strong> (${hariStr})</div>
+              <div>${mingguStr} • ${kumpulanStr}</div>
+            </div>
+          </div>
+
+          <!-- Penerima & Maklumat Penggantian -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 11px;">
+            <div><strong>Guru Pengganti:</strong> <span style="color: #1e3a8a; font-weight: 800;">${tName}</span></div>
+            <div><strong>Menggantikan:</strong> <span style="color: #b91c1c; font-weight: 700;">${absentNames}</span> <span style="font-size:10px; color:#64748b;">(${reasons})</span></div>
+          </div>
+
+          <!-- Jadual Waktu Ganti -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px;">
+            <thead>
+              <tr style="background: #e2e8f0; text-align: left; color: #1e293b;">
+                <th style="padding: 4px 8px; font-size: 10px;">WAKTU / MASA</th>
+                <th style="padding: 4px 8px; font-size: 10px;">KELAS</th>
+                <th style="padding: 4px 8px; font-size: 10px;">MATA PELAJARAN</th>
+                <th style="padding: 4px 8px; font-size: 10px;">CATATAN</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <!-- Tandatangan Dual -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-top: 6px; border-top: 1px dotted #cbd5e1; font-size: 10px; color: #475569;">
+            <div style="border-top: 1px solid #94a3b8; margin-top: 26px; padding-top: 3px; text-align: center;">
+              Tandatangan Pentadbir / Penyelaras Jadual
+            </div>
+            <div style="border-top: 1px solid #94a3b8; margin-top: 26px; padding-top: 3px; text-align: center;">
+              Akuan Terima Guru Pengganti
+            </div>
+          </div>
+        </div>
+        ${idx < teachers.length - 1 ? '<div class="mini-slip-cut-line" style="border-top: 1.5px dashed #94a3b8; margin: 16px 0; position: relative; text-align: right;"><span style="position: relative; top: -10px; background: #fff; padding: 0 8px; font-size: 10px; color: #64748b;">✂ Potong Di Sini</span></div>' : ''}
+      `;
+    });
+
+    const win = window.open("", "_blank");
+    if (!win) {
+      showToast("Sila benarkan pop-up pada pelayar web anda untuk mencetak slip mini.", "error");
+      return;
+    }
+
+    win.document.write(`<!DOCTYPE html>
+    <html lang="ms">
+    <head>
+      <meta charset="UTF-8">
+      <title>Slip Guru Ganti Mini (A4) - ${tarikhStr}</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #f1f5f9; color: #0f172a; padding: 20px; }
+        .page-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+        .btn-print { background: #0284c7; color: #fff; border: none; padding: 10px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin: 0 auto 16px; display: block; font-size: 14px; }
+        @media print {
+          @page { size: A4 portrait; margin: 8mm 10mm; }
+          body { background: #fff; padding: 0; }
+          .page-container { box-shadow: none; padding: 0; max-width: 100%; }
+          .btn-print { display: none !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <button class="btn-print" onclick="window.print()">🖨️ Cetak Slip Mini A4 (3-4 Slip Sehelai)</button>
+      <div class="page-container">
+        ${cardsHtml}
+      </div>
+    </body>
+    </html>`);
+    win.document.close();
+  });
+}
+
+/* ========================================================
+   MODUL URUS & IMPORT JADUAL WAKTU (CSV / JSON)
+   ======================================================== */
+let parsedImportData = null;
+
+function renderImportPage() {
+  const sourceEl = document.getElementById("import-status-source");
+  const teachersCountEl = document.getElementById("import-status-teachers-count");
+  const slotsCountEl = document.getElementById("import-status-slots-count");
+
+  const hasCustom = !!localStorage.getItem(APP_CONFIG.storageKeys.customTimetable);
+  if (sourceEl) {
+    if (hasCustom) {
+      sourceEl.textContent = "Jadual Khas (Dimuat Naik)";
+      sourceEl.style.color = "#0284c7";
+    } else {
+      sourceEl.textContent = "Jadual Asal (SK Tampasuk 1)";
+      sourceEl.style.color = "#16a34a";
+    }
+  }
+
+  if (teachersCountEl) {
+    teachersCountEl.textContent = `${MASTER_TEACHERS.length} Orang Guru`;
+  }
+
+  if (slotsCountEl) {
+    let totalSlots = 0;
+    Object.values(TIMETABLE).forEach(dayObj => {
+      Object.values(dayObj).forEach(arr => {
+        if (Array.isArray(arr)) totalSlots += arr.length;
+      });
+    });
+    slotsCountEl.textContent = `${totalSlots} Slot Pengajaran`;
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function downloadCSVTimetableTemplate() {
+  let csv = "Nama Guru,Hari,Slot (1-13),Mata Pelajaran,Kelas\n";
+  csv += "En. Mudah Hj. Admaim,Isnin,9,PI,5B\n";
+  csv += "Datin Razana Hj. Abd. Wahid,Isnin,8,PM,5A\n";
+  csv += "Datin Razana Hj. Abd. Wahid,Isnin,9,PM,5A\n";
+  csv += "Pn. Hamisah Janah,Selasa,10,PM,1A\n";
+  csv += "En. Amriee Abdullah,Isnin,2,SEJ,6B\n";
+
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "templat_jadual_guru.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Templat jadual guru (CSV) berjaya dimuat turun.", "success");
+}
+
+function downloadCSVTeachersTemplate() {
+  let csv = "Nama Guru,Kumpulan (1-4),No WhatsApp\n";
+  MASTER_TEACHERS.forEach(t => {
+    let grp = "Kumpulan 1";
+    for (const [gName, members] of Object.entries(TEACHER_GROUPS)) {
+      if (members.includes(t)) { grp = gName; break; }
+    }
+    const phone = getTeacherPhone(t) || "";
+    csv += `"${t}",${grp},${phone}\n`;
+  });
+
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "templat_senarai_guru.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Templat senarai guru (CSV) berjaya dimuat turun.", "success");
+}
+
+function parseTimetableCSV(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+
+  const results = [];
+  const startIdx = lines[0].toLowerCase().includes("guru") ? 1 : 0;
+
+  for (let i = startIdx; i < lines.length; i++) {
+    const parts = lines[i].split(",").map(p => p.trim().replace(/^["']|["']$/g, ""));
+    if (parts.length >= 5) {
+      results.push({
+        guru: parts[0],
+        hari: parts[1],
+        slot: Number(parts[2]),
+        subjek: parts[3],
+        kelas: parts[4]
+      });
+    }
+  }
+  return results;
+}
+
+function setupImportPageEvents() {
+  const btnDlSchedule = document.getElementById("btn-download-csv-timetable");
+  if (btnDlSchedule) btnDlSchedule.addEventListener("click", downloadCSVTimetableTemplate);
+
+  const btnDlTeachers = document.getElementById("btn-download-csv-teachers");
+  if (btnDlTeachers) btnDlTeachers.addEventListener("click", downloadCSVTeachersTemplate);
+
+  const fileInput = document.getElementById("import-file-input");
+  const textPaste = document.getElementById("import-text-paste");
+  const btnParse = document.getElementById("btn-parse-preview");
+  const btnSave = document.getElementById("btn-confirm-save-import");
+  const previewSection = document.getElementById("import-preview-section");
+  const previewTbody = document.getElementById("import-preview-tbody");
+  const previewSummary = document.getElementById("import-preview-summary");
+
+  if (fileInput) {
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (textPaste) textPaste.value = event.target.result;
+        showToast(`Fail ${file.name} sedia untuk disemak.`, "info");
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  if (btnParse) {
+    btnParse.addEventListener("click", () => {
+      const content = textPaste ? textPaste.value.trim() : "";
+      if (!content) {
+        showToast("Sila pilih fail atau tampal teks CSV/JSON terlebih dahulu.", "error");
+        return;
+      }
+
+      try {
+        if (content.startsWith("{") || content.startsWith("[")) {
+          // JSON format
+          const json = JSON.parse(content);
+          parsedImportData = json;
+          showToast("Data JSON sah berjaya dibaca!", "success");
+        } else {
+          // CSV format
+          const parsed = parseTimetableCSV(content);
+          if (!parsed || parsed.length === 0) {
+            showToast("Format CSV tidak sah atau tiada data ditemui.", "error");
+            return;
+          }
+          parsedImportData = parsed;
+          showToast(`${parsed.length} baris jadual berjaya dibaca!`, "success");
+        }
+
+        if (previewSection && previewTbody) {
+          previewTbody.innerHTML = "";
+          const rowsToShow = Array.isArray(parsedImportData) ? parsedImportData.slice(0, 15) : [];
+          rowsToShow.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td style="padding:6px 10px; font-weight:700;">${r.guru || "—"}</td>
+              <td style="padding:6px 10px;">${r.hari || "—"}</td>
+              <td style="padding:6px 10px; font-family:monospace;">${r.slot || "—"}</td>
+              <td style="padding:6px 10px; color:#1d4ed8; font-weight:600;">${r.subjek || "—"}</td>
+              <td style="padding:6px 10px;">${r.kelas || "—"}</td>
+            `;
+            previewTbody.appendChild(tr);
+          });
+          if (previewSummary) {
+            previewSummary.textContent = `Menunjukkan ${rowsToShow.length} daripada ${parsedImportData.length || Object.keys(parsedImportData).length} rekod yang dimuat naik.`;
+          }
+          previewSection.classList.remove("hidden");
+        }
+
+        if (btnSave) btnSave.disabled = false;
+
+      } catch (err) {
+        showToast("Ralat menghurai data: " + err.message, "error");
+      }
+    });
+  }
+
+  if (btnSave) {
+    btnSave.addEventListener("click", () => {
+      if (!parsedImportData) {
+        showToast("Tiada data import untuk disimpan.", "error");
+        return;
+      }
+
+      try {
+        // Bina jadual individu baharu
+        const newTimetable = {};
+        const newTeachersSet = new Set();
+
+        if (Array.isArray(parsedImportData)) {
+          parsedImportData.forEach(item => {
+            if (!item.guru) return;
+            newTeachersSet.add(item.guru);
+            if (!newTimetable[item.guru]) newTimetable[item.guru] = {};
+            if (!newTimetable[item.guru][item.hari]) newTimetable[item.guru][item.hari] = [];
+            const slotTime = STANDARD_SLOTS[item.slot] || `Slot ${item.slot}`;
+            newTimetable[item.guru][item.hari].push([slotTime, item.subjek, item.kelas]);
+          });
+        }
+
+        const newTeachersList = [...newTeachersSet];
+        if (newTeachersList.length > 0) {
+          MASTER_TEACHERS = newTeachersList;
+        }
+        Object.assign(TIMETABLE, newTimetable);
+
+        localStorage.setItem(APP_CONFIG.storageKeys.customTimetable, JSON.stringify(newTimetable));
+        if (newTeachersList.length > 0) {
+          localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(newTeachersList));
+        }
+
+        showToast("Jadual waktu baharu berjaya disimpan dan diaktifkan!", "success");
+        renderImportPage();
+
+        // Segar semula pilihan guru pada dropdown
+        const teacherSelects = document.querySelectorAll(".teacher-select");
+        teacherSelects.forEach(s => {
+          const val = s.value;
+          s.innerHTML = `<option value="">Pilih guru tidak hadir</option>` +
+            MASTER_TEACHERS.map(t => `<option value="${t}">${t}</option>`).join("");
+          if (val) s.value = val;
+        });
+
+      } catch (e) {
+        showToast("Gagal menyimpan jadual: " + e.message, "error");
+      }
+    });
+  }
+
+  // Butang Muat Turun Backup JSON
+  const btnExport = document.getElementById("btn-export-backup-json");
+  if (btnExport) {
+    btnExport.addEventListener("click", () => {
+      const backupObj = {
+        school: APP_CONFIG.schoolName,
+        exportDate: new Date().toISOString(),
+        teachers: MASTER_TEACHERS,
+        groups: TEACHER_GROUPS,
+        timetable: TIMETABLE
+      };
+      const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup_jadual_${APP_CONFIG.schoolName.replace(/\s+/g, '_')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Fail backup JSON berjaya dimuat turun.", "success");
+    });
+  }
+
+  // Butang Reset Jadual Asal
+  const btnReset = document.getElementById("btn-reset-default-schedule");
+  if (btnReset) {
+    btnReset.addEventListener("click", () => {
+      if (confirm("Adakah anda pasti mahu memulihkan jadual asal SK Tampasuk 1? Sebarang jadual yang diimport akan dipadamkan.")) {
+        localStorage.removeItem(APP_CONFIG.storageKeys.customTimetable);
+        localStorage.removeItem(APP_CONFIG.storageKeys.customTeachers);
+        location.reload();
+      }
+    });
+  }
+}
+
+// Inisialisasi Semakan Jadual Khas daripada Storan Tempatan
+function initActiveTimetable() {
+  try {
+    const savedTimetable = localStorage.getItem(APP_CONFIG.storageKeys.customTimetable);
+    const savedTeachers = localStorage.getItem(APP_CONFIG.storageKeys.customTeachers);
+
+    if (savedTeachers) {
+      const parsedTeachers = JSON.parse(savedTeachers);
+      if (Array.isArray(parsedTeachers) && parsedTeachers.length > 0) {
+        MASTER_TEACHERS = parsedTeachers;
+      }
+    }
+
+    if (savedTimetable) {
+      const parsedTT = JSON.parse(savedTimetable);
+      Object.assign(TIMETABLE, parsedTT);
+    }
+  } catch (err) {
+    console.warn("Gagal memuatkan jadual khas daripada localStorage:", err);
+  }
+}
+
+/* ========================================================
+   MODUL PENGESAHAN & LOG MASUK (LOGIN & ACCESS CONTROL)
+   ======================================================== */
+function setupAuth() {
+  const overlay = document.getElementById("login-overlay");
+  const form = document.getElementById("login-form");
+  const userInput = document.getElementById("login-username");
+  const passInput = document.getElementById("login-password");
+  const rememberCheck = document.getElementById("login-remember-me");
+  const errorAlert = document.getElementById("login-error-alert");
+  const errorText = document.getElementById("login-error-text");
+  const togglePwBtn = document.getElementById("btn-toggle-password");
+  const togglePwIcon = document.getElementById("icon-toggle-password");
+  const logoutBtn = document.getElementById("btn-logout");
+
+  if (!overlay || !form) return;
+
+  const authCfg = APP_CONFIG.auth || {
+    enabled: true,
+    defaultUser: "xba5346",
+    defaultPass: "xba5346",
+    sessionKey: "eguru_auth_session_v2",
+    rememberKey: "eguru_auth_remember_v2"
+  };
+
+  if (!authCfg.enabled) {
+    overlay.classList.add("hidden");
+    return;
+  }
+
+  function isUserAuthenticated() {
+    return !!sessionStorage.getItem(authCfg.sessionKey) || !!localStorage.getItem(authCfg.rememberKey);
+  }
+
+  // Semakan Status Sesi Semasa Muat Laman
+  if (isUserAuthenticated()) {
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+  } else {
+    overlay.classList.remove("hidden");
+    overlay.setAttribute("aria-hidden", "false");
+    setTimeout(() => { if (userInput) userInput.focus(); }, 150);
+  }
+
+  // Butang Tunjuk/Sembunyi Kata Laluan
+  if (togglePwBtn && passInput) {
+    togglePwBtn.addEventListener("click", () => {
+      const isPw = passInput.type === "password";
+      passInput.type = isPw ? "text" : "password";
+      if (togglePwIcon) {
+        togglePwIcon.setAttribute("data-lucide", isPw ? "eye-off" : "eye");
+        if (window.lucide) window.lucide.createIcons();
+      }
+    });
+  }
+
+  // Pengendali Hantar Borang Log Masuk
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const u = userInput ? userInput.value.trim().toLowerCase() : "";
+    const p = passInput ? passInput.value.trim() : "";
+
+    const expectedUser = (authCfg.defaultUser || "xba5346").toLowerCase();
+    const expectedPass = authCfg.defaultPass || "xba5346";
+
+    if (u === expectedUser && p === expectedPass) {
+      // Log masuk berjaya
+      if (errorAlert) errorAlert.classList.add("hidden");
+      const token = "auth_" + Date.now();
+      sessionStorage.setItem(authCfg.sessionKey, token);
+
+      if (rememberCheck && rememberCheck.checked) {
+        localStorage.setItem(authCfg.rememberKey, token);
+      } else {
+        localStorage.removeItem(authCfg.rememberKey);
+      }
+
+      overlay.classList.add("hidden");
+      overlay.setAttribute("aria-hidden", "true");
+
+      if (passInput) passInput.value = "";
+      showToast("Log masuk berjaya! Selamat datang ke Sistem e-Guru Ganti.", "success");
+    } else {
+      // Kata laluan atau ID salah
+      if (errorAlert) {
+        if (errorText) errorText.textContent = "ID Pengguna atau Kata Laluan tidak tepat. Sila semak semula.";
+        errorAlert.classList.remove("hidden");
+      }
+      const card = overlay.querySelector(".login-card");
+      if (card) {
+        card.style.animation = "none";
+        void card.offsetWidth; // trigger reflow
+        card.style.animation = "loginShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both";
+      }
+      if (passInput) {
+        passInput.value = "";
+        passInput.focus();
+      }
+    }
+  });
+
+  // Pengendali Butang Log Keluar
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      if (confirm("Adakah anda pasti mahu log keluar daripada sistem?")) {
+        sessionStorage.removeItem(authCfg.sessionKey);
+        localStorage.removeItem(authCfg.rememberKey);
+        overlay.classList.remove("hidden");
+        overlay.setAttribute("aria-hidden", "false");
+        if (errorAlert) errorAlert.classList.add("hidden");
+        if (passInput) passInput.value = "";
+        if (userInput) {
+          userInput.value = "";
+          userInput.focus();
+        }
+        showToast("Anda telah berjaya log keluar.", "info");
+      }
+    });
+  }
+}
+
 
