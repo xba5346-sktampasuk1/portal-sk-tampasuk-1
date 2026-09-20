@@ -12,8 +12,10 @@ const DatabaseAPI = {
     // 1. Cuba ambil daripada Google Apps Script jika URL disediakan
     if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
       try {
-        const response = await fetch(`${APP_CONFIG.googleAppsScriptUrl}?action=getRecords`, {
+        const noCacheUrl = `${APP_CONFIG.googleAppsScriptUrl}?action=getRecords&_t=${Date.now()}`;
+        const response = await fetch(noCacheUrl, {
           method: "GET",
+          cache: "no-store",
           headers: { "Accept": "application/json" }
         });
         if (response.ok) {

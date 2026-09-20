@@ -158,7 +158,16 @@ function setupNavigation() {
 
       if (pageId === "page2") renderPage2();
       if (pageId === "page3") renderPage3();
-      if (pageId === "page5") renderPage5();
+      if (pageId === "page5") {
+        renderPage5();
+        // Segerakkan data terkini daripada Google Sheet di latar belakang
+        DatabaseAPI.getAllRecords().then(records => {
+          if (records && records.length) {
+            allRecords = records;
+            renderPage5();
+          }
+        }).catch(() => {});
+      }
       if (pageId === "page6") renderPage6();
       if (pageId === "page7") renderCalendar();
       if (pageId === "page-import") renderImportPage();
@@ -2647,6 +2656,30 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
     </html>`);
   win.document.close();
 });
+
+// Butang Segerak Data Awan daripada Google Sheet
+const syncBtn = document.getElementById("sync-records-btn");
+if (syncBtn) {
+  syncBtn.addEventListener("click", async () => {
+    const origHtml = syncBtn.innerHTML;
+    syncBtn.disabled = true;
+    syncBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width:16px;height:16px"></i> <span>Menyegerak...</span>`;
+    if (window.lucide) window.lucide.createIcons();
+
+    try {
+      const records = await DatabaseAPI.getAllRecords();
+      allRecords = records;
+      renderPage5();
+      showToast(`Berjaya menyegerakkan ${records.length} rekod daripada Google Sheet!`, "success");
+    } catch (err) {
+      showToast("Gagal menyegerakkan data awan: " + (err.message || err), "error");
+    } finally {
+      syncBtn.disabled = false;
+      syncBtn.innerHTML = origHtml;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  });
+}
 
 // Cetakan: Laporan Bulanan PDF (Dinamik mengikut bulan yang dipilih)
 document.getElementById("monthly-pdf-btn").addEventListener("click", () => {
