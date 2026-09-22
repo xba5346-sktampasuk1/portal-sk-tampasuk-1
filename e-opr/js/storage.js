@@ -11,6 +11,7 @@ const StorageTool = {
   HISTORY_KEY: 'eopr_sk_tampasuk_1_history',
   CURRENT_ID_KEY: 'eopr_current_editing_id',
   CLOUD_URL_KEY: 'eopr_sk_tampasuk_1_cloud_url',
+  DEFAULT_CLOUD_URL: 'https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec', // URL Google Apps Script Rasmi Sekolah (Web App)
   debounceTimer: null,
 
   /**
@@ -327,13 +328,16 @@ const StorageTool = {
    * Pengurusan Konfigurasi URL Google Apps Script Awan DELIMa
    */
   getCloudUrl() {
-    return (localStorage.getItem(this.CLOUD_URL_KEY) || '').trim();
+    const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
+    if (savedUrl === 'disabled') return '';
+    if (savedUrl && savedUrl.trim()) return savedUrl.trim();
+    return (this.DEFAULT_CLOUD_URL || '').trim();
   },
 
   setCloudUrl(url) {
     const cleanUrl = (url || '').trim();
     if (!cleanUrl) {
-      localStorage.removeItem(this.CLOUD_URL_KEY);
+      localStorage.setItem(this.CLOUD_URL_KEY, 'disabled');
     } else {
       localStorage.setItem(this.CLOUD_URL_KEY, cleanUrl);
     }
