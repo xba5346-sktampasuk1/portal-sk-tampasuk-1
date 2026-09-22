@@ -66,21 +66,8 @@ const themeColorMap = {
  */
 function formatDate(value) {
   if (!value) return placeholders.date;
-  let val = String(value).trim();
-  if (val.includes("T")) {
-    try {
-      const d = new Date(val);
-      if (!isNaN(d.getTime())) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        return `${day}/${m}/${y}`;
-      }
-    } catch (e) {}
-    val = val.split("T")[0];
-  }
-  const parts = val.split("-");
-  if (parts.length !== 3) return val;
+  const parts = value.split("-");
+  if (parts.length !== 3) return value;
   return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
@@ -89,31 +76,14 @@ function formatDate(value) {
  */
 function formatTime(timeStr) {
   if (!timeStr) return "";
-  let raw = String(timeStr).trim();
-  let h, m;
-
-  if (raw.includes("T") || raw.includes("-")) {
-    try {
-      const d = new Date(raw);
-      if (!isNaN(d.getTime())) {
-        h = d.getHours();
-        m = String(d.getMinutes()).padStart(2, "0");
-      }
-    } catch (e) {}
-  }
-
-  if (h === undefined) {
-    const parts = raw.split(":");
-    h = parseInt(parts[0], 10);
-    m = parts[1] || "00";
-  }
-
-  if (isNaN(h)) return raw;
+  const [hStr, mStr] = timeStr.split(":");
+  const h = parseInt(hStr, 10);
+  const m = mStr || "00";
 
   let period = "pagi";
   if (h === 12) period = "tengah hari";
   else if (h > 12 && h < 19) period = "petang";
-  else if (h >= 19 || h < 5) period = "malam";
+  else if (h >= 19) period = "malam";
 
   const displayH = h % 12 || 12;
   return `${displayH}:${m} ${period}`;
@@ -424,9 +394,34 @@ function loadOPRToEditor(recordId) {
 }
 
 /**
+ * Persediaan Sebelum Cetakan (Sokongan Penuh Desktop & Mobile iOS/Android)
+ */
+function prepareForPrint() {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                || window.innerWidth <= 800 
+                || document.body.classList.contains('view-phone') 
+                || document.body.classList.contains('view-tablet');
+
+  if (isMobile) {
+    document.body.classList.add('is-mobile-print');
+  } else {
+    document.body.classList.remove('is-mobile-print');
+  }
+
+  window.scrollTo(0, 0);
+  if (document.body) document.body.scrollTop = 0;
+  if (document.documentElement) document.documentElement.scrollTop = 0;
+}
+
+function finishPrint() {
+  document.body.classList.remove('is-mobile-print');
+  fitPreviewToPage();
+}
+
+/**
  * Cetak rekod tertentu terus daripada arkib sejarah
  */
-async function printRecordFromHistory(recordId) {
+function printRecordFromHistory(recordId) {
   if (!window.StorageTool) return;
   const record = window.StorageTool.getRecordById(recordId);
   if (!record) return;
@@ -434,29 +429,130 @@ async function printRecordFromHistory(recordId) {
   window.StorageTool.loadData(record);
   window.StorageTool.setCurrentEditingId(record.id);
   switchView("generator");
-  showNotice("Menyediakan dokumen dan imej untuk cetakan PDF...", false);
-
-  // Tunggu imej selesai dimuatkan (jika daripada Google Drive)
-  const imgPromises = [];
-  for (let i = 1; i <= 6; i++) {
-    const pvImg = $(`pv-img-${i}`);
-    if (pvImg && pvImg.src && pvImg.src.startsWith("http")) {
-      if (!pvImg.complete) {
-        imgPromises.push(new Promise(resolve => {
-          pvImg.onload = resolve;
-          pvImg.onerror = resolve;
-          setTimeout(resolve, 2500);
-        }));
-      }
-    }
-  }
-  if (imgPromises.length > 0) {
-    await Promise.all(imgPromises);
-  }
-
+  prepareForPrint();
   setTimeout(() => {
     window.print();
   }, 350);
+}
+
+/**
+ * Padankan rekod OPR dengan penapis Unit / Panitia secara pintar
+ */
+function matchRecordCategory(item, filterKey) {
+  if (!filterKey || filterKey === "all") return true;
+
+  const key = filterKey.toLowerCase().trim();
+  const theme = (item.theme || "").toLowerCase().trim();
+  const cat = (item.category || "").toLowerCase().trim();
+  const anj = (item.anjuran || "").toLowerCase().trim();
+  const anjLain = (item.anjuranLain || "").toLowerCase().trim();
+  const panitiaSel = (item.panitiaSelect || "").toLowerCase().trim();
+
+  // Teks gabungan bagi anjuran / bahagian / unit / tajuk / kategori
+  const combinedText = `${theme} ${cat} ${anj} ${anjLain} ${panitiaSel}`;
+
+  // 1. HAL EHWAL MURID (HEM)
+  if (key === "hem" || key.includes("hem") || key.includes("hal ehwal murid")) {
+    if (theme === "hem") return true;
+    if (theme.startsWith("panitia-") || theme === "kokurikulum") return false;
+    const hemKeywords = [
+      "hem", "hal ehwal murid", "disiplin", "pengawas", "spbt", 
+      "kebajikan", "3k", "keselamatan murid", "kesihatan murid", "kebersihan", 
+      "kantin", "asrama", "bencana", "minda sihat"
+    ];
+    return hemKeywords.some(kw => combinedText.includes(kw));
+  }
+
+  // 2. PENTADBIRAN
+  if (key === "pentadbiran" || key.includes("pentadbiran")) {
+    if (theme === "pentadbiran") return true;
+    if (theme === "hem" || theme === "kokurikulum" || theme.startsWith("panitia-")) return false;
+    const adminKeywords = [
+      "pentadbiran", "pengurusan", "bimbingan", "kaunseling", 
+      "ubk", "pibg", "staf", "mesyuarat guru", "ldp", "splkpm"
+    ];
+    return adminKeywords.some(kw => combinedText.includes(kw));
+  }
+
+  // 3. KOKURIKULUM
+  if (key === "kokurikulum" || key.includes("koku")) {
+    if (theme === "kokurikulum") return true;
+    if (theme === "pentadbiran" || theme === "hem" || theme.startsWith("panitia-")) return false;
+    const kokumKeywords = [
+      "kokurikulum", "kokum", "sukan", "permainan", "1m1s", 
+      "merentas desa", "olahraga", "kelab", "persatuan", 
+      "uniform", "beruniform", "pengakap", "tkrs", "pbsm", 
+      "pandu puteri", "puteri islam"
+    ];
+    return kokumKeywords.some(kw => combinedText.includes(kw));
+  }
+
+  // 4. PANITIA-PANITIA (SEMUA PANITIA MATA PELAJARAN)
+  if (key === "panitia") {
+    if (theme.startsWith("panitia-")) return true;
+    return cat.includes("panitia") || anj.includes("panitia") || anjLain.includes("panitia");
+  }
+
+  // 5. PANITIA PENDIDIKAN JASMANI & KESIHATAN (PJK)
+  if (key.includes("pjk") || key.includes("jasmani")) {
+    return theme === "panitia-pjk" || combinedText.includes("pjk") || combinedText.includes("jasmani");
+  }
+
+  // 6. PANITIA MATA PELAJARAN KHUSUS
+  if (key.includes("bahasa melayu") || key.includes("bm")) {
+    return theme === "panitia-bm" || combinedText.includes("bahasa melayu");
+  }
+  if (key.includes("bahasa inggeris") || key.includes("bi") || key.includes("english")) {
+    return theme === "panitia-bi" || combinedText.includes("bahasa inggeris") || combinedText.includes("english");
+  }
+  if (key.includes("matematik") || key.includes("math")) {
+    return theme === "panitia-math" || combinedText.includes("matematik");
+  }
+  if (key.includes("sains") || key.includes("science")) {
+    return theme === "panitia-sains" || combinedText.includes("sains");
+  }
+  if (key.includes("islam") || key.includes("moral")) {
+    return theme === "panitia-islam-moral" || combinedText.includes("islam") || combinedText.includes("moral");
+  }
+  if (key.includes("sejarah")) {
+    return theme === "panitia-sejarah" || combinedText.includes("sejarah");
+  }
+  if (key.includes("seni") || key.includes("muzik") || key.includes("psv")) {
+    return theme === "panitia-seni-muzik" || combinedText.includes("seni") || combinedText.includes("muzik") || combinedText.includes("psv");
+  }
+  if (key.includes("rbt") || key.includes("reka bentuk")) {
+    return theme === "panitia-rbt" || combinedText.includes("rbt") || combinedText.includes("reka bentuk");
+  }
+  if (key.includes("arab") || key.includes("bkd")) {
+    return theme === "panitia-arab-bkd" || combinedText.includes("arab") || combinedText.includes("bkd");
+  }
+
+  // 7. KURIKULUM (UMUM & MATA PELAJARAN)
+  if (key === "kurikulum" || key.includes("kurikulum")) {
+    if (theme === "kurikulum" || theme.startsWith("panitia-")) return true;
+    if (theme === "kokurikulum" || theme === "hem" || theme === "pentadbiran") return false;
+    const kuriKeywords = [
+      "unit kurikulum", "panitia", "akademik", "peperiksaan", "pbd", 
+      "uasa", "stem", "pss", "pusat sumber", "pemulihan"
+    ];
+    return kuriKeywords.some(kw => combinedText.includes(kw));
+  }
+
+  // 8. LAIN-LAIN / UNIT KHAS
+  if (key === "other" || key.includes("lain")) {
+    const isMainUnit = (
+      theme === "pentadbiran" || theme === "kurikulum" || 
+      theme === "kokurikulum" || theme === "hem" || theme.startsWith("panitia-")
+    );
+    const hasSpecialKeywords = [
+      "pentadbiran", "kurikulum", "kokurikulum", "hem", "panitia"
+    ].some(kw => combinedText.includes(kw));
+
+    return !isMainUnit || !hasSpecialKeywords || anj === "lain-lain" || anjLain.length > 0;
+  }
+
+  // Fallback padanan terus
+  return combinedText.includes(key) || key.includes(cat) || key.includes(theme);
 }
 
 /**
@@ -489,22 +585,11 @@ function renderHistoryView() {
   const searchQuery = ($("history-search-input")?.value || "").toLowerCase().trim();
   const filterUnit = $("history-filter-unit")?.value || "all";
 
-  // Tapis rekod
+  // Tapis rekod secara pintar
   const filtered = rawHistory.filter((item) => {
     // 1. Penapis Unit / Panitia
-    if (filterUnit !== "all") {
-      if (filterUnit === "panitia") {
-        const isPanitia = (item.category || "").toLowerCase().includes("panitia") || (item.theme || "").startsWith("panitia-");
-        if (!isPanitia) return false;
-      } else if (filterUnit === "other") {
-        const standardCats = ["pentadbiran", "kurikulum", "kokurikulum", "hal ehwal murid (hem)", "hem"];
-        const isStandard = standardCats.includes((item.category || "").toLowerCase()) || (item.category || "").toLowerCase().includes("panitia");
-        if (isStandard) return false;
-      } else {
-        const itemCat = (item.category || "").toLowerCase();
-        const targetCat = filterUnit.toLowerCase();
-        if (!itemCat.includes(targetCat) && !targetCat.includes(itemCat)) return false;
-      }
+    if (!matchRecordCategory(item, filterUnit)) {
+      return false;
     }
 
     // 2. Carian Teks Bebas
@@ -514,7 +599,8 @@ function renderHistoryView() {
       const matchTempat = (item.tempat || "").toLowerCase().includes(searchQuery);
       const matchPenyedia = (item.namaPenyedia || "").toLowerCase().includes(searchQuery);
       const matchCategory = (item.category || "").toLowerCase().includes(searchQuery);
-      if (!matchTitle && !matchTarikh && !matchTempat && !matchPenyedia && !matchCategory) return false;
+      const matchAnjuran = (item.anjuran || "").toLowerCase().includes(searchQuery);
+      if (!matchTitle && !matchTarikh && !matchTempat && !matchPenyedia && !matchCategory && !matchAnjuran) return false;
     }
 
     return true;
@@ -551,8 +637,8 @@ function renderHistoryView() {
       photosHtml = `
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 my-2">
           ${displayPhotos.map(([, src], idx) => `
-            <div class="mini-photo-slot relative group aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-              <img src="${src}" alt="Foto ${idx + 1}" loading="lazy" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-[9px] text-slate-400 font-bold\\'>Foto ${idx + 1}</div>'">
+            <div class="mini-photo-slot relative group">
+              <img src="${src}" alt="Foto ${idx + 1}" class="w-full h-full object-cover">
             </div>
           `).join("")}
         </div>
@@ -1049,7 +1135,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (printBtn) {
     printBtn.addEventListener("click", () => {
       updatePreview();
-      window.print();
+      prepareForPrint();
+      setTimeout(() => {
+        window.print();
+      }, 60);
     });
   }
 
@@ -1072,25 +1161,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 14. Integrasi Awan DELIMa (Google Sheets & Drive)
   setupCloudSync();
 
-  // 14.1 Segerak automatik arkib awan di latar belakang pada permulaan
-  if (window.StorageTool && window.StorageTool.isCloudEnabled()) {
-    setTimeout(() => {
-      syncCloudHistory(false);
-    }, 1200);
-  }
-
   // 15. Penskalaan paparan & Pengendali Cetakan A4 Sempurna
   window.addEventListener("resize", fitPreviewToPage);
   fitPreviewToPage();
 
   window.addEventListener("beforeprint", () => {
-    window.scrollTo(0, 0);
-    if (document.body) document.body.scrollTop = 0;
-    if (document.documentElement) document.documentElement.scrollTop = 0;
+    prepareForPrint();
   });
 
   window.addEventListener("afterprint", () => {
-    fitPreviewToPage();
+    finishPrint();
   });
 });
 
@@ -1325,27 +1405,17 @@ async function syncCloudHistory(showNoticeMsg = true) {
       const nowStr = new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
       if (lastSyncTime) {
         lastSyncTime.textContent = `Disemak jam ${nowStr} (${res.count} rekod)`;
-        lastSyncTime.className = "text-xs text-slate-500 font-semibold";
       }
       if (showNoticeMsg) {
         showNotice(`✅ Arkib berjaya disegerakkan! ${res.count} rekod OPR sedia diakses.`, false);
       }
     } else {
-      const nowStr = new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
-      if (lastSyncTime) {
-        lastSyncTime.textContent = `⚠️ Gagal disegerak jam ${nowStr}`;
-        lastSyncTime.className = "text-xs text-rose-600 font-bold";
-      }
       if (showNoticeMsg) {
         showNotice(`⚠️ Gagal menyegerak: ${res.error || res.reason || "Sila semak URL Web App anda."}`, true);
       }
     }
   } catch (err) {
     console.warn("syncCloudHistory error:", err);
-    if (lastSyncTime) {
-      lastSyncTime.textContent = `⚠️ Ralat sambungan Awan`;
-      lastSyncTime.className = "text-xs text-rose-600 font-bold";
-    }
     if (showNoticeMsg) {
       showNotice("⚠️ Ralat semasa menyambung ke Awan DELIMa.", true);
     }
@@ -1356,35 +1426,6 @@ async function syncCloudHistory(showNoticeMsg = true) {
     if (window.lucide) window.lucide.createIcons();
   }
 }
-
-// Pendengar Acara Segerak Awan DELIMa daripada StorageTool
-window.addEventListener("eopr:cloud-syncing", (e) => {
-  const syncBtn = $("btn-sync-cloud");
-  const syncIcon = $("sync-icon");
-  const syncText = $("sync-btn-text");
-  if (syncIcon) syncIcon.classList.add("animate-spin");
-  if (syncText) syncText.textContent = "Menyimpan ke Awan...";
-  const progName = e.detail?.record?.program || "Laporan OPR";
-  showNotice(`📤 Sedang menghantar "${progName}" dan foto aktiviti ke Google Drive & Sheets DELIMa...`, false);
-});
-
-window.addEventListener("eopr:cloud-synced", (e) => {
-  const syncBtn = $("btn-sync-cloud");
-  const syncIcon = $("sync-icon");
-  const syncText = $("sync-btn-text");
-  if (syncIcon) syncIcon.classList.remove("animate-spin");
-  if (syncText) syncText.textContent = "Segerak Awan";
-
-  if (e.detail?.success) {
-    const progName = e.detail?.record?.program || "Laporan OPR";
-    showNotice(`☁️ "${progName}" dan foto berjaya disegerakkan ke Google Drive & Sheets DELIMa!`, false);
-    renderHistoryView();
-    updateHistoryCountBadge();
-  } else {
-    showNotice(`💾 OPR telah disimpan di pelayar tempatan. (Awan: ${e.detail?.error || 'Sedang memproses'})`, false);
-  }
-  if (window.lucide) window.lucide.createIcons();
-});
 
 function openCloudModal() {
   const modal = $("modal-cloud-setup");

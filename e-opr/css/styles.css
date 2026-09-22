@@ -1269,7 +1269,7 @@ body.view-phone .sticky-panel {
     overflow: hidden !important;
   }
 
-  /* Sembunyikan semua elemen kawalan UI, navigasi & borang */
+  /* Sembunyikan semua elemen kawalan UI, navigasi, borang & modal */
   .no-print,
   .topbar,
   #tab-nav-bar,
@@ -1280,7 +1280,8 @@ body.view-phone .sticky-panel {
   .notice,
   #print-controls,
   #preview-area > .no-print,
-  #view-history {
+  #view-history,
+  #modal-cloud-setup {
     display: none !important;
   }
 
@@ -1348,6 +1349,25 @@ body.view-phone .sticky-panel {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
+  }
+
+  /* ==========================================================================
+     PERLINDUNGAN MUTLAK 1 HALAMAN A4 BAGI PERANTI TELEFON (IOS & ANDROID)
+     Penyelarasan skala 0.92 menyerap margin pencetak mandatori iOS Safari &
+     Android Chrome (~5-7mm) agar dokumen kekal 100% tepat 1 muka surat sahaja.
+     ========================================================================== */
+  body.is-mobile-device .opr-paper,
+  body.view-phone .opr-paper,
+  body.is-mobile-print .opr-paper {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    transform: scale(0.92) !important;
+    transform-origin: top center !important;
+    margin: 0 auto !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    break-after: avoid !important;
   }
 
   .opr-header {

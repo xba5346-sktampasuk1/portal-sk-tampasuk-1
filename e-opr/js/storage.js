@@ -11,99 +11,7 @@ const StorageTool = {
   HISTORY_KEY: 'eopr_sk_tampasuk_1_history',
   CURRENT_ID_KEY: 'eopr_current_editing_id',
   CLOUD_URL_KEY: 'eopr_sk_tampasuk_1_cloud_url',
-  DEFAULT_CLOUD_URL: 'https://script.google.com/macros/s/AKfycbxCi9N_txsm8jYPyqd6hql424H4Ycz_axmfbVgo04yyHMUw17-oiHIDMvEy0r6BeL7h/exec',
   debounceTimer: null,
-
-  /**
-   * Sanitasi & Penstandardan Rekod OPR (Format Tarikh YYYY-MM-DD & Masa HH:mm)
-   */
-  normalizeRecord(rec) {
-    if (!rec || typeof rec !== 'object') return rec;
-    const item = { ...rec };
-
-    // 1. Format Tarikh standard YYYY-MM-DD untuk sokongan penuh input[type=date]
-    if (item.tarikh) {
-      const raw = String(item.tarikh).trim();
-      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-        item.tarikh = raw;
-      } else {
-        try {
-          const d = new Date(raw);
-          if (!isNaN(d.getTime())) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            item.tarikh = `${y}-${m}-${day}`;
-          } else {
-            item.tarikh = raw.split('T')[0] || raw;
-          }
-        } catch (e) {
-          item.tarikh = raw.split('T')[0] || raw;
-        }
-      }
-    }
-
-    // 2. Format Masa standard HH:mm untuk sokongan input[type=time]
-    const normTime = (val) => {
-      if (!val) return '';
-      const raw = String(val).trim();
-      if (/^\d{1,2}:\d{2}$/.test(raw)) {
-        const parts = raw.split(':');
-        return `${String(parts[0]).padStart(2, '0')}:${parts[1]}`;
-      }
-      try {
-        const d = new Date(raw);
-        if (!isNaN(d.getTime())) {
-          const h = String(d.getHours()).padStart(2, '0');
-          const min = String(d.getMinutes()).padStart(2, '0');
-          return `${h}:${min}`;
-        }
-      } catch (e) {}
-      return raw;
-    };
-
-    if (item.masaMula) item.masaMula = normTime(item.masaMula);
-    if (item.masaTamat) item.masaTamat = normTime(item.masaTamat);
-
-    if (!item.photoLayout) item.photoLayout = '6';
-
-    return item;
-  },
-
-  /**
-   * Simpan senarai sejarah dengan perlindungan kuota LocalStorage
-   */
-  safeSaveHistory(historyList) {
-    try {
-      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(historyList));
-      return true;
-    } catch (err) {
-      console.warn('LocalStorage kuota terhad, membersihkan storan imej base64 arkib lama:', err);
-      try {
-        // Buang base64 imej dari rekod-rekod lama (kecuali 2 terkini) untuk jimat ruang
-        const pruned = historyList.map((item, idx) => {
-          if (idx < 2) return item;
-          const copy = { ...item };
-          if (copy.images) {
-            const cleanImgs = {};
-            Object.entries(copy.images).forEach(([slot, src]) => {
-              // Kekalkan jika pautan Google Drive (bukan base64 data:...)
-              if (src && typeof src === 'string' && !src.startsWith('data:')) {
-                cleanImgs[slot] = src;
-              }
-            });
-            copy.images = cleanImgs;
-          }
-          return copy;
-        });
-        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(pruned));
-        return true;
-      } catch (err2) {
-        console.error('Gagal menyimpan sejarah walaupun selepas pembersihan:', err2);
-        return false;
-      }
-    }
-  },
 
   /**
    * Kumpulkan semua data borang
@@ -193,9 +101,8 @@ const StorageTool = {
   /**
    * Muat semula data ke dalam borang & pratonton
    */
-  loadData(rawRecord) {
-    if (!rawRecord) return;
-    const data = this.normalizeRecord(rawRecord);
+  loadData(data) {
+    if (!data) return;
 
     if (data.theme && window.applyTheme) {
       window.applyTheme(data.theme);
@@ -318,14 +225,7 @@ const StorageTool = {
       if (!raw) return [];
       const list = JSON.parse(raw);
       if (Array.isArray(list)) {
-        const normalized = list
-          .filter(item => item && typeof item === 'object' && item.id)
-          .map(item => this.normalizeRecord(item));
-        return normalized.sort((a, b) => {
-          const tA = new Date(a.updatedAt || a.savedAt || a.timestamp || 0).getTime();
-          const tB = new Date(b.updatedAt || b.savedAt || b.timestamp || 0).getTime();
-          return tB - tA;
-        });
+        return list.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
       }
     } catch (e) {
       console.warn('Ralat membaca arkib sejarah:', e);
@@ -357,15 +257,13 @@ const StorageTool = {
     const now = new Date().toISOString();
     const category = this.determineCategory(data);
 
-    let record = {
+    const record = {
       ...data,
       id: currentId,
       category: category,
       updatedAt: now,
       createdAt: data.createdAt || now
     };
-
-    record = this.normalizeRecord(record);
 
     const existingIndex = history.findIndex(item => item.id === currentId);
     if (existingIndex >= 0) {
@@ -375,35 +273,29 @@ const StorageTool = {
       history.unshift(record);
     }
 
-    this.setCurrentEditingId(currentId);
-    const saveOk = this.safeSaveHistory(history);
+    try {
+      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
+      localStorage.setItem(this.CURRENT_ID_KEY, currentId);
 
-    // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
-    if (this.isCloudEnabled()) {
-      // Maklumkan UI proses muat naik bermula
-      window.dispatchEvent(new CustomEvent('eopr:cloud-syncing', { detail: { record } }));
-
-      this.sendToCloud(record).then(cloudRes => {
-        if (cloudRes && cloudRes.status === 'success' && cloudRes.record) {
-          const historyNow = this.getHistory();
-          const idx = historyNow.findIndex(i => i.id === record.id);
-          if (idx >= 0) {
-            if (cloudRes.record.images) {
+      // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
+      if (this.isCloudEnabled()) {
+        this.sendToCloud(record).then(cloudRes => {
+          if (cloudRes && cloudRes.record && cloudRes.record.images) {
+            const historyNow = this.getHistory();
+            const idx = historyNow.findIndex(i => i.id === record.id);
+            if (idx >= 0) {
               historyNow[idx].images = cloudRes.record.images;
+              localStorage.setItem(this.HISTORY_KEY, JSON.stringify(historyNow));
             }
-            this.safeSaveHistory(historyNow);
           }
-          window.dispatchEvent(new CustomEvent('eopr:cloud-synced', { detail: { record: cloudRes.record, success: true } }));
-        } else {
-          window.dispatchEvent(new CustomEvent('eopr:cloud-synced', { detail: { record, success: false, error: cloudRes?.message } }));
-        }
-      }).catch(e => {
-        console.warn('Latar belakang awan:', e);
-        window.dispatchEvent(new CustomEvent('eopr:cloud-synced', { detail: { record, success: false, error: e.message } }));
-      });
-    }
+        }).catch(e => console.warn('Latar belakang awan:', e));
+      }
 
-    return { success: saveOk, record, count: history.length };
+      return { success: true, record, count: history.length };
+    } catch (err) {
+      console.warn('Ralat kuota LocalStorage arkib sejarah:', err);
+      return { success: false, error: err.message, record };
+    }
   },
 
   /**
@@ -413,40 +305,39 @@ const StorageTool = {
     if (!id) return false;
     let history = this.getHistory();
     history = history.filter(item => item.id !== id);
-    const saveOk = this.safeSaveHistory(history);
-    if (this.getCurrentEditingId() === id) {
-      this.setCurrentEditingId(null);
-    }
+    try {
+      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
+      if (this.getCurrentEditingId() === id) {
+        this.setCurrentEditingId(null);
+      }
 
-    // Padam juga dari Google Sheets DELIMa jika terhubung
-    if (this.isCloudEnabled()) {
-      this.deleteFromCloud(id).catch(e => console.warn('Padam dari awan:', e));
-    }
+      // Padam juga dari Google Sheets DELIMa jika terhubung
+      if (this.isCloudEnabled()) {
+        this.deleteFromCloud(id).catch(e => console.warn('Padam dari awan:', e));
+      }
 
-    return saveOk;
+      return true;
+    } catch (e) {
+      console.warn('Gagal memadam rekod:', e);
+      return false;
+    }
   },
 
   /**
    * Pengurusan Konfigurasi URL Google Apps Script Awan DELIMa
    */
   getCloudUrl() {
-    let custom = (localStorage.getItem(this.CLOUD_URL_KEY) || '').trim();
-    // Jika URL lama tamat dengan /dev atau mengandungi ID ujian lama, pulihkan ke DEFAULT_CLOUD_URL rasmi (/exec)
-    if (custom && (custom.endsWith('/dev') || custom.includes('/dev?') || custom.includes('AKfycbwytHYVqDyhzRwkIZltErAGaKCuOCwp1hPjHfNarp0'))) {
-      localStorage.removeItem(this.CLOUD_URL_KEY);
-      custom = '';
-    }
-    return custom || this.DEFAULT_CLOUD_URL || '';
+    return (localStorage.getItem(this.CLOUD_URL_KEY) || '').trim();
   },
 
   setCloudUrl(url) {
     const cleanUrl = (url || '').trim();
-    if (!cleanUrl || cleanUrl === this.DEFAULT_CLOUD_URL) {
+    if (!cleanUrl) {
       localStorage.removeItem(this.CLOUD_URL_KEY);
     } else {
       localStorage.setItem(this.CLOUD_URL_KEY, cleanUrl);
     }
-    return cleanUrl || this.DEFAULT_CLOUD_URL;
+    return cleanUrl;
   },
 
   isCloudEnabled() {
@@ -487,24 +378,12 @@ const StorageTool = {
         const local = this.getHistory();
         const localMap = new Map();
         local.forEach(item => {
-          if (item && item.id) localMap.set(item.id, this.normalizeRecord(item));
+          if (item && item.id) localMap.set(item.id, item);
         });
 
-        // Gabungkan rekod awan (normalkan tarikh dan masa)
-        json.records.forEach(rawCloudItem => {
-          if (rawCloudItem && rawCloudItem.id) {
-            const cloudItem = this.normalizeRecord(rawCloudItem);
-            const existing = localMap.get(cloudItem.id);
-            if (existing) {
-              // Jika rekod tempatan mempunyai base64, gantikan dengan URL Google Drive daripada awan
-              localMap.set(cloudItem.id, {
-                ...existing,
-                ...cloudItem,
-                images: cloudItem.images || existing.images
-              });
-            } else {
-              localMap.set(cloudItem.id, cloudItem);
-            }
+        json.records.forEach(cloudItem => {
+          if (cloudItem && cloudItem.id) {
+            localMap.set(cloudItem.id, cloudItem);
           }
         });
 
@@ -514,7 +393,7 @@ const StorageTool = {
           return tB - tA;
         });
 
-        this.safeSaveHistory(merged);
+        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(merged));
         return { success: true, count: merged.length, cloudCount: json.records.length, records: merged };
       }
       return { success: false, reason: json ? json.message : 'invalid_response' };
