@@ -161,12 +161,7 @@ function setupNavigation() {
       if (pageId === "page5") {
         renderPage5();
         // Segerakkan data terkini daripada Google Sheet di latar belakang
-        DatabaseAPI.getAllRecords().then(records => {
-          if (records && records.length) {
-            allRecords = records;
-            renderPage5();
-          }
-        }).catch(() => {});
+        triggerCloudSync(false);
       }
       if (pageId === "page6") renderPage6();
       if (pageId === "page7") renderCalendar();
@@ -2657,28 +2652,84 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
   win.document.close();
 });
 
-// Butang Segerak Data Awan daripada Google Sheet
-const syncBtn = document.getElementById("sync-records-btn");
-if (syncBtn) {
-  syncBtn.addEventListener("click", async () => {
-    const origHtml = syncBtn.innerHTML;
-    syncBtn.disabled = true;
-    syncBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width:16px;height:16px"></i> <span>Menyegerak...</span>`;
-    if (window.lucide) window.lucide.createIcons();
+// ========================================================
+// PENGURUSAN SEGERAK AWAN HEADER (GOOGLE SHEETS)
+// ========================================================
+async function triggerCloudSync(isManual = false) {
+  const cloudBtn = document.getElementById("btn-cloud-sync");
+  const cloudIcon = document.getElementById("cloud-sync-icon");
+  if (!cloudBtn) return;
 
-    try {
-      const records = await DatabaseAPI.getAllRecords();
-      allRecords = records;
-      renderPage5();
-      showToast(`Berjaya menyegerakkan ${records.length} rekod daripada Google Sheet!`, "success");
-    } catch (err) {
-      showToast("Gagal menyegerakkan data awan: " + (err.message || err), "error");
-    } finally {
-      syncBtn.disabled = false;
-      syncBtn.innerHTML = origHtml;
-      if (window.lucide) window.lucide.createIcons();
+  // 1. Tetapkan status SEDANG MENYEGERAK (Loading State)
+  cloudBtn.classList.remove("status-success", "status-error");
+  cloudBtn.classList.add("status-loading");
+  cloudBtn.setAttribute("title", "Sedang menyegerak data dengan Google Sheets...");
+  if (cloudIcon) {
+    cloudIcon.setAttribute("data-lucide", "refresh-cw");
+    cloudIcon.classList.add("animate-spin");
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  let isSuccess = false;
+  let recordCount = 0;
+  let statusMsg = "";
+
+  try {
+    const res = await DatabaseAPI.syncFromCloud();
+    if (res && res.success) {
+      allRecords = res.data || [];
+      recordCount = res.count || allRecords.length;
+      isSuccess = true;
+
+      // Segar semula paparan tab statistik jika sedang dibuka
+      const p5 = document.getElementById("page5");
+      if (p5 && !p5.classList.contains("page-hidden") && typeof renderPage5 === "function") {
+        renderPage5();
+      }
+    } else {
+      isSuccess = false;
+      statusMsg = res ? res.message : "Gagal menghubungi Google Sheet";
     }
-  });
+  } catch (err) {
+    console.warn("Ralat sambungan awan:", err);
+    isSuccess = false;
+    statusMsg = err.message || "Ralat rangkaian";
+  } finally {
+    // 2. Kemas kini status visual (HIJAU jika Berjaya, MERAH jika Gagal)
+    cloudBtn.classList.remove("status-loading");
+    if (cloudIcon) {
+      cloudIcon.classList.remove("animate-spin");
+    }
+
+    if (isSuccess) {
+      cloudBtn.classList.remove("status-error");
+      cloudBtn.classList.add("status-success");
+      cloudBtn.setAttribute("title", `Segerak Awan Berfungsi (Google Sheets Aktif - ${recordCount} rekod disegerak). Klik untuk segerak semula.`);
+      if (cloudIcon) cloudIcon.setAttribute("data-lucide", "cloud");
+      if (isManual) {
+        showToast(`Segerak Awan Berjaya! (${recordCount} rekod dikemas kini)`, "success");
+      }
+    } else {
+      cloudBtn.classList.remove("status-success");
+      cloudBtn.classList.add("status-error");
+      cloudBtn.setAttribute("title", `Segerak Awan Tidak Berfungsi: ${statusMsg}. Klik untuk cuba lagi.`);
+      if (cloudIcon) cloudIcon.setAttribute("data-lucide", "cloud-off");
+      if (isManual) {
+        showToast(`Segerak Awan Gagal: ${statusMsg}`, "error");
+      }
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  return isSuccess;
+}
+
+function setupCloudSync() {
+  const cloudBtn = document.getElementById("btn-cloud-sync");
+  if (cloudBtn) {
+    cloudBtn.addEventListener("click", () => triggerCloudSync(true));
+  }
 }
 
 // Cetakan: Laporan Bulanan PDF (Dinamik mengikut bulan yang dipilih)
@@ -2996,6 +3047,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   initActiveTimetable();
 
   renderPage5();
+
+  // Inisialisasi Butang Segerak Awan Header & Automatik Segerak Pada Permulaan
+  setupCloudSync();
+  triggerCloudSync(false);
 
   // Permulaan Modul WhatsApp Guru Ganti
   setupWhatsAppModalEvents();

@@ -3267,3 +3267,105 @@ html[data-device-mode="mobile"] .wa-modal-footer {
   margin-top: 2px;
   font-weight: 600;
 }
+
+/* ========================================================
+   BUTANG SEGERAK AWAN HEADER (HANYA IKON + INDIKATOR WARNA)
+   ======================================================== */
+.cloud-sync-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.cloud-sync-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.cloud-sync-btn:active {
+  transform: translateY(0);
+}
+
+/* Status: HIJAU (Segerak Awan Berfungsi dengan Baik / Bersambung) */
+.cloud-sync-btn.status-success {
+  background: rgba(16, 185, 129, 0.22) !important;
+  border-color: #10b981 !important;
+  color: #34d399 !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5) !important;
+}
+
+.cloud-sync-btn.status-success:hover {
+  background: rgba(16, 185, 129, 0.35) !important;
+  border-color: #34d399 !important;
+  color: #a7f3d0 !important;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.7) !important;
+}
+
+/* Status: MERAH (Segerak Awan Tidak Berfungsi / Gagal Sambung / Luar Talian) */
+.cloud-sync-btn.status-error {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+}
+
+.cloud-sync-btn.status-error:hover {
+  background: rgba(239, 68, 68, 0.38) !important;
+  border-color: #f87171 !important;
+  color: #fecaca !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.7) !important;
+}
+
+/* Status: SEDANG MENYEGERAK (Loading / Syncing) */
+.cloud-sync-btn.status-loading {
+  background: rgba(56, 189, 248, 0.25) !important;
+  border-color: #38bdf8 !important;
+  color: #7dd3fc !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6) !important;
+  cursor: wait;
+}
+
+/* Titik Indikator Status di Bucu Ikon */
+.cloud-sync-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  border: 1px solid #ffffff;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.cloud-sync-btn.status-success .cloud-sync-dot {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.cloud-sync-btn.status-error .cloud-sync-dot {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+.cloud-sync-btn.status-loading .cloud-sync-dot {
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+  animation: pulse 1s infinite;
+}
+

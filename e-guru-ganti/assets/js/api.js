@@ -31,13 +31,42 @@ const DatabaseAPI = {
       }
     }
 
-    // 2. Sandaran luar talian (localStorage)
     try {
       const local = localStorage.getItem(APP_CONFIG.storageKeys.records);
       return local ? JSON.parse(local) : [];
     } catch (e) {
       console.error("Ralat membaca localStorage:", e);
       return [];
+    }
+  },
+
+  /**
+   * Menyegerak terus daripada Google Sheet dengan pulangan status eksplisit (Berjaya / Gagal)
+   */
+  async syncFromCloud() {
+    if (!APP_CONFIG.googleAppsScriptUrl) {
+      return { success: false, reason: "no_url", message: "URL Google Apps Script belum dikonfigurasikan." };
+    }
+    if (!navigator.onLine) {
+      return { success: false, reason: "offline", message: "Peranti berada di luar talian." };
+    }
+    try {
+      const noCacheUrl = `${APP_CONFIG.googleAppsScriptUrl}?action=getRecords&_t=${Date.now()}`;
+      const response = await fetch(noCacheUrl, {
+        method: "GET",
+        cache: "no-store",
+        headers: { "Accept": "application/json" }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result && result.status === "success" && Array.isArray(result.data)) {
+          localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(result.data));
+          return { success: true, count: result.data.length, data: result.data };
+        }
+      }
+      return { success: false, reason: "invalid_response", message: "Respons tidak sah daripada Google Sheet." };
+    } catch (err) {
+      return { success: false, reason: "network_error", message: err.message || "Ralat sambungan rangkaian." };
     }
   },
 
