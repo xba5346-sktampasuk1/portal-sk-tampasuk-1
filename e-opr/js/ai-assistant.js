@@ -1,6 +1,6 @@
-﻿/**
+/**
  * Modul Pembantu Pintar "Jana AI" e-OPR
- * SK Tampasuk 1 Kota Belud
+ * Sistem e-OPR Pintar Sekolah
  * 
  * Ciri-ciri:
  * 1. Enjin Heuristik Pintar Sekolah (100% Offline, serta-merta, tanpa kos/kunci API)
@@ -67,10 +67,10 @@ const AIAssistant = {
    */
   templates: {
     sukan: {
-      sasaran: "Semua murid Tahun 1 hingga Tahun 6, guru-guru dan staf sokongan SK Tampasuk 1.",
+      sasaran: "Semua murid Tahun 1 hingga Tahun 6, guru-guru dan staf sokongan sekolah.",
       objektif: (p) => [
         `1. Memupuk budaya gaya hidup sihat dan cergas dalam kalangan murid selaras dasar 1Murid 1Sukan (1M1S).`,
-        `2. Mencungkil dan mengasah bakat murid dalam sukan serta memilih wakil sekolah ke peringkat MSSD Kota Belud.`,
+        `2. Mencungkil dan mengasah bakat murid dalam sukan serta memilih wakil sekolah ke peringkat daerah (MSSD).`,
         `3. Membina daya saing yang sihat, disiplin diri dan semangat kerjasama berpasukan yang utuh.`
       ].join('\n'),
       aktiviti: (p) => [
@@ -136,7 +136,7 @@ const AIAssistant = {
     },
 
     patriotisme: {
-      sasaran: "Seluruh warga SK Tampasuk 1 merangkumi murid Prasekolah hingga Tahun 6, para guru dan staf sokongan.",
+      sasaran: "Seluruh warga sekolah merangkumi murid Prasekolah hingga Tahun 6, para guru dan staf sokongan.",
       objektif: (p) => [
         `1. Menyemai dan menyuburkan semangat cinta akan tanah air serta menghargai erti kemerdekaan negara.`,
         `2. Memupuk perpaduan, persefahaman dan integrasi nasional dalam kalangan murid.`,
@@ -182,7 +182,7 @@ const AIAssistant = {
     },
 
     kebersihan_3k: {
-      sasaran: "Warga pendidik, staf sokongan, murid-murid Tahap 2 dan barisan ibu bapa PIBG SK Tampasuk 1.",
+      sasaran: "Warga pendidik, staf sokongan, murid-murid Tahap 2 dan barisan ibu bapa PIBG sekolah.",
       objektif: (p) => [
         `1. Mewujudkan persekitaran sekolah yang bersih, ceria, selamat dan kondusif untuk proses pembelajaran murid.`,
         `2. Meningkatkan kesedaran warga sekolah tentang pencegahan tempat pembiakan nyamuk Aedes dan penyakit berjangkit.`,
@@ -205,7 +205,7 @@ const AIAssistant = {
     },
 
     ppda: {
-      sasaran: "Semua murid Tahun 1 hingga Tahun 6, para guru dan kakitangan SK Tampasuk 1.",
+      sasaran: "Semua murid Tahun 1 hingga Tahun 6, para guru dan kakitangan sekolah.",
       objektif: (p) => [
         `1. Memberi pendedahan dan kesedaran tentang bahaya penyalahgunaan dadah, rokok, inhalan dan gejala 'vaping'.`,
         `2. Membina benteng ketahanan diri murid agar berani berkata 'TIDAK' kepada sebarang pengaruh negatif.`,
@@ -260,7 +260,7 @@ const AIAssistant = {
       aktiviti: (p) => [
         `1. Pendaftaran tetamu jemputan, ibu bapa dan ketibaan perasmi kehormat.`,
         `2. Ucapan alu-aluan Guru Besar dan ucapan perasmian oleh Yang Dipertua PIBG / Pegawai PPD.`,
-        `3. Persembahan selingan tarian kebudayaan dan koir murid SK Tampasuk 1.`,
+        `3. Persembahan selingan tarian kebudayaan dan persembahan bakat murid sekolah.`,
         `4. Upacara penyampaian sijil penghargaan, trofi tokoh murid dan sesi bergambar kenang-kenangan.`
       ].join('\n'),
       kelemahan: (p) => [
@@ -297,7 +297,7 @@ const AIAssistant = {
     },
 
     umum: {
-      sasaran: "Semua murid, para guru dan kakitangan SK Tampasuk 1 Kota Belud.",
+      sasaran: "Semua murid, para guru dan kakitangan pihak sekolah.",
       objektif: (p) => [
         `1. Memberi pendedahan, kefahaman dan penghayatan menyeluruh kepada murid mengenai pengisian ${p || 'program'}.`,
         `2. Meningkatkan kemahiran, potensi dan daya saing murid melalui aktiviti yang terancang.`,

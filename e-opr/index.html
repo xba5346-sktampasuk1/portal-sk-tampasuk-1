@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>e-OPR • SK Tampasuk 1 Kota Belud</title>
-  <meta name="description" content="Sistem Penjana One Page Report (OPR) Automatik SK Tampasuk 1 Kota Belud, Sabah">
+  <title>e-OPR • Sistem Penjana One Page Report Sekolah</title>
+  <meta name="description" content="Sistem Penjana One Page Report (OPR) Automatik Rasmi Sekolah">
   <meta name="theme-color" content="#06244a">
 
   <!-- PWA Manifest & App Icons -->
@@ -35,26 +35,26 @@
         <!-- Logo & Tajuk Portal Sekolah -->
         <div class="flex items-center gap-3.5">
           <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-md flex items-center justify-center overflow-hidden border-2 border-amber-400">
-            <img id="header-school-logo" src="assets/logo-sekolah.png" alt="Logo Rasmi SK Tampasuk 1" class="w-full h-full object-contain">
+            <img id="header-school-logo" src="assets/logo-sekolah.png" alt="Logo Rasmi Sekolah" class="w-full h-full object-contain">
           </div>
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight m-0">e-OPR</h1>
               <span class="bg-amber-400 text-slate-950 text-[11px] font-extrabold px-2 py-0.5 rounded shadow-sm">VERSI 2.0</span>
             </div>
-            <p class="m-0 text-xs sm:text-sm text-sky-100 font-medium tracking-wide">
-              SK Tampasuk 1, Kota Belud • Sistem Laporan Satu Muka Surat Rasmi
+            <p id="header-school-subtitle" class="m-0 text-xs sm:text-sm text-sky-100 font-medium tracking-wide">
+              Sistem Penjana One Page Report (OPR) Rasmi Sekolah
             </p>
           </div>
         </div>
 
         <!-- Kawalan Cepat Atas (Top Bar Actions) -->
         <div class="flex items-center flex-wrap gap-2.5">
-          <!-- Pautan Balik ke Portal Sekolah -->
-          <a href="../index.html" class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-bold px-3 py-2 rounded-xl text-xs border border-white/20 transition">
-            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-            <span>Portal Sekolah</span>
-          </a>
+          <!-- Butang Tetapan Sekolah (Konfigurasi Guru & Admin) -->
+          <button id="btn-open-school-settings" type="button" class="inline-flex items-center gap-1.5 bg-blue-700/80 hover:bg-blue-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs border border-blue-400/40 shadow-sm transition-transform hover:-translate-y-0.5">
+            <i data-lucide="settings" class="w-3.5 h-3.5 text-amber-300"></i>
+            <span>Tetapan Sekolah</span>
+          </button>
 
           <!-- Status Auto-Save -->
           <span id="save-status" class="text-xs text-amber-200 font-semibold bg-slate-900/40 px-3 py-1.5 rounded-full border border-amber-400/30 transition-opacity">
@@ -294,7 +294,7 @@
                 <!-- Tempat -->
                 <div class="sm:col-span-2">
                   <label class="field-label" for="tempat">Tempat / Lokasi</label>
-                  <input id="tempat" class="form-control" type="text" placeholder="Cth: Dewan Terbuka SK Tampasuk 1">
+                  <input id="tempat" class="form-control" type="text" placeholder="Cth: Dewan Terbuka / Bilik Mesyuarat">
                 </div>
 
                 <!-- Kumpulan Sasaran -->
@@ -600,7 +600,7 @@
           <div class="preview-stage">
             
             <!-- HALAMAN KERTAS A4 OPR RASMI -->
-            <article class="opr-paper" aria-label="One Page Report Rasmi SK Tampasuk 1">
+            <article class="opr-paper" aria-label="One Page Report Rasmi Sekolah">
               
               <!-- KEPALA LAPORAN (HEADER DIRAJA & SIJIL EKSKLUSIF) -->
               <header class="opr-header" id="master-opr-header">
@@ -638,9 +638,9 @@
                     <img src="assets/jata-negara.png" alt="Jata Negara Malaysia" class="circular-logo-img">
                   </div>
 
-                  <!-- Logo 2: Logo Rasmi SK Tampasuk 1 (Bulat & Penuh) -->
-                  <div class="circular-logo-badge" title="Logo Rasmi SK Tampasuk 1 Kota Belud">
-                    <img id="school-logo-img" src="assets/logo-sekolah.png" alt="Logo Rasmi SK Tampasuk 1 Kota Belud" class="circular-logo-img">
+                  <!-- Logo 2: Logo Rasmi Sekolah (Bulat & Penuh) -->
+                  <div class="circular-logo-badge" title="Logo Rasmi Sekolah">
+                    <img id="school-logo-img" src="assets/logo-sekolah.png" alt="Logo Rasmi Sekolah" class="circular-logo-img">
                   </div>
 
                 </div>
@@ -651,8 +651,8 @@
                     <span class="text-one-page">ONE PAGE</span>
                     <span class="text-report">REPORT</span>
                   </div>
-                  <div class="header-school-address">
-                    SK TAMPASUK 1, W.D.T. 158, 89150 KOTA BELUD, SABAH
+                  <div id="paper-school-address" class="header-school-address">
+                    NAMA & ALAMAT RASMI SEKOLAH ANDA
                   </div>
                 </div>
 
@@ -1087,12 +1087,15 @@
     <!-- FOOTER APLIKASI -->
     <footer class="no-print border-t border-slate-200 bg-white py-4 mt-12 text-center text-xs text-slate-500 font-medium">
       <div class="w-full max-w-[1550px] mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-        <p class="m-0">© 2026 SK Tampasuk 1, Kota Belud, Sabah. Hak Cipta Terpelihara.</p>
+        <p id="footer-school-copyright" class="m-0">© Hak Cipta Terpelihara Sekolah.</p>
         <p class="m-0 text-slate-400">Sistem e-OPR Pintar • Standard Pelaporan Kementerian Pendidikan Malaysia (KPM)</p>
       </div>
     </footer>
 
   </div>
+
+  <!-- Fail Konfigurasi Pusat Sekolah (Starter Kit) -->
+  <script src="js/config.js"></script>
 
   <!-- Skrip Aplikasi Modular -->
   <script src="js/image-tool.js"></script>
@@ -1211,6 +1214,130 @@
               <button type="button" id="btn-save-cloud-setup" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-md transition-transform hover:-translate-y-0.5">
                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
                 <span>Simpan & Segerak</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  <!-- MODAL TETAPAN SEKOLAH (KONFIGURASI PANTAS GURU & ADMIN) -->
+  <div id="modal-school-setup" class="hidden fixed inset-0 z-50 overflow-y-auto no-print">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <!-- Backdrop -->
+      <div id="school-modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+
+      <!-- Modal Card -->
+      <div class="relative bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 z-10">
+        
+        <!-- Header Modal -->
+        <div class="bg-gradient-to-r from-blue-950 via-indigo-900 to-slate-900 p-5 text-white flex items-center justify-between border-b-2 border-amber-400">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+              <i data-lucide="school" class="w-5 h-5 text-amber-400"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-extrabold m-0 tracking-tight">Tetapan Identiti Sekolah & Pangkalan Data</h3>
+              <p class="text-xs text-sky-200 m-0">Sesuaikan nama, lencana, alamat kepala surat OPR & sambungan Google Sheets sekolah anda</p>
+            </div>
+          </div>
+          <button type="button" id="btn-close-school-modal" class="text-slate-300 hover:text-white p-1 rounded-lg transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Badan Modal -->
+        <div class="p-5 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs text-amber-950 flex items-start gap-2.5">
+            <i data-lucide="info" class="w-4 h-4 text-amber-600 flex-none mt-0.5"></i>
+            <div>
+              <strong>Tetapan Mudah untuk Guru:</strong> Anda boleh mengisi maklumat di bawah dan klik <em>"Simpan Tetapan"</em>. Maklumat ini akan disimpan secara automatik pada peranti ini. Pihak pentadbir juga boleh menekan <em>"Salin Kod config.js"</em> untuk menjadikan tetapan ini kekal bagi semua guru.
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Nama Sekolah -->
+            <div class="sm:col-span-2">
+              <label for="setup-school-name" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                Nama Penuh Sekolah <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="setup-school-name" placeholder="Cth: SK Sri Bintang Utara" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Nama Singkat / Kod Sekolah -->
+            <div>
+              <label for="setup-school-short" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                Nama Singkat / Kod Sekolah
+              </label>
+              <input type="text" id="setup-school-short" placeholder="Cth: SKSBU / WBA0001" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Subtitle / Moto -->
+            <div>
+              <label for="setup-school-subtitle" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                Sari Kata / Moto Sistem
+              </label>
+              <input type="text" id="setup-school-subtitle" placeholder="Cth: Sistem Laporan Satu Muka Surat Rasmi" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Alamat Rasmi Sekolah (Kepala Surat OPR) -->
+            <div class="sm:col-span-2">
+              <label for="setup-school-address" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                Alamat Rasmi Sekolah (Dipaparkan pada Kepala Kertas OPR) <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="setup-school-address" placeholder="Cth: JALAN BINTANG, 56000 KUALA LUMPUR" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm uppercase font-semibold focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Muat Naik Logo Rasmi Sekolah -->
+            <div class="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
+                Logo Rasmi / Lencana Sekolah
+              </label>
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-300 p-1 flex items-center justify-center overflow-hidden shadow-sm flex-none">
+                  <img id="setup-logo-preview" src="assets/logo-sekolah.png" alt="Pratonton Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="flex-1 space-y-1.5">
+                  <input type="file" id="setup-logo-input" accept="image/png,image/jpeg,image/svg+xml" class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                  <p class="text-[11px] text-slate-500 m-0">Format dicadangkan: PNG telus (transparent). Logo akan automatik dipaparkan di menu, kertas OPR, dan tera air.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- URL Web App Google Apps Script (Backend) -->
+            <div class="sm:col-span-2">
+              <div class="flex items-center justify-between mb-1">
+                <label for="setup-backend-url" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider m-0">
+                  URL Google Apps Script (Web App Backend)
+                </label>
+                <span class="text-[11px] text-slate-500">Google Sheet DELIMa</span>
+              </div>
+              <input type="url" id="setup-backend-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <p class="text-[11px] text-slate-500 mt-1">Biarkan kosong jika hanya mahu menggunakan storan tempatan pada peranti ini.</p>
+            </div>
+          </div>
+
+          <!-- Status Ujian Sambungan Sekolah -->
+          <div id="school-setup-status" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
+
+          <!-- Tindakan Butang -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-slate-200">
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-export-config-code" class="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3.5 py-2.5 rounded-xl text-xs transition">
+                <i data-lucide="code-2" class="w-3.5 h-3.5 text-indigo-600"></i>
+                <span>Salin Kod config.js</span>
+              </button>
+              <button type="button" id="btn-reset-school-settings" class="inline-flex items-center gap-1 text-slate-500 hover:text-rose-600 font-semibold px-2 py-2 text-xs transition">
+                <span>Reset Asal</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-save-school-setup" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md transition-transform hover:-translate-y-0.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Simpan Tetapan Sekolah</span>
               </button>
             </div>
           </div>

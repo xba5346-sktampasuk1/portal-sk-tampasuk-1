@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
   <defs>
     <linearGradient id="skBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0b4182" />
+      <stop offset="0%" stop-color="#0b3c75" />
       <stop offset="100%" stop-color="#06244a" />
     </linearGradient>
     <linearGradient id="skGold" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fed136" />
-      <stop offset="100%" stop-color="#e09e0a" />
+      <stop offset="100%" stop-color="#d4af37" />
     </linearGradient>
     <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
@@ -17,25 +17,25 @@
   <circle cx="200" cy="200" r="190" fill="url(#skBlue)" stroke="url(#skGold)" stroke-width="8" filter="url(#badgeShadow)" />
   <circle cx="200" cy="200" r="180" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4" />
 
-  <!-- Teks Pekeliling Atas: SK TAMPASUK 1 KOTA BELUD -->
+  <!-- Teks Pekeliling Atas: LENCANA RASMI SEKOLAH -->
   <path id="textArcTop" d="M 45,200 A 155,155 0 0,1 355,200" fill="none" />
-  <text font-family="'Oswald', Arial, sans-serif" font-weight="bold" font-size="21" fill="#fed136" letter-spacing="3.5">
+  <text font-family="'Oswald', Arial, sans-serif" font-weight="bold" font-size="20" fill="#fed136" letter-spacing="3.5">
     <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
-      SK TAMPASUK 1 KOTA BELUD
+      LENCANA RASMI SEKOLAH
     </textPath>
   </text>
 
-  <!-- Teks Pekeliling Bawah: BERILMU BERAMAL BERBAKTI -->
+  <!-- Teks Pekeliling Bawah: ILMU SULUH HIDUP -->
   <path id="textArcBottom" d="M 355,200 A 155,155 0 0,1 45,200" fill="none" />
-  <text font-family="'Oswald', Arial, sans-serif" font-weight="bold" font-size="17" fill="#ffffff" letter-spacing="3">
+  <text font-family="'Oswald', Arial, sans-serif" font-weight="bold" font-size="16" fill="#ffffff" letter-spacing="3">
     <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
-      BERILMU • BERAMAL • BERBAKTI
+      ILMU SULUH HIDUP • BERBAKTI
     </textPath>
   </text>
 
   <!-- Perisai Tengah (Inner Shield) -->
   <g transform="translate(200, 200)">
-    <!-- Perisai Putih & Hijau/Kuning -->
+    <!-- Perisai Putih & Emas -->
     <path d="M -75,-65 L 75,-65 C 75,20 60,75 0,105 C -60,75 -75,20 -75,-65 Z" fill="#ffffff" stroke="url(#skGold)" stroke-width="5" />
     
     <clipPath id="innerShieldClip">
@@ -43,17 +43,19 @@
     </clipPath>
 
     <g clip-path="url(#innerShieldClip)">
-      <!-- Latar Langit & Gunung Kinabalu (Ikonik Kota Belud) -->
-      <rect x="-75" y="-65" width="150" height="75" fill="#3498db" />
-      <!-- Siluet Gunung Kinabalu -->
-      <path d="M -75,0 L -40,-35 L -15,-20 L 5,-45 L 35,-15 L 75,5 L 75,10 L -75,10 Z" fill="#1b4f72" />
-      <path d="M -15,-20 L 5,-45 L 20,-30 Z" fill="#eaf2f8" opacity="0.6" /> <!-- Puncak salji/kabut -->
+      <!-- Latar Atas: Biru Diraja -->
+      <rect x="-75" y="-65" width="150" height="75" fill="#1b4f72" />
+      
+      <!-- Bintang Kemilau di Langit -->
+      <polygon points="0,-48 3,-40 12,-40 5,-35 8,-26 0,-31 -8,-26 -5,-35 -12,-40 -3,-40" fill="#fed136" />
+      <circle cx="-45" cy="-35" r="3" fill="#ffffff" opacity="0.8" />
+      <circle cx="45" cy="-35" r="3" fill="#ffffff" opacity="0.8" />
 
-      <!-- Jalur Bawah: Hijau Alam & Buku Ilmu -->
-      <rect x="-75" y="10" width="150" height="95" fill="#27ae60" />
+      <!-- Jalur Bawah: Hijau Pendidikan -->
+      <rect x="-75" y="10" width="150" height="95" fill="#1e8449" />
 
-      <!-- Buku Terbuka (Simbol Pendidikan) -->
-      <g transform="translate(0, 38)">
+      <!-- Buku Terbuka (Simbol Pendidikan Universal) -->
+      <g transform="translate(0, 40)">
         <!-- Halaman Kiri -->
         <path d="M -4,-18 C -20,-24 -36,-18 -42,-12 L -42,12 C -36,6 -20,0 -4,6 Z" fill="#ffffff" stroke="#06244a" stroke-width="1.5" />
         <!-- Halaman Kanan -->
@@ -62,8 +64,8 @@
         <rect x="-2" y="-18" width="4" height="25" fill="#e09e0a" />
       </g>
 
-      <!-- Obor Kejayaan (Tengah Atas) -->
-      <g transform="translate(0, -5)">
+      <!-- Obor Ilmu & Kejayaan (Tengah) -->
+      <g transform="translate(0, -6)">
         <!-- Pemegang Obor -->
         <path d="M -6,15 L 6,15 L 3,30 L -3,30 Z" fill="url(#skGold)" stroke="#b8860b" stroke-width="1" />
         <ellipse cx="0" cy="15" rx="8" ry="4" fill="#e67e22" />
@@ -72,10 +74,6 @@
         <path d="M 0,-10 C -6,2 -1,8 0,10 C 1,8 6,2 0,-10 Z" fill="#f39c12" />
         <circle cx="0" cy="4" r="3" fill="#f1c40f" />
       </g>
-
-      <!-- Tahun Penubuhan / Bintang -->
-      <circle cx="-50" cy="-45" r="4" fill="#fed136" />
-      <circle cx="50" cy="-45" r="4" fill="#fed136" />
     </g>
   </g>
 </svg>

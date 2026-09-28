@@ -12,6 +12,8 @@
   --text-muted: #4b6382;
   --a4-width: 794px;
   --a4-height: 1123px;
+  /* Logo Rasmi & Watermark Sekolah (Boleh ditukar dinamik melalui config.js / JS) */
+  --school-logo-url: url('../assets/logo-sekolah.png');
 }
 
 * {
@@ -440,7 +442,7 @@ textarea.form-control {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('../assets/logo-sekolah.png');
+  background-image: var(--school-logo-url);
   background-repeat: no-repeat;
   background-position: center 62%;
   background-size: 360px 360px;
@@ -1465,7 +1467,7 @@ body.view-phone .sticky-panel {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('../assets/logo-sekolah.png');
+  background-image: var(--school-logo-url);
   background-repeat: no-repeat;
   background-position: center 60%;
   background-size: 130px 130px;

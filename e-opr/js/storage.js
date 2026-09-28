@@ -1,17 +1,18 @@
 /**
- * Modul Simpanan Draf & Arkib Sejarah e-OPR
- * SK Tampasuk 1 Kota Belud
+ * Modul Simpanan Draf & Arkib Sejarah e-OPR Pintar Sekolah
  * - Auto-save draf semasa ke LocalStorage
  * - Arkib Sejarah OPR (Koleksi automatik setiap kali 'JANA OPR' ditekan)
  * - Pengkategorian mengikut Unit & Panitia
  */
 
 const StorageTool = {
-  STORAGE_KEY: 'eopr_sk_tampasuk_1_draft',
-  HISTORY_KEY: 'eopr_sk_tampasuk_1_history',
-  CURRENT_ID_KEY: 'eopr_current_editing_id',
-  CLOUD_URL_KEY: 'eopr_sk_tampasuk_1_cloud_url',
-  DEFAULT_CLOUD_URL: 'https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec', // URL Google Apps Script Rasmi Sekolah (Web App)
+  STORAGE_KEY: 'eopr_starter_kit_draft',
+  HISTORY_KEY: 'eopr_starter_kit_history',
+  CURRENT_ID_KEY: 'eopr_starter_kit_current_id',
+  CLOUD_URL_KEY: 'eopr_starter_kit_cloud_url',
+  SETTINGS_KEY: 'eopr_starter_kit_school_settings',
+  // URL Default: Kosong secara lalai untuk diisi oleh pihak sekolah pembeli
+  DEFAULT_CLOUD_URL: '',
   debounceTimer: null,
 
   /**
@@ -100,6 +101,72 @@ const StorageTool = {
   },
 
   /**
+   * Penyeragaman Tarikh ke format standard HTML YYYY-MM-DD
+   */
+  normalizeDateToYMD(val) {
+    if (!val) return "";
+    const str = String(val).trim();
+    if (str.includes("T")) {
+      const d = new Date(str);
+      if (!isNaN(d.getTime())) {
+        const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        const myTime = new Date(utc + (3600000 * 8)); // Paksa UTC+8 (Waktu Malaysia)
+        const y = myTime.getFullYear();
+        const m = String(myTime.getMonth() + 1).padStart(2, "0");
+        const day = String(myTime.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+    }
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
+      const [d, m, y] = str.split("/");
+      return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      return str;
+    }
+    const spaceMatch = str.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (spaceMatch) return spaceMatch[1];
+    return str;
+  },
+
+  /**
+   * Penyeragaman Masa ke format standard HTML HH:mm (24-jam)
+   */
+  normalizeTimeToHHMM(timeStr) {
+    if (!timeStr) return "";
+    const str = String(timeStr).trim();
+    if (str.startsWith("1899-12-30T") || str.startsWith("1899-12-29T") || str.includes("T")) {
+      const match = str.match(/T(\d{2}):(\d{2}):(\d{2})/);
+      if (match) {
+        const utcTotalSec = parseInt(match[1], 10) * 3600 + parseInt(match[2], 10) * 60 + parseInt(match[3], 10);
+        const offsetSec = str.startsWith("1899-12-") ? 27925 : 28800;
+        let totalLocalSec = (utcTotalSec + offsetSec) % 86400;
+        if (totalLocalSec < 0) totalLocalSec += 86400;
+        const roundedMins = Math.round(totalLocalSec / 60) % 1440;
+        const h = Math.floor(roundedMins / 60);
+        const m = roundedMins % 60;
+        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+      }
+    }
+    const hhmmMatch = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (hhmmMatch) {
+      const h = String(parseInt(hhmmMatch[1], 10)).padStart(2, "0");
+      const m = hhmmMatch[2];
+      return `${h}:${m}`;
+    }
+    const ampmMatch = str.match(/^(\d{1,2}):(\d{2})\s*(am|pm|pagi|petang|malam|tengah hari)?$/i);
+    if (ampmMatch) {
+      let h = parseInt(ampmMatch[1], 10);
+      const m = ampmMatch[2];
+      const modifier = (ampmMatch[3] || "").toLowerCase();
+      if ((modifier === "pm" || modifier === "petang" || modifier === "malam") && h < 12) h += 12;
+      if ((modifier === "am" || modifier === "pagi") && h === 12) h = 0;
+      return `${String(h).padStart(2, "0")}:${m}`;
+    }
+    return str;
+  },
+
+  /**
    * Muat semula data ke dalam borang & pratonton
    */
   loadData(data) {
@@ -119,14 +186,18 @@ const StorageTool = {
       window.ImageTool.setLayout(data.photoLayout);
     }
 
+    const cleanTarikh = this.normalizeDateToYMD(data.tarikh);
+    const cleanMasaMula = this.normalizeTimeToHHMM(data.masaMula);
+    const cleanMasaTamat = this.normalizeTimeToHHMM(data.masaTamat);
+
     const fieldMap = {
       'anjuran': data.anjuran,
       'anjuran-lain': data.anjuranLain,
       'program': data.program,
-      'tarikh': data.tarikh,
+      'tarikh': cleanTarikh,
       'hari': data.hari,
-      'masa-mula': data.masaMula,
-      'masa-tamat': data.masaTamat,
+      'masa-mula': cleanMasaMula,
+      'masa-tamat': cleanMasaTamat,
       'tempat': data.tempat,
       'sasaran': data.sasaran,
       'objektif': data.objektif,
@@ -262,6 +333,9 @@ const StorageTool = {
       ...data,
       id: currentId,
       category: category,
+      tarikh: this.normalizeDateToYMD(data.tarikh),
+      masaMula: this.normalizeTimeToHHMM(data.masaMula),
+      masaTamat: this.normalizeTimeToHHMM(data.masaTamat),
       updatedAt: now,
       createdAt: data.createdAt || now
     };
@@ -327,11 +401,31 @@ const StorageTool = {
   /**
    * Pengurusan Konfigurasi URL Google Apps Script Awan DELIMa
    */
+  getDefaultCloudUrl() {
+    if (typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl) {
+      return (window.EOPR_CONFIG.backendUrl || '').trim();
+    }
+    // Semak jika ada tetapan yang disimpan oleh guru melalui UI
+    try {
+      const customSettings = localStorage.getItem(this.SETTINGS_KEY);
+      if (customSettings) {
+        const parsed = JSON.parse(customSettings);
+        if (parsed && parsed.backendUrl) return parsed.backendUrl.trim();
+      }
+    } catch (e) {}
+    return (this.DEFAULT_CLOUD_URL || '').trim();
+  },
+
   getCloudUrl() {
     const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
     if (savedUrl === 'disabled') return '';
     if (savedUrl && savedUrl.trim()) return savedUrl.trim();
-    return (this.DEFAULT_CLOUD_URL || '').trim();
+    return this.getDefaultCloudUrl();
+  },
+
+  isHardcodedFromConfig() {
+    const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
+    return !savedUrl && !!(typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl);
   },
 
   setCloudUrl(url) {
@@ -382,11 +476,19 @@ const StorageTool = {
         const local = this.getHistory();
         const localMap = new Map();
         local.forEach(item => {
-          if (item && item.id) localMap.set(item.id, item);
+          if (item && item.id) {
+            item.tarikh = this.normalizeDateToYMD(item.tarikh);
+            item.masaMula = this.normalizeTimeToHHMM(item.masaMula);
+            item.masaTamat = this.normalizeTimeToHHMM(item.masaTamat);
+            localMap.set(item.id, item);
+          }
         });
 
         json.records.forEach(cloudItem => {
           if (cloudItem && cloudItem.id) {
+            cloudItem.tarikh = this.normalizeDateToYMD(cloudItem.tarikh);
+            cloudItem.masaMula = this.normalizeTimeToHHMM(cloudItem.masaMula);
+            cloudItem.masaTamat = this.normalizeTimeToHHMM(cloudItem.masaTamat);
             localMap.set(cloudItem.id, cloudItem);
           }
         });
@@ -473,4 +575,6 @@ const StorageTool = {
 };
 
 window.StorageTool = StorageTool;
+window.normalizeDateToYMD = StorageTool.normalizeDateToYMD.bind(StorageTool);
+window.normalizeTimeToHHMM = StorageTool.normalizeTimeToHHMM.bind(StorageTool);
 

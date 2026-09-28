@@ -1,5 +1,5 @@
 /**
- * Aplikasi Utama e-OPR SK Tampasuk 1 Kota Belud
+ * Aplikasi Utama e-OPR Pintar Sekolah
  * Menguruskan pratonton langsung, penukaran tema, auto-fit teks, cetakan A4 dan interaksi borang
  */
 
@@ -62,12 +62,77 @@ const themeColorMap = {
 };
 
 /**
+ * Penyeragaman Tarikh ke format standard HTML YYYY-MM-DD
+ */
+function normalizeDateToYMD(val) {
+  if (window.StorageTool && window.StorageTool.normalizeDateToYMD) {
+    return window.StorageTool.normalizeDateToYMD(val);
+  }
+  if (!val) return "";
+  const str = String(val).trim();
+  if (str.includes("T")) {
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+      const myTime = new Date(utc + (3600000 * 8));
+      const y = myTime.getFullYear();
+      const m = String(myTime.getMonth() + 1).padStart(2, "0");
+      const day = String(myTime.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+  }
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
+    const [d, m, y] = str.split("/");
+    return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    return str;
+  }
+  const spaceMatch = str.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (spaceMatch) return spaceMatch[1];
+  return str;
+}
+
+/**
+ * Penyeragaman Masa ke format standard HTML HH:mm (24-jam)
+ */
+function normalizeTimeToHHMM(timeStr) {
+  if (window.StorageTool && window.StorageTool.normalizeTimeToHHMM) {
+    return window.StorageTool.normalizeTimeToHHMM(timeStr);
+  }
+  if (!timeStr) return "";
+  const str = String(timeStr).trim();
+  if (str.startsWith("1899-12-30T") || str.startsWith("1899-12-29T") || str.includes("T")) {
+    const match = str.match(/T(\d{2}):(\d{2}):(\d{2})/);
+    if (match) {
+      const utcTotalSec = parseInt(match[1], 10) * 3600 + parseInt(match[2], 10) * 60 + parseInt(match[3], 10);
+      const offsetSec = str.startsWith("1899-12-") ? 27925 : 28800;
+      let totalLocalSec = (utcTotalSec + offsetSec) % 86400;
+      if (totalLocalSec < 0) totalLocalSec += 86400;
+      const roundedMins = Math.round(totalLocalSec / 60) % 1440;
+      const h = Math.floor(roundedMins / 60);
+      const m = roundedMins % 60;
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    }
+  }
+  const hhmmMatch = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (hhmmMatch) {
+    const h = String(parseInt(hhmmMatch[1], 10)).padStart(2, "0");
+    const m = hhmmMatch[2];
+    return `${h}:${m}`;
+  }
+  return str;
+}
+
+/**
  * Formatkan tarikh ke format standard Malaysia: DD/MM/YYYY
  */
 function formatDate(value) {
   if (!value) return placeholders.date;
-  const parts = value.split("-");
-  if (parts.length !== 3) return value;
+  const ymd = normalizeDateToYMD(value);
+  if (!ymd) return placeholders.date;
+  const parts = ymd.split("-");
+  if (parts.length !== 3) return ymd;
   return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
@@ -76,7 +141,9 @@ function formatDate(value) {
  */
 function formatTime(timeStr) {
   if (!timeStr) return "";
-  const [hStr, mStr] = timeStr.split(":");
+  const cleanTime = normalizeTimeToHHMM(timeStr);
+  if (!cleanTime) return "";
+  const [hStr, mStr] = cleanTime.split(":");
   const h = parseInt(hStr, 10);
   const m = mStr || "00";
 
@@ -183,7 +250,11 @@ function updatePreview() {
  * Kira hari automatik berdasarkan tarikh yang dipilih
  */
 function updateDay() {
-  const value = $("tarikh")?.value;
+  const rawValue = $("tarikh")?.value;
+  const value = normalizeDateToYMD(rawValue);
+  if ($("tarikh") && rawValue !== value) {
+    $("tarikh").value = value;
+  }
   if ($("hari")) {
     $("hari").value = value ? dayNames[new Date(`${value}T12:00:00`).getDay()] : "";
   }
@@ -263,7 +334,257 @@ function clearNotice() {
 }
 
 /**
- * Muat naik logo sekolah kustom (opsyenal)
+ * ==========================================================================
+ * SISTEM PENJENAMAAN SEKOLAH & TETAPAN STARTER KIT (WHITELABEL)
+ * ==========================================================================
+ */
+
+const SETTINGS_KEY = "eopr_starter_kit_school_settings";
+let pendingLogoDataUrl = null;
+
+function getSchoolSettings() {
+  const fallback = window.EOPR_CONFIG || {
+    schoolName: "NAMA SEKOLAH ANDA",
+    schoolShortName: "SEKOLAH",
+    schoolSubtitle: "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
+    schoolAddress: "NAMA & ALAMAT RASMI SEKOLAH ANDA",
+    schoolLogo: "assets/logo-sekolah.png",
+    backendUrl: "",
+    defaultTempatPlaceholder: "Cth: Dewan Terbuka / Bilik Mesyuarat",
+    footerCopyright: "© Hak Cipta Terpelihara Sekolah."
+  };
+
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...fallback, ...parsed };
+    }
+  } catch (e) {
+    console.warn("Ralat membaca tetapan sekolah:", e);
+  }
+  return fallback;
+}
+
+window.getSchoolSettings = getSchoolSettings;
+
+function applySchoolBranding() {
+  const settings = getSchoolSettings();
+
+  // 1. Tajuk Dokumen Web
+  if (settings.schoolName) {
+    document.title = `e-OPR • ${settings.schoolName}`;
+  }
+
+  // 2. Keterangan Subtitle Header
+  const headerSubtitle = $("header-school-subtitle");
+  if (headerSubtitle && settings.schoolSubtitle) {
+    headerSubtitle.textContent = settings.schoolSubtitle;
+  }
+
+  // 3. Teks Hak Cipta Footer
+  const footerCopyright = $("footer-school-copyright");
+  if (footerCopyright && settings.footerCopyright) {
+    footerCopyright.textContent = settings.footerCopyright;
+  }
+
+  // 4. Alamat Rasmi Sekolah pada Kepala Surat Kertas OPR
+  const paperAddress = $("paper-school-address");
+  if (paperAddress && settings.schoolAddress) {
+    paperAddress.textContent = settings.schoolAddress;
+  }
+
+  // 5. Placeholder Input Tempat
+  const inputTempat = $("tempat");
+  if (inputTempat && settings.defaultTempatPlaceholder) {
+    inputTempat.placeholder = settings.defaultTempatPlaceholder;
+  }
+
+  // 6. Logo Rasmi Sekolah
+  const logoSrc = settings.schoolLogo || "assets/logo-sekolah.png";
+  setSystemLogo(logoSrc, false);
+}
+
+function setSystemLogo(logoSrc, saveToStorage = false) {
+  if (!logoSrc) return;
+
+  const schoolLogo = $("school-logo-img");
+  const headerLogo = $("header-school-logo");
+
+  if (schoolLogo) schoolLogo.src = logoSrc;
+  if (headerLogo) headerLogo.src = logoSrc;
+
+  // Kemas kini pembolehubah CSS untuk watermark latar belakang kertas OPR secara langsung
+  document.documentElement.style.setProperty("--school-logo-url", `url("${logoSrc}")`);
+
+  if (saveToStorage) {
+    try {
+      const current = getSchoolSettings();
+      current.schoolLogo = logoSrc;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(current));
+    } catch (e) {
+      console.warn("Gagal menyimpan logo ke localStorage:", e);
+    }
+  }
+}
+
+/**
+ * Pengendalian Modal Tetapan Sekolah
+ */
+function openSchoolSettingsModal() {
+  const modal = $("modal-school-setup");
+  if (!modal) return;
+
+  const settings = getSchoolSettings();
+  if ($("setup-school-name")) $("setup-school-name").value = settings.schoolName || "";
+  if ($("setup-school-short")) $("setup-school-short").value = settings.schoolShortName || "";
+  if ($("setup-school-subtitle")) $("setup-school-subtitle").value = settings.schoolSubtitle || "";
+  if ($("setup-school-address")) $("setup-school-address").value = settings.schoolAddress || "";
+  if ($("setup-backend-url")) {
+    const currentBackend = (window.StorageTool && window.StorageTool.getCloudUrl()) || settings.backendUrl || "";
+    $("setup-backend-url").value = currentBackend;
+  }
+  if ($("setup-logo-preview")) {
+    $("setup-logo-preview").src = settings.schoolLogo || "assets/logo-sekolah.png";
+  }
+
+  const statusEl = $("school-setup-status");
+  if (statusEl) {
+    statusEl.className = "hidden p-3.5 rounded-xl text-xs font-semibold";
+    statusEl.textContent = "";
+  }
+
+  pendingLogoDataUrl = null;
+  modal.classList.remove("hidden");
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function closeSchoolSettingsModal() {
+  const modal = $("modal-school-setup");
+  if (modal) modal.classList.add("hidden");
+}
+
+function saveSchoolSettings() {
+  const name = ($("setup-school-name")?.value || "").trim();
+  const shortName = ($("setup-school-short")?.value || "").trim();
+  const subtitle = ($("setup-school-subtitle")?.value || "").trim();
+  const address = ($("setup-school-address")?.value || "").trim();
+  const backend = ($("setup-backend-url")?.value || "").trim();
+
+  const currentSettings = getSchoolSettings();
+  const updatedSettings = {
+    ...currentSettings,
+    schoolName: name || "NAMA SEKOLAH ANDA",
+    schoolShortName: shortName || "SEKOLAH",
+    schoolSubtitle: subtitle || "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
+    schoolAddress: address || "NAMA & ALAMAT RASMI SEKOLAH ANDA",
+    backendUrl: backend
+  };
+
+  if (pendingLogoDataUrl) {
+    updatedSettings.schoolLogo = pendingLogoDataUrl;
+  }
+
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(updatedSettings));
+    if (backend && window.StorageTool) {
+      window.StorageTool.setCloudUrl(backend);
+    }
+  } catch (e) {
+    console.warn("Gagal simpan tetapan sekolah:", e);
+  }
+
+  applySchoolBranding();
+  updateCloudStatusUI();
+  closeSchoolSettingsModal();
+  showNotice("✅ Tetapan sekolah berjaya disimpan & dikemas kini!", false);
+}
+
+function exportConfigJsCode() {
+  const s = getSchoolSettings();
+  const code = `/**
+ * =========================================================================
+ * SISTEM e-OPR • FAIL KONFIGURASI PUSAT (STARTER KIT SEKOLAH)
+ * =========================================================================
+ * Salin dan tampalkan kandungan ini ke dalam fail js/config.js
+ * =========================================================================
+ */
+
+const EOPR_CONFIG = {
+  schoolName: "${(s.schoolName || '').replace(/"/g, '\\"')}",
+  schoolShortName: "${(s.schoolShortName || '').replace(/"/g, '\\"')}",
+  schoolSubtitle: "${(s.schoolSubtitle || '').replace(/"/g, '\\"')}",
+  schoolAddress: "${(s.schoolAddress || '').replace(/"/g, '\\"')}",
+  schoolLogo: "${(s.schoolLogo && !s.schoolLogo.startsWith('data:') ? s.schoolLogo : 'assets/logo-sekolah.png')}",
+  backendUrl: "${(s.backendUrl || '').trim()}",
+  defaultTempatPlaceholder: "${(s.defaultTempatPlaceholder || 'Cth: Dewan Terbuka / Bilik Mesyuarat').replace(/"/g, '\\"')}",
+  defaultJawatanPenyedia: "Guru Bertugas Mingguan",
+  defaultJawatanPenyemak: "Penolong Kanan Pentadbiran",
+  defaultJawatanPengesah: "Guru Besar / Pengetua",
+  footerCopyright: "${(s.footerCopyright || '© Hak Cipta Terpelihara Sekolah.').replace(/"/g, '\\"')}"
+};
+
+window.EOPR_CONFIG = EOPR_CONFIG;
+`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      alert("✅ Kod konfigurasi berjaya disalin ke papan keratan (clipboard)!\n\nAnda boleh membuka fail js/config.js dan menampalkannya di sana.");
+    }).catch(() => {
+      prompt("Salin kod konfigurasi di bawah:", code);
+    });
+  } else {
+    prompt("Salin kod konfigurasi di bawah:", code);
+  }
+}
+
+function resetSchoolSettings() {
+  if (confirm("Adakah anda pasti mahu memulihkan tetapan sekolah kepada lalai?")) {
+    localStorage.removeItem(SETTINGS_KEY);
+    pendingLogoDataUrl = null;
+    applySchoolBranding();
+    openSchoolSettingsModal();
+    showNotice("Tetapan sekolah telah dipulihkan kepada lalai.", false);
+  }
+}
+
+function setupSchoolSettingsUI() {
+  const btnOpen = $("btn-open-school-settings");
+  if (btnOpen) btnOpen.addEventListener("click", openSchoolSettingsModal);
+
+  const btnClose = $("btn-close-school-modal");
+  if (btnClose) btnClose.addEventListener("click", closeSchoolSettingsModal);
+
+  const backdrop = $("school-modal-backdrop");
+  if (backdrop) backdrop.addEventListener("click", closeSchoolSettingsModal);
+
+  const btnSave = $("btn-save-school-setup");
+  if (btnSave) btnSave.addEventListener("click", saveSchoolSettings);
+
+  const btnExport = $("btn-export-config-code");
+  if (btnExport) btnExport.addEventListener("click", exportConfigJsCode);
+
+  const btnReset = $("btn-reset-school-settings");
+  if (btnReset) btnReset.addEventListener("click", resetSchoolSettings);
+
+  const logoInput = $("setup-logo-input");
+  if (logoInput) {
+    logoInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (loadEvt) => {
+        pendingLogoDataUrl = loadEvt.target.result;
+        const prev = $("setup-logo-preview");
+        if (prev) prev.src = pendingLogoDataUrl;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+/**
+ * Muat naik logo sekolah kustom dari peranti (Quick inline)
  */
 function setupCustomLogo() {
   const logoInput = $("custom-logo-input");
@@ -276,10 +597,8 @@ function setupCustomLogo() {
     const reader = new FileReader();
     reader.onload = (loadEvent) => {
       const imgUrl = loadEvent.target.result;
-      const schoolLogo = $("school-logo-img");
-      const headerLogo = $("header-school-logo");
-      if (schoolLogo) schoolLogo.src = imgUrl;
-      if (headerLogo) headerLogo.src = imgUrl;
+      setSystemLogo(imgUrl, true);
+      showNotice("✅ Logo rasmi sekolah berjaya dikemas kini!", false);
     };
     reader.readAsDataURL(file);
   });
@@ -378,6 +697,8 @@ function loadOPRToEditor(recordId) {
   // 1. Muatkan data borang, tema dan gambar
   window.StorageTool.loadData(record);
   window.StorageTool.setCurrentEditingId(record.id);
+  updateDay();
+  updatePreview();
 
   // 2. Tukar paparan ke Page Utama (Penjana OPR)
   switchView("generator");
@@ -690,12 +1011,12 @@ function renderHistoryView() {
                   <img src="assets/jata-negara.png" alt="Jata Negara" class="w-full h-full object-contain">
                 </div>
                 <div class="w-6 h-6 rounded-full bg-white p-0.5 border border-amber-400 shadow-sm flex items-center justify-center overflow-hidden">
-                  <img src="assets/logo-sekolah.png" alt="Logo Sekolah" class="w-full h-full object-contain">
+                  <img src="${(getSchoolSettings().schoolLogo || 'assets/logo-sekolah.png')}" alt="Logo Sekolah" class="w-full h-full object-contain">
                 </div>
               </div>
               <div class="flex-1 min-w-0 text-center">
                 <div class="text-[10px] font-black tracking-wider text-amber-300 uppercase leading-none" style="font-family: 'Cinzel', serif;">ONE PAGE REPORT</div>
-                <div class="text-[7.5px] font-bold text-amber-100/90 truncate tracking-wide mt-0.5">SK TAMPASUK 1 KOTA BELUD</div>
+                <div class="text-[7.5px] font-bold text-amber-100/90 truncate tracking-wide mt-0.5">${(getSchoolSettings().schoolName || 'SEKOLAH').toUpperCase()}</div>
               </div>
               <div class="px-1.5 py-0.5 rounded text-[8px] font-black text-amber-950 uppercase flex-none border border-amber-700/60 shadow-sm" style="background: linear-gradient(135deg, #fcedc5, #dfb753, #aa771c); font-family: 'Cinzel', serif;">
                 ${t.label}
@@ -1142,6 +1463,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // 10.5 Inisialisasi Penjenamaan Sekolah daripada config.js / settings
+  applySchoolBranding();
+  setupSchoolSettingsUI();
+
   // 11. Logo Kustom
   setupCustomLogo();
 
@@ -1364,7 +1689,11 @@ function updateCloudStatusUI() {
 
   if (desc) {
     if (isEnabled) {
-      desc.textContent = "Disegerakkan secara automatik bersama Google Sheets & Google Drive akaun DELIMa sekolah.";
+      if (window.StorageTool.isHardcodedFromConfig && window.StorageTool.isHardcodedFromConfig()) {
+        desc.textContent = "Disegerakkan secara automatik bersama Google Sheets DELIMa sekolah (Ditetapkan terus melalui config.js).";
+      } else {
+        desc.textContent = "Disegerakkan secara automatik bersama Google Sheets & Google Drive akaun DELIMa sekolah.";
+      }
     } else {
       desc.textContent = "Hubungkan ke Google Sheets akaun DELIMa sekolah untuk perkongsian arkib antara semua desktop guru.";
     }

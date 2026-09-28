@@ -1,15 +1,28 @@
 /**
  * =========================================================================
- * GOOGLE APPS SCRIPT: SISTEM e-OPR SK TAMPASUK 1 KOTA BELUD
+ * GOOGLE APPS SCRIPT: SISTEM e-OPR PINTAR SEKOLAH (BACKEND TEMPLATE)
  * =========================================================================
  * - Pangkalan Data Berpusat: Google Sheets (Rekod_OPR)
- * - Storan Gambar Aktiviti Berpusat: Google Drive ("e-OPR SK Tampasuk 1 Gambar Aktiviti")
+ * - Storan Gambar Aktiviti Berpusat: Google Drive (Dinamik mengikut nama sekolah)
  * - Membenarkan perkongsian arkib antara semua peranti dan desktop guru
  * =========================================================================
  */
 
 const SHEET_NAME = "Rekod_OPR";
-const FOLDER_NAME = "e-OPR SK Tampasuk 1 Gambar Aktiviti";
+
+/**
+ * Dapatkan nama folder Google Drive secara dinamik berdasarkan nama Google Sheet
+ */
+function getFolderName() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const name = ss.getName();
+    if (name && !name.includes("Untitled") && !name.includes("Tanpa tajuk")) {
+      return name + " - Gambar Aktiviti";
+    }
+  } catch (e) {}
+  return "e-OPR Gambar Aktiviti Sekolah";
+}
 
 /**
  * Pengendali Permintaan GET (Muat Turun Senarai Arkib atau Ujian Sambungan)
@@ -19,9 +32,13 @@ function doGet(e) {
     const action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "getAll";
 
     if (action === "ping") {
+      let ssName = "e-OPR Sekolah";
+      try {
+        ssName = SpreadsheetApp.getActiveSpreadsheet().getName();
+      } catch (err) {}
       return createJsonResponse({
         status: "success",
-        message: "API e-OPR SK Tampasuk 1 aktif dan sedia disambungkan!",
+        message: "API " + ssName + " aktif dan sedia disambungkan!",
         timestamp: new Date().toISOString()
       });
     }
@@ -186,98 +203,79 @@ function getAllRecords() {
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return [];
 
-  const data = sheet.getRange(2, 1, lastRow - 1, 26).getValues();
+  const range = sheet.getRange(2, 1, lastRow - 1, 26);
+  const data = range.getValues();
+  const displayData = range.getDisplayValues();
   const records = [];
 
   for (let i = data.length - 1; i >= 0; i--) { // Susun dari terkini ke lama
     const row = data[i];
-    const recordId = row[0];
+    const dispRow = displayData[i];
+    const recordId = row[0] || dispRow[0];
     if (!recordId) continue;
 
     let images = {};
     try {
       if (row[25]) {
         images = JSON.parse(row[25]);
+      } else if (dispRow[25]) {
+        images = JSON.parse(dispRow[25]);
       }
     } catch (e) {
       images = {};
     }
 
-    // Format Tarikh & Masa dengan tepat mengikut zon waktu Malaysia
-    let tarikhStr = "";
-    if (row[7]) {
-      if (row[7] instanceof Date) {
-        tarikhStr = Utilities.formatDate(row[7], "Asia/Kuala_Lumpur", "yyyy-MM-dd");
-      } else {
-        tarikhStr = String(row[7]).trim();
+    // Format tarikh ke format standard YYYY-MM-DD
+    let cleanTarikh = dispRow[7] || "";
+    if (row[7] instanceof Date) {
+      cleanTarikh = Utilities.formatDate(row[7], "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    } else if (cleanTarikh && cleanTarikh.includes("/")) {
+      const parts = cleanTarikh.split("/");
+      if (parts.length === 3 && parts[2].length === 4) {
+        cleanTarikh = parts[2] + "-" + parts[1].padStart(2, "0") + "-" + parts[0].padStart(2, "0");
       }
     }
 
-    let masaMulaStr = "";
-    if (row[9]) {
-      if (row[9] instanceof Date) {
-        masaMulaStr = Utilities.formatDate(row[9], "Asia/Kuala_Lumpur", "HH:mm");
-      } else {
-        masaMulaStr = String(row[9]).trim();
-      }
+    // Format masa mula ke HH:mm
+    let cleanMasaMula = dispRow[9] || "";
+    if (row[9] instanceof Date) {
+      cleanMasaMula = Utilities.formatDate(row[9], "Asia/Kuala_Lumpur", "HH:mm");
     }
 
-    let masaTamatStr = "";
-    if (row[10]) {
-      if (row[10] instanceof Date) {
-        masaTamatStr = Utilities.formatDate(row[10], "Asia/Kuala_Lumpur", "HH:mm");
-      } else {
-        masaTamatStr = String(row[10]).trim();
-      }
-    }
-
-    let timestampStr = "";
-    let updatedAtStr = new Date().toISOString();
-    if (row[1]) {
-      try {
-        if (row[1] instanceof Date) {
-          timestampStr = Utilities.formatDate(row[1], "Asia/Kuala_Lumpur", "yyyy-MM-dd HH:mm:ss");
-          updatedAtStr = row[1].toISOString();
-        } else {
-          timestampStr = String(row[1]);
-          const d = new Date(row[1]);
-          if (!isNaN(d.getTime())) {
-            updatedAtStr = d.toISOString();
-          }
-        }
-      } catch (e) {
-        timestampStr = String(row[1]);
-      }
+    // Format masa tamat ke HH:mm
+    let cleanMasaTamat = dispRow[10] || "";
+    if (row[10] instanceof Date) {
+      cleanMasaTamat = Utilities.formatDate(row[10], "Asia/Kuala_Lumpur", "HH:mm");
     }
 
     records.push({
       id: recordId,
-      timestamp: timestampStr,
-      theme: row[2] || "pentadbiran",
-      category: row[3] || "Umum",
-      anjuran: row[4] || "",
-      anjuranLain: row[5] || "",
-      program: row[6] || "",
-      tarikh: tarikhStr,
-      hari: row[8] || "",
-      masaMula: masaMulaStr,
-      masaTamat: masaTamatStr,
-      tempat: row[11] || "",
-      sasaran: row[12] || "",
-      objektif: row[13] || "",
-      aktiviti: row[14] || "",
-      kelemahan: row[15] || "",
-      cadangan: row[16] || "",
-      namaPenyedia: row[17] || "",
-      jawatanPenyedia: row[18] || "",
-      namaPenyemak: row[19] || "",
-      jawatanPenyemak: row[20] || "",
-      namaPengesah: row[21] || "",
-      jawatanPengesah: row[22] || "",
-      photoLayout: row[23] || "6",
-      panitiaSelect: row[24] || "",
+      timestamp: row[1] ? (row[1] instanceof Date ? Utilities.formatDate(row[1], "Asia/Kuala_Lumpur", "yyyy-MM-dd HH:mm:ss") : row[1]) : dispRow[1],
+      theme: dispRow[2] || row[2] || "pentadbiran",
+      category: dispRow[3] || row[3] || "Umum",
+      anjuran: dispRow[4] || row[4] || "",
+      anjuranLain: dispRow[5] || row[5] || "",
+      program: dispRow[6] || row[6] || "",
+      tarikh: cleanTarikh,
+      hari: dispRow[8] || row[8] || "",
+      masaMula: cleanMasaMula,
+      masaTamat: cleanMasaTamat,
+      tempat: dispRow[11] || row[11] || "",
+      sasaran: dispRow[12] || row[12] || "",
+      objektif: dispRow[13] || row[13] || "",
+      aktiviti: dispRow[14] || row[14] || "",
+      kelemahan: dispRow[15] || row[15] || "",
+      cadangan: dispRow[16] || row[16] || "",
+      namaPenyedia: dispRow[17] || row[17] || "",
+      jawatanPenyedia: dispRow[18] || row[18] || "",
+      namaPenyemak: dispRow[19] || row[19] || "",
+      jawatanPenyemak: dispRow[20] || row[20] || "",
+      namaPengesah: dispRow[21] || row[21] || "",
+      jawatanPengesah: dispRow[22] || row[22] || "",
+      photoLayout: dispRow[23] || row[23] || "6",
+      panitiaSelect: dispRow[24] || row[24] || "",
       images: images,
-      updatedAt: updatedAtStr
+      updatedAt: row[1] ? (row[1] instanceof Date ? row[1].toISOString() : new Date(row[1]).toISOString()) : new Date().toISOString()
     });
   }
 
@@ -309,11 +307,12 @@ function deleteRecordById(recordId) {
  * Cipta atau Ambil Folder Google Drive Khas Gambar OPR
  */
 function getOrCreateDriveFolder() {
-  const folders = DriveApp.getFoldersByName(FOLDER_NAME);
+  const folderName = getFolderName();
+  const folders = DriveApp.getFoldersByName(folderName);
   if (folders.hasNext()) {
     return folders.next();
   }
-  const folder = DriveApp.createFolder(FOLDER_NAME);
+  const folder = DriveApp.createFolder(folderName);
   try {
     folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   } catch (e) {
@@ -396,6 +395,11 @@ function setupSheet() {
     .setFontWeight("bold")
     .setHorizontalAlignment("center");
   sheet.setFrozenRows(1);
+  // Set format teks biasa (@) untuk lajur Tarikh & Masa
+  if (sheet.getMaxRows() > 1) {
+    sheet.getRange(2, 8, sheet.getMaxRows() - 1, 1).setNumberFormat("@");
+    sheet.getRange(2, 10, sheet.getMaxRows() - 1, 2).setNumberFormat("@");
+  }
   return sheet;
 }
 
