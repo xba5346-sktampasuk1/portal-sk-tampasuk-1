@@ -6,8 +6,12 @@
  * - Storan Gambar Aktiviti Berpusat: Google Drive (Dinamik mengikut nama sekolah)
  * - Membenarkan perkongsian arkib antara semua peranti dan desktop guru
  * =========================================================================
+ * PAUTAN WEB APP RASMI e-OPR SK TAMPASUK 1 KOTA BELUD (HARDCODED):
+ * https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec
+ * =========================================================================
  */
 
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec";
 const SHEET_NAME = "Rekod_OPR";
 
 /**

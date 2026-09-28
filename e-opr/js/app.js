@@ -1307,7 +1307,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // 6. Pengendali Navigasi Tab (Penjana OPR vs Sejarah OPR)
   const tabGen = $("tab-btn-generator");
   if (tabGen) {
-    tabGen.addEventListener("click", () => switchView("generator"));
+    tabGen.addEventListener("click", () => {
+      if (!window.StorageTool || !window.StorageTool.getCurrentEditingId()) {
+        resetOPRForm(true);
+      }
+      switchView("generator");
+    });
   }
 
   const tabHist = $("tab-btn-history");
@@ -1318,23 +1323,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnNewFromHist = $("btn-new-opr-from-history");
   if (btnNewFromHist) {
     btnNewFromHist.addEventListener("click", () => {
-      if (window.StorageTool) window.StorageTool.setCurrentEditingId(null);
-      updateEditingBanner();
+      resetOPRForm(true);
       switchView("generator");
     });
   }
 
   const btnEmptyCreate = $("btn-empty-create");
   if (btnEmptyCreate) {
-    btnEmptyCreate.addEventListener("click", () => switchView("generator"));
+    btnEmptyCreate.addEventListener("click", () => {
+      resetOPRForm(true);
+      switchView("generator");
+    });
   }
 
   const btnCancelEditing = $("btn-cancel-editing");
   if (btnCancelEditing) {
     btnCancelEditing.addEventListener("click", () => {
-      if (window.StorageTool) window.StorageTool.setCurrentEditingId(null);
-      updateEditingBanner();
-      showNotice("Mod suntingan ditutup. Anda kini mencipta OPR baharu.", false);
+      resetOPRForm(true);
+      showNotice("Mod suntingan ditutup. Borang dikosongkan.", false);
     });
   }
 
@@ -1470,12 +1476,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // 11. Logo Kustom
   setupCustomLogo();
 
-  // 12. Muat semula draf tersimpan dari LocalStorage jika ada
-  const hasDraft = window.StorageTool ? window.StorageTool.loadDraft() : false;
-  if (!hasDraft) {
-    applyTheme("pentadbiran");
-    updatePreview();
+  // 12. Pastikan borang & Master Template sentiasa bermula KOSONG dan BERSIH setiap kali dibuka
+  if (window.StorageTool) {
+    window.StorageTool.clearDraft();
+    window.StorageTool.setCurrentEditingId(null);
   }
+  resetOPRForm(true);
+  applyTheme("pentadbiran");
+  updatePreview();
 
   updateHistoryCountBadge();
   updateEditingBanner();
@@ -1780,6 +1788,11 @@ function closeCloudModal() {
 
 function setupCloudSync() {
   updateCloudStatusUI();
+
+  // Segerakkan arkib Google Sheets sekolah secara automatik di latar belakang semasa halaman dibuka
+  if (window.StorageTool && window.StorageTool.isCloudEnabled()) {
+    syncCloudHistory(false);
+  }
 
   const btnSync = $("btn-sync-cloud");
   if (btnSync) {

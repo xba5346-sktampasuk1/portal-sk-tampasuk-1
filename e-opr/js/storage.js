@@ -11,8 +11,8 @@ const StorageTool = {
   CURRENT_ID_KEY: 'eopr_starter_kit_current_id',
   CLOUD_URL_KEY: 'eopr_starter_kit_cloud_url',
   SETTINGS_KEY: 'eopr_starter_kit_school_settings',
-  // URL Default: Kosong secara lalai untuk diisi oleh pihak sekolah pembeli
-  DEFAULT_CLOUD_URL: '',
+  // URL Default Google Apps Script Rasmi SK Tampasuk 1 Kota Belud
+  DEFAULT_CLOUD_URL: 'https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec',
   debounceTimer: null,
 
   /**
@@ -84,20 +84,7 @@ const StorageTool = {
    * Simpan draf kerja semasa ke LocalStorage
    */
   saveDraft() {
-    clearTimeout(this.debounceTimer);
-    this.debounceTimer = setTimeout(() => {
-      try {
-        const data = this.getFormData();
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-        const statusElem = document.getElementById('save-status');
-        if (statusElem) {
-          statusElem.textContent = 'Draf disimpan (' + new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' }) + ')';
-          statusElem.classList.remove('opacity-0');
-        }
-      } catch (err) {
-        console.warn('Gagal menyimpan draf ke LocalStorage:', err);
-      }
-    }, 400);
+    // Dimatikan atas keperluan sistem: Borang sentiasa bermula bersih dan kosong setiap kali dibuka
   },
 
   /**
@@ -244,16 +231,7 @@ const StorageTool = {
    * Muat semula draf dari LocalStorage
    */
   loadDraft() {
-    try {
-      const raw = localStorage.getItem(this.STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        this.loadData(data);
-        return true;
-      }
-    } catch (e) {
-      console.warn('Ralat membaca draf:', e);
-    }
+    // Sentiasa kembalikan false supaya borang & template sentiasa bermula kosong
     return false;
   },
 

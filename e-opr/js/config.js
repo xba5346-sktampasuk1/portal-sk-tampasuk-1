@@ -16,16 +16,16 @@ const EOPR_CONFIG = {
   // 1. IDENTITI & NAMA SEKOLAH
   // -----------------------------------------------------------------------
   // Nama penuh sekolah seperti pada kepala surat rasmi
-  schoolName: "NAMA SEKOLAH ANDA",
+  schoolName: "SK TAMPASUK 1 KOTA BELUD",
 
   // Nama ringkas atau kod sekolah
-  schoolShortName: "SEKOLAH",
+  schoolShortName: "SK TAMPASUK 1",
 
   // Keterangan / Moto / Subtitle sistem di menu atas
   schoolSubtitle: "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
 
   // Alamat rasmi sekolah (muncul di kepala surat kertas laporan OPR)
-  schoolAddress: "NAMA & ALAMAT RASMI SEKOLAH ANDA",
+  schoolAddress: "WDT 11, 89158 KOTA BELUD, SABAH",
 
   // -----------------------------------------------------------------------
   // 2. LOGO RASMI SEKOLAH
@@ -40,7 +40,7 @@ const EOPR_CONFIG = {
   // Masukkan URL Web App Google Apps Script akaun Google DELIMa sekolah anda.
   // Kosongkan jika belum dikonfigurasi (sistem akan berjalan dalam mod tempatan).
   // Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
-  backendUrl: "",
+  backendUrl: "https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec",
 
   // -----------------------------------------------------------------------
   // 4. NILAI LALAI BORANG (DEFAULT FORM VALUES)
@@ -53,7 +53,7 @@ const EOPR_CONFIG = {
   // -----------------------------------------------------------------------
   // 5. TEKS HAK CIPTA (FOOTER)
   // -----------------------------------------------------------------------
-  footerCopyright: "© Hak Cipta Terpelihara Sekolah."
+  footerCopyright: "© Hak Cipta Terpelihara SK Tampasuk 1 Kota Belud."
 };
 
 // Pasang ke objek tetingkap global (Window)
