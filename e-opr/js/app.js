@@ -344,20 +344,25 @@ let pendingLogoDataUrl = null;
 
 function getSchoolSettings() {
   const fallback = window.EOPR_CONFIG || {
-    schoolName: "NAMA SEKOLAH ANDA",
-    schoolShortName: "SEKOLAH",
+    schoolName: "SK TAMPASUK 1 KOTA BELUD",
+    schoolShortName: "SK TAMPASUK 1",
     schoolSubtitle: "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
-    schoolAddress: "NAMA & ALAMAT RASMI SEKOLAH ANDA",
-    schoolLogo: "assets/logo-sekolah.png",
-    backendUrl: "",
+    schoolAddress: "WDT 11, 89158 KOTA BELUD, SABAH",
+    schoolLogo: (window.OFFICIAL_SCHOOL_LOGO || "assets/logo-sekolah.png"),
+    backendUrl: "https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec",
     defaultTempatPlaceholder: "Cth: Dewan Terbuka / Bilik Mesyuarat",
-    footerCopyright: "© Hak Cipta Terpelihara Sekolah."
+    footerCopyright: "\u00A9 Hak Cipta Terpelihara SK Tampasuk 1 Kota Belud."
   };
 
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      // Sekiranya simpanan peranti ini masih mengandungi nama placeholder atau logo dummy lama, tetapkan semula
+      if (parsed && (parsed.schoolName === "NAMA SEKOLAH ANDA" || parsed.schoolName.includes('Tampasuk'))) {
+        localStorage.removeItem(SETTINGS_KEY);
+        return fallback;
+      }
       return { ...fallback, ...parsed };
     }
   } catch (e) {
@@ -401,21 +406,36 @@ function applySchoolBranding() {
   }
 
   // 6. Logo Rasmi Sekolah
-  const logoSrc = settings.schoolLogo || "assets/logo-sekolah.png";
+  const logoSrc = settings.schoolLogo || window.OFFICIAL_SCHOOL_LOGO || "assets/logo-sekolah.png";
   setSystemLogo(logoSrc, false);
 }
 
 function setSystemLogo(logoSrc, saveToStorage = false) {
-  if (!logoSrc) return;
+  const targetSrc = logoSrc || window.OFFICIAL_SCHOOL_LOGO || "assets/logo-sekolah.png";
 
   const schoolLogo = $("school-logo-img");
   const headerLogo = $("header-school-logo");
+  const setupPreview = $("setup-logo-preview");
 
-  if (schoolLogo) schoolLogo.src = logoSrc;
-  if (headerLogo) headerLogo.src = logoSrc;
+  const attachFallback = (img) => {
+    if (!img) return;
+    img.src = targetSrc;
+    img.onerror = function() {
+      this.onerror = null;
+      if (window.OFFICIAL_SCHOOL_LOGO && this.src !== window.OFFICIAL_SCHOOL_LOGO) {
+        this.src = window.OFFICIAL_SCHOOL_LOGO;
+      } else {
+        this.src = "assets/logo-sekolah.png";
+      }
+    };
+  };
+
+  attachFallback(schoolLogo);
+  attachFallback(headerLogo);
+  attachFallback(setupPreview);
 
   // Kemas kini pembolehubah CSS untuk watermark latar belakang kertas OPR secara langsung
-  document.documentElement.style.setProperty("--school-logo-url", `url("${logoSrc}")`);
+  document.documentElement.style.setProperty("--school-logo-url", `url("${targetSrc}")`);
 
   if (saveToStorage) {
     try {
@@ -445,7 +465,7 @@ function openSchoolSettingsModal() {
     $("setup-backend-url").value = currentBackend;
   }
   if ($("setup-logo-preview")) {
-    $("setup-logo-preview").src = settings.schoolLogo || "assets/logo-sekolah.png";
+    $("setup-logo-preview").src = settings.schoolLogo || window.OFFICIAL_SCHOOL_LOGO || "assets/logo-sekolah.png";
   }
 
   const statusEl = $("school-setup-status");
@@ -1011,7 +1031,7 @@ function renderHistoryView() {
                   <img src="assets/jata-negara.png" alt="Jata Negara" class="w-full h-full object-contain">
                 </div>
                 <div class="w-6 h-6 rounded-full bg-white p-0.5 border border-amber-400 shadow-sm flex items-center justify-center overflow-hidden">
-                  <img src="${(getSchoolSettings().schoolLogo || 'assets/logo-sekolah.png')}" alt="Logo Sekolah" class="w-full h-full object-contain">
+                  <img src="${(getSchoolSettings().schoolLogo || window.OFFICIAL_SCHOOL_LOGO || 'assets/logo-sekolah.png')}" onerror="this.onerror=null; if(window.OFFICIAL_SCHOOL_LOGO) this.src=window.OFFICIAL_SCHOOL_LOGO;" alt="Logo Sekolah" class="w-full h-full object-contain">
                 </div>
               </div>
               <div class="flex-1 min-w-0 text-center">
@@ -1476,14 +1496,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 11. Logo Kustom
   setupCustomLogo();
 
-  // 12. Pastikan borang & Master Template sentiasa bermula KOSONG dan BERSIH setiap kali dibuka
+  // 12. Muat semula draf kerja jika wujud, jika tiada mulakan dengan borang bersih
+  let hasDraft = false;
   if (window.StorageTool) {
-    window.StorageTool.clearDraft();
-    window.StorageTool.setCurrentEditingId(null);
+    hasDraft = window.StorageTool.loadDraft();
   }
-  resetOPRForm(true);
-  applyTheme("pentadbiran");
-  updatePreview();
+  if (!hasDraft) {
+    resetOPRForm(true);
+    applyTheme("pentadbiran");
+    updatePreview();
+  }
 
   updateHistoryCountBadge();
   updateEditingBanner();

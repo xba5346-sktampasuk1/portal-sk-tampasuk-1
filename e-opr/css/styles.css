@@ -16,6 +16,10 @@
   --school-logo-url: url('../assets/logo-sekolah.png');
 }
 
+.hidden {
+  display: none !important;
+}
+
 * {
   box-sizing: border-box;
 }

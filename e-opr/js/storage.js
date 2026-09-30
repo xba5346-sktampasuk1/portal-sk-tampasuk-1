@@ -11,8 +11,10 @@ const StorageTool = {
   CURRENT_ID_KEY: 'eopr_starter_kit_current_id',
   CLOUD_URL_KEY: 'eopr_starter_kit_cloud_url',
   SETTINGS_KEY: 'eopr_starter_kit_school_settings',
-  // URL Default Google Apps Script Rasmi SK Tampasuk 1 Kota Belud
-  DEFAULT_CLOUD_URL: 'https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec',
+  // URL Lalai Google Apps Script: Dikosongkan secara lalai untuk pakej jualan / starter kit.
+  // Pihak sekolah pembeli boleh memasukkan URL Google Apps Script mereka dalam js/config.js (backendUrl)
+  // atau melalui modal "Tetapan Sekolah" di skrin.
+  DEFAULT_CLOUD_URL: '',
   debounceTimer: null,
 
   /**
@@ -84,7 +86,22 @@ const StorageTool = {
    * Simpan draf kerja semasa ke LocalStorage
    */
   saveDraft() {
-    // Dimatikan atas keperluan sistem: Borang sentiasa bermula bersih dan kosong setiap kali dibuka
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = setTimeout(() => {
+      try {
+        const data = this.getFormData();
+        if (data && (data.program || data.aktiviti || data.tempat || (data.images && Object.keys(data.images).length > 0))) {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+          const statusElem = document.getElementById('save-status');
+          if (statusElem) {
+            statusElem.textContent = 'Draf disimpan (' + new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' }) + ')';
+            statusElem.classList.remove('opacity-0');
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal menyimpan draf ke LocalStorage:', err);
+      }
+    }, 400);
   },
 
   /**
@@ -231,7 +248,18 @@ const StorageTool = {
    * Muat semula draf dari LocalStorage
    */
   loadDraft() {
-    // Sentiasa kembalikan false supaya borang & template sentiasa bermula kosong
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data && (data.program || data.aktiviti || data.tempat || (data.images && Object.keys(data.images).length > 0))) {
+          this.loadData(data);
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('Ralat membaca draf:', e);
+    }
     return false;
   },
 
@@ -275,7 +303,17 @@ const StorageTool = {
       if (!raw) return [];
       const list = JSON.parse(raw);
       if (Array.isArray(list)) {
-        return list.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
+        // Tapis sebarang rekod ujian lama berkaitan sekolah pembangunan terdahulu jika wujud
+        const cleanList = list.filter(item => {
+          if (!item) return false;
+          const p = (item.program || '').toLowerCase();
+          const t = (item.tempat || '').toLowerCase();
+          return !p.includes('tampasuk') && !t.includes('tampasuk');
+        });
+        if (cleanList.length !== list.length) {
+          localStorage.setItem(this.HISTORY_KEY, JSON.stringify(cleanList));
+        }
+        return cleanList.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
       }
     } catch (e) {
       console.warn('Ralat membaca arkib sejarah:', e);
@@ -380,10 +418,12 @@ const StorageTool = {
    * Pengurusan Konfigurasi URL Google Apps Script Awan DELIMa
    */
   getDefaultCloudUrl() {
+    // 1. Semak fail js/config.js (jika pembeli/admin telah hardcode)
     if (typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl) {
-      return (window.EOPR_CONFIG.backendUrl || '').trim();
+      const hardcoded = (window.EOPR_CONFIG.backendUrl || '').trim();
+      if (hardcoded) return hardcoded;
     }
-    // Semak jika ada tetapan yang disimpan oleh guru melalui UI
+    // 2. Semak jika ada tetapan yang disimpan oleh guru melalui UI
     try {
       const customSettings = localStorage.getItem(this.SETTINGS_KEY);
       if (customSettings) {
@@ -395,15 +435,23 @@ const StorageTool = {
   },
 
   getCloudUrl() {
+    // Jika admin/pembeli telah hardcode dalam config.js, utamakan pautan berpusat ini
+    if (typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl && window.EOPR_CONFIG.backendUrl.trim()) {
+      return window.EOPR_CONFIG.backendUrl.trim();
+    }
     const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
     if (savedUrl === 'disabled') return '';
+    // Bersihkan sisa URL SK Tampasuk lama jika wujud dari cache pelayar tempatan
+    if (savedUrl && (savedUrl.includes('AKfycbxPyNckbOzetRy') || savedUrl.includes('sktampasuk1'))) {
+      localStorage.removeItem(this.CLOUD_URL_KEY);
+      return this.getDefaultCloudUrl();
+    }
     if (savedUrl && savedUrl.trim()) return savedUrl.trim();
     return this.getDefaultCloudUrl();
   },
 
   isHardcodedFromConfig() {
-    const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
-    return !savedUrl && !!(typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl);
+    return !!(typeof window !== 'undefined' && window.EOPR_CONFIG && window.EOPR_CONFIG.backendUrl && window.EOPR_CONFIG.backendUrl.trim());
   },
 
   setCloudUrl(url) {
