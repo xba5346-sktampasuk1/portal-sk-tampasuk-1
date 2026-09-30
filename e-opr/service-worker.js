@@ -3,28 +3,27 @@
  * Menyokong pemuatan pantas dan penggunaan luar talian (offline)
  */
 
-const CACHE_NAME = "eopr-sktampasuk1-v2.4";
+const CACHE_NAME = "eopr-sktampasuk1-v2.6";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
   "./css/styles.css",
-  "./js/app.js",
+  "./js/config.js",
   "./js/image-tool.js",
   "./js/storage.js",
   "./js/ai-assistant.js",
+  "./js/app.js",
   "./assets/logo-sekolah.png",
-  "./assets/logo-sekolah.jpg",
+  "./assets/logo-sekolah.svg",
   "./assets/jata-negara.png"
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -48,10 +47,15 @@ self.addEventListener("fetch", (event) => {
   }
 
   const url = new URL(event.request.url);
-  const isCodeAsset = url.pathname.endsWith(".js") || url.pathname.endsWith(".html") || url.pathname.endsWith("/");
+  const isCode = url.pathname.endsWith(".html") || 
+                 url.pathname.endsWith(".js") || 
+                 url.pathname.endsWith(".css") || 
+                 url.pathname === "/" || 
+                 url.pathname.endsWith("/e-opr/") ||
+                 url.pathname.endsWith("/e-opr");
 
-  // Strategi Network-First untuk fail kod & dokumen (sentiasa ambil versi terkini jika dalam talian)
-  if (isCodeAsset) {
+  // Network-First untuk fail kod & dokumen HTML supaya sentiasa menerima versi terkini
+  if (isCode) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
@@ -66,7 +70,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Strategi Cache-First untuk aset media & font
+  // Cache-First untuk imej dan font statik
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

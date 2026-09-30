@@ -332,10 +332,6 @@ function updateDay() {
     if (btnClear) btnClear.classList.remove("hidden");
     const dStart = new Date(`${startVal}T12:00:00`);
     const dEnd = new Date(`${endVal}T12:00:00`);
-    const startDay = dayNames[dStart.getDay()];
-    const endDay = dayNames[dEnd.getDay()];
-    suggestedDay = `${startDay} – ${endDay}`;
-
     const diffMs = dEnd.getTime() - dStart.getTime();
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
     if (badge && diffDays > 1) {
@@ -353,20 +349,6 @@ function updateDay() {
       }
     }
     if (badge) badge.classList.add("hidden");
-    suggestedDay = startVal ? dayNames[new Date(`${startVal}T12:00:00`).getDay()] : "";
-  }
-
-  // Pengendali cadangan hari pilihan (manual tanpa paksaan)
-  const btnSuggest = $("btn-suggest-day");
-  if (btnSuggest) {
-    if (suggestedDay) {
-      btnSuggest.classList.remove("hidden");
-      btnSuggest.dataset.suggested = suggestedDay;
-      btnSuggest.title = `Klik untuk memilih '${suggestedDay}' secara automatik`;
-    } else {
-      btnSuggest.classList.add("hidden");
-      btnSuggest.dataset.suggested = "";
-    }
   }
 
   updatePreview();
@@ -1303,12 +1285,6 @@ function resetOPRForm(skipConfirm = false) {
     dateRangeBadge.textContent = "";
   }
 
-  const btnSuggestDay = document.getElementById("btn-suggest-day");
-  if (btnSuggestDay) {
-    btnSuggestDay.classList.add("hidden");
-    btnSuggestDay.dataset.suggested = "";
-  }
-
   const tarikhTamatEl = document.getElementById("tarikh-tamat");
   if (tarikhTamatEl) {
     tarikhTamatEl.removeAttribute("min");
@@ -1452,32 +1428,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const otherHariWrap = $("other-hari-wrap");
       if (otherHariWrap) {
         otherHariWrap.classList.toggle("hidden", $("hari").value !== "Lain-lain");
-      }
-      updatePreview();
-    });
-  }
-
-  const btnSuggestDay = $("btn-suggest-day");
-  if (btnSuggestDay) {
-    btnSuggestDay.addEventListener("click", () => {
-      const suggested = btnSuggestDay.dataset.suggested;
-      if (!suggested || !$("hari")) return;
-      let matched = false;
-      for (const opt of $("hari").options) {
-        if (opt.value === suggested) {
-          $("hari").value = suggested;
-          matched = true;
-          break;
-        }
-      }
-      const wrap = $("other-hari-wrap");
-      const hl = $("hari-lain");
-      if (!matched) {
-        $("hari").value = "Lain-lain";
-        if (wrap) wrap.classList.remove("hidden");
-        if (hl) hl.value = suggested;
-      } else {
-        if (wrap) wrap.classList.add("hidden");
       }
       updatePreview();
     });
