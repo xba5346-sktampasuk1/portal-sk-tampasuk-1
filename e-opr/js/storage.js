@@ -30,7 +30,8 @@ const StorageTool = {
       program: document.getElementById('program')?.value || '',
       tarikh: document.getElementById('tarikh')?.value || '',
       tarikhTamat: document.getElementById('tarikh-tamat')?.value || '',
-      hari: document.getElementById('hari')?.value || '',
+      hari: (document.getElementById('hari')?.value === 'Lain-lain' ? document.getElementById('hari-lain')?.value : document.getElementById('hari')?.value) || '',
+      hariLain: document.getElementById('hari-lain')?.value || '',
       masaMula: document.getElementById('masa-mula')?.value || '',
       masaTamat: document.getElementById('masa-tamat')?.value || '',
       tempat: document.getElementById('tempat')?.value || '',
@@ -252,6 +253,28 @@ const StorageTool = {
     const otherWrap = document.getElementById('other-wrap');
     if (otherWrap) {
       otherWrap.classList.toggle('hidden', data.anjuran !== 'Lain-lain');
+    }
+
+    const otherHariWrap = document.getElementById('other-hari-wrap');
+    const hariEl = document.getElementById('hari');
+    if (hariEl) {
+      const val = data.hari || '';
+      let matched = false;
+      for (const opt of hariEl.options) {
+        if (opt.value === val) {
+          hariEl.value = val;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched && val && val !== '-') {
+        hariEl.value = 'Lain-lain';
+        if (otherHariWrap) otherHariWrap.classList.remove('hidden');
+        const hl = document.getElementById('hari-lain');
+        if (hl) hl.value = val;
+      } else {
+        if (otherHariWrap) otherHariWrap.classList.add('hidden');
+      }
     }
 
     if (window.ImageTool) {

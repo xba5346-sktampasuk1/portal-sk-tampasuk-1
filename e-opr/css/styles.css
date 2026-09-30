@@ -972,6 +972,24 @@ textarea.form-control {
   font-size: 11px;
 }
 
+.detail-item-place {
+  padding: 3px 6px;
+  gap: 5.5px;
+}
+
+.detail-value-place {
+  font-size: 10px;
+  line-height: 1.16;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  letter-spacing: -0.15px;
+  max-height: 25px;
+}
+
 #pv-date, #pv-day {
   font-size: 10.5px;
   letter-spacing: -0.2px;

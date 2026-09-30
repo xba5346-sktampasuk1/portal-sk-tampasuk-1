@@ -222,6 +222,14 @@ function autoFitText() {
   document.querySelectorAll(".detail-value, .signature-value, .signature-role").forEach((el) => {
     if (!el) return;
     el.style.fontSize = "";
+    if (el.id === "pv-place") {
+      let size = 10;
+      while (size > 7.5 && el.scrollHeight > el.clientHeight) {
+        size -= 0.5;
+        el.style.fontSize = `${size}px`;
+      }
+      return;
+    }
     let size = parseFloat(window.getComputedStyle(el).fontSize) || 11;
     while (size > 7.5 && el.scrollWidth > el.clientWidth) {
       size -= 0.5;
@@ -237,20 +245,30 @@ function updatePreview() {
   const isOther = $("anjuran") && $("anjuran").value === "Lain-lain";
   const organiser = isOther ? ($("anjuran-lain")?.value || "") : ($("anjuran")?.value || "");
 
+  const isOtherDay = $("hari") && $("hari").value === "Lain-lain";
+  const dayValue = isOtherDay ? ($("hari-lain")?.value || "") : ($("hari")?.value || "");
+
   const start = formatTime($("masa-mula")?.value);
   const end = formatTime($("masa-tamat")?.value);
   const time = start && end ? `${start} – ${end}` : (start || end);
 
   const setText = (id, val, fallback) => {
     const el = $(id);
-    if (el) el.textContent = (val || "").trim() || fallback;
+    if (el) {
+      const trimmed = (val !== undefined && val !== null) ? String(val).trim() : "";
+      el.textContent = trimmed !== "" ? trimmed : fallback;
+    }
   };
 
   setText("pv-program", $("program")?.value, placeholders.program);
   setText("pv-date", formatDate($("tarikh")?.value, $("tarikh-tamat")?.value), placeholders.date);
-  setText("pv-day", $("hari")?.value, placeholders.day);
+  setText("pv-day", dayValue, placeholders.day);
   setText("pv-time", time, placeholders.time);
   setText("pv-place", $("tempat")?.value, placeholders.place);
+  if ($("pv-place")) {
+    const tempatVal = ($("tempat")?.value || "").trim();
+    $("pv-place").title = tempatVal || placeholders.place;
+  }
   setText("pv-organiser", organiser, placeholders.organiser);
   setText("pv-target", $("sasaran")?.value, placeholders.target);
   setText("pv-objective", $("objektif")?.value, placeholders.objective);
@@ -309,16 +327,14 @@ function updateDay() {
     }
   }
 
+  let suggestedDay = "";
   if (endVal && startVal && endVal !== startVal) {
     if (btnClear) btnClear.classList.remove("hidden");
     const dStart = new Date(`${startVal}T12:00:00`);
     const dEnd = new Date(`${endVal}T12:00:00`);
     const startDay = dayNames[dStart.getDay()];
     const endDay = dayNames[dEnd.getDay()];
-    
-    if ($("hari")) {
-      $("hari").value = `${startDay} – ${endDay}`;
-    }
+    suggestedDay = `${startDay} – ${endDay}`;
 
     const diffMs = dEnd.getTime() - dStart.getTime();
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
@@ -337,8 +353,19 @@ function updateDay() {
       }
     }
     if (badge) badge.classList.add("hidden");
-    if ($("hari")) {
-      $("hari").value = startVal ? dayNames[new Date(`${startVal}T12:00:00`).getDay()] : "";
+    suggestedDay = startVal ? dayNames[new Date(`${startVal}T12:00:00`).getDay()] : "";
+  }
+
+  // Pengendali cadangan hari pilihan (manual tanpa paksaan)
+  const btnSuggest = $("btn-suggest-day");
+  if (btnSuggest) {
+    if (suggestedDay) {
+      btnSuggest.classList.remove("hidden");
+      btnSuggest.dataset.suggested = suggestedDay;
+      btnSuggest.title = `Klik untuk memilih '${suggestedDay}' secara automatik`;
+    } else {
+      btnSuggest.classList.add("hidden");
+      btnSuggest.dataset.suggested = "";
     }
   }
 
@@ -1146,11 +1173,11 @@ function renderHistoryView() {
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
                 <strong class="text-slate-900">Masa:</strong> ${timeFormatted}
               </div>
-              <div class="p-1.5 rounded bg-slate-50 border border-slate-200 truncate">
-                <strong class="text-slate-900">Tempat:</strong> ${item.tempat || "-"}
+              <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
+                <strong class="text-slate-900">Tempat:</strong> <span class="break-words line-clamp-2 leading-tight">${item.tempat || "-"}</span>
               </div>
-              <div class="p-1.5 rounded bg-slate-50 border border-slate-200 truncate">
-                <strong class="text-slate-900">Sasaran:</strong> ${item.sasaran || "-"}
+              <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
+                <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.sasaran || "-"}</span>
               </div>
             </div>
 
@@ -1249,7 +1276,7 @@ function resetOPRForm(skipConfirm = false) {
 
   // 2. Kosongkan setiap elemen input, textarea dan select secara eksplisit
   const fieldIds = [
-    "anjuran", "anjuran-lain", "program", "tarikh", "tarikh-tamat", "hari", 
+    "anjuran", "anjuran-lain", "program", "tarikh", "tarikh-tamat", "hari", "hari-lain",
     "masa-mula", "masa-tamat", "tempat", "sasaran", 
     "objektif", "aktiviti", "kelemahan", "cadangan", 
     "nama-penyedia", "jawatan-penyedia", "nama-penyemak", "jawatan-penyemak", 
@@ -1276,6 +1303,12 @@ function resetOPRForm(skipConfirm = false) {
     dateRangeBadge.textContent = "";
   }
 
+  const btnSuggestDay = document.getElementById("btn-suggest-day");
+  if (btnSuggestDay) {
+    btnSuggestDay.classList.add("hidden");
+    btnSuggestDay.dataset.suggested = "";
+  }
+
   const tarikhTamatEl = document.getElementById("tarikh-tamat");
   if (tarikhTamatEl) {
     tarikhTamatEl.removeAttribute("min");
@@ -1283,6 +1316,9 @@ function resetOPRForm(skipConfirm = false) {
 
   const otherWrap = document.getElementById("other-wrap");
   if (otherWrap) otherWrap.classList.add("hidden");
+
+  const otherHariWrap = document.getElementById("other-hari-wrap");
+  if (otherHariWrap) otherHariWrap.classList.add("hidden");
 
   // 3. Kosongkan semua gambar (ImageTool, Form Box & Slot Pratonton Master Template)
   if (window.ImageTool) {
@@ -1406,6 +1442,42 @@ document.addEventListener("DOMContentLoaded", () => {
       const otherWrap = $("other-wrap");
       if (otherWrap) {
         otherWrap.classList.toggle("hidden", $("anjuran").value !== "Lain-lain");
+      }
+      updatePreview();
+    });
+  }
+
+  if ($("hari")) {
+    $("hari").addEventListener("change", () => {
+      const otherHariWrap = $("other-hari-wrap");
+      if (otherHariWrap) {
+        otherHariWrap.classList.toggle("hidden", $("hari").value !== "Lain-lain");
+      }
+      updatePreview();
+    });
+  }
+
+  const btnSuggestDay = $("btn-suggest-day");
+  if (btnSuggestDay) {
+    btnSuggestDay.addEventListener("click", () => {
+      const suggested = btnSuggestDay.dataset.suggested;
+      if (!suggested || !$("hari")) return;
+      let matched = false;
+      for (const opt of $("hari").options) {
+        if (opt.value === suggested) {
+          $("hari").value = suggested;
+          matched = true;
+          break;
+        }
+      }
+      const wrap = $("other-hari-wrap");
+      const hl = $("hari-lain");
+      if (!matched) {
+        $("hari").value = "Lain-lain";
+        if (wrap) wrap.classList.remove("hidden");
+        if (hl) hl.value = suggested;
+      } else {
+        if (wrap) wrap.classList.add("hidden");
       }
       updatePreview();
     });
