@@ -1882,11 +1882,11 @@ body.view-phone .sticky-panel {
                   <input id="program" class="form-control" type="text" placeholder="Cth: Sambutan Bulan Kemerdekaan & Hari Malaysia 2026">
                 </div>
 
-                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Ala Aplikasi Penerbangan) -->
+                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Program 1 Hari / Berbilang Hari) -->
                 <div>
                   <div class="flex items-center justify-between mb-1">
                     <label class="field-label m-0" for="tarikh">
-                      <i data-lucide="plane-takeoff" class="w-3.5 h-3.5 inline text-blue-600 mr-1"></i>Tarikh Mula (Dari) <span class="text-rose-500">*</span>
+                      Tarikh Mula (Dari) <span class="text-rose-500">*</span>
                     </label>
                     <span class="text-[10px] text-slate-400 font-semibold">Mula Program</span>
                   </div>
@@ -1896,7 +1896,7 @@ body.view-phone .sticky-panel {
                 <div>
                   <div class="flex items-center justify-between mb-1">
                     <label class="field-label m-0" for="tarikh-tamat">
-                      <i data-lucide="plane-landing" class="w-3.5 h-3.5 inline text-indigo-600 mr-1"></i>Tarikh Tamat (Hingga)
+                      Tarikh Tamat (Hingga)
                     </label>
                     <span class="text-[10px] text-slate-400 font-semibold">Pilihan jika &gt; 1 hari</span>
                   </div>
@@ -4434,7 +4434,7 @@ function updateDay() {
     const diffMs = dEnd.getTime() - dStart.getTime();
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
     if (badge && diffDays > 1) {
-      badge.textContent = `✈️ ${diffDays} Hari`;
+      badge.textContent = `${diffDays} Hari`;
       badge.classList.remove("hidden");
     } else if (badge) {
       badge.classList.add("hidden");

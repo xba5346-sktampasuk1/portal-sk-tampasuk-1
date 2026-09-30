@@ -323,7 +323,7 @@ function updateDay() {
     const diffMs = dEnd.getTime() - dStart.getTime();
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
     if (badge && diffDays > 1) {
-      badge.textContent = `✈️ ${diffDays} Hari`;
+      badge.textContent = `${diffDays} Hari`;
       badge.classList.remove("hidden");
     } else if (badge) {
       badge.classList.add("hidden");
