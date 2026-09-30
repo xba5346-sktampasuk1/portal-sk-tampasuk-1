@@ -269,29 +269,29 @@
                   <input id="program" class="form-control" type="text" placeholder="Cth: Sambutan Bulan Kemerdekaan & Hari Malaysia 2026">
                 </div>
 
-                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Program 1 Hari / Berbilang Hari) -->
-                <div>
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="field-label m-0" for="tarikh">
+                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Dua Kolum Selari & Tersusun) -->
+                <div class="sm:col-span-2 grid grid-cols-2 gap-3.5 date-range-container">
+                  <div class="date-col">
+                    <label class="field-label" for="tarikh">
                       Tarikh Mula (Dari) <span class="text-rose-500">*</span>
                     </label>
-                    <span class="text-[10px] text-slate-400 font-semibold">Mula Program</span>
+                    <input id="tarikh" class="form-control" type="date" title="Pilih tarikh mula program">
                   </div>
-                  <input id="tarikh" class="form-control" type="date" title="Pilih tarikh mula program">
-                </div>
 
-                <div>
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="field-label m-0" for="tarikh-tamat">
+                  <div class="date-col">
+                    <label class="field-label" for="tarikh-tamat">
                       Tarikh Tamat (Hingga)
                     </label>
-                    <span class="text-[10px] text-slate-400 font-semibold">Pilihan jika &gt; 1 hari</span>
+                    <div class="relative">
+                      <input id="tarikh-tamat" class="form-control pr-8" type="date" title="Pilih tarikh tamat sekiranya program melebihi 1 hari">
+                      <button type="button" id="btn-clear-tarikh-tamat" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 p-1 rounded-lg transition" title="Padam tarikh tamat (Jadikan 1 hari)">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
                   </div>
-                  <div class="relative">
-                    <input id="tarikh-tamat" class="form-control pr-8" type="date" title="Pilih tarikh tamat sekiranya program melebihi 1 hari">
-                    <button type="button" id="btn-clear-tarikh-tamat" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 p-1 rounded-lg transition" title="Padam tarikh tamat (Jadikan 1 hari)">
-                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
+
+                  <div class="col-span-2 -mt-1.5">
+                    <p class="text-[10px] sm:text-[10.5px] text-slate-400 m-0">Pilihan: Isi Tarikh Tamat sekiranya program melebihi 1 hari</p>
                   </div>
                 </div>
 
@@ -304,14 +304,16 @@
                   <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh mula dahulu">
                 </div>
 
-                <!-- Masa Mula & Tamat -->
-                <div>
-                  <label class="field-label" for="masa-mula">Masa Mula</label>
-                  <input id="masa-mula" class="form-control" type="time">
-                </div>
-                <div>
-                  <label class="field-label" for="masa-tamat">Masa Tamat</label>
-                  <input id="masa-tamat" class="form-control" type="time">
+                <!-- Masa Mula & Tamat (Dua Kolum Selari & Tersusun) -->
+                <div class="sm:col-span-2 grid grid-cols-2 gap-3.5 time-range-container">
+                  <div class="time-col">
+                    <label class="field-label" for="masa-mula">Masa Mula</label>
+                    <input id="masa-mula" class="form-control" type="time">
+                  </div>
+                  <div class="time-col">
+                    <label class="field-label" for="masa-tamat">Masa Tamat</label>
+                    <input id="masa-tamat" class="form-control" type="time">
+                  </div>
                 </div>
 
                 <!-- Tempat -->

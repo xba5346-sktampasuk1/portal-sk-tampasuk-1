@@ -298,6 +298,46 @@ body.theme-panitia-pjk {
   text-transform: uppercase;
 }
 
+/* Penyelarasan Kolum Tarikh Mula, Tarikh Tamat & Masa (Desktop, Tablet, Telefon) */
+.date-range-container,
+.time-range-container {
+  align-items: start;
+}
+
+.date-col,
+.time-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-col .field-label,
+.time-col .field-label {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  line-height: 18px;
+  height: 18px;
+  margin-bottom: 5px;
+}
+
+body.view-tablet .date-col .field-label,
+body.view-tablet .time-col .field-label,
+body.view-phone .date-col .field-label,
+body.view-phone .time-col .field-label {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .date-col .field-label,
+  .time-col .field-label {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+}
+
 .form-control {
   width: 100%;
   min-height: 40px;
