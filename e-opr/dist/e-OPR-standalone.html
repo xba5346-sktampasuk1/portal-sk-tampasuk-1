@@ -954,6 +954,12 @@ textarea.form-control {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 11px;
+}
+
+#pv-date, #pv-day {
+  font-size: 10.5px;
+  letter-spacing: -0.2px;
 }
 
 .target-content {
@@ -1876,16 +1882,39 @@ body.view-phone .sticky-panel {
                   <input id="program" class="form-control" type="text" placeholder="Cth: Sambutan Bulan Kemerdekaan & Hari Malaysia 2026">
                 </div>
 
-                <!-- Tarikh -->
+                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Ala Aplikasi Penerbangan) -->
                 <div>
-                  <label class="field-label" for="tarikh">Tarikh</label>
-                  <input id="tarikh" class="form-control" type="date">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="tarikh">
+                      <i data-lucide="plane-takeoff" class="w-3.5 h-3.5 inline text-blue-600 mr-1"></i>Tarikh Mula (Dari) <span class="text-rose-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-slate-400 font-semibold">Mula Program</span>
+                  </div>
+                  <input id="tarikh" class="form-control" type="date" title="Pilih tarikh mula program">
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="tarikh-tamat">
+                      <i data-lucide="plane-landing" class="w-3.5 h-3.5 inline text-indigo-600 mr-1"></i>Tarikh Tamat (Hingga)
+                    </label>
+                    <span class="text-[10px] text-slate-400 font-semibold">Pilihan jika &gt; 1 hari</span>
+                  </div>
+                  <div class="relative">
+                    <input id="tarikh-tamat" class="form-control pr-8" type="date" title="Pilih tarikh tamat sekiranya program melebihi 1 hari">
+                    <button type="button" id="btn-clear-tarikh-tamat" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 p-1 rounded-lg transition" title="Padam tarikh tamat (Jadikan 1 hari)">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Hari (Automatik) -->
-                <div>
-                  <label class="field-label" for="hari">Hari (Automatik)</label>
-                  <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh dahulu">
+                <div class="sm:col-span-2">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="hari">Hari (Automatik)</label>
+                    <span id="date-range-badge" class="hidden px-2.5 py-0.5 text-[11px] font-extrabold rounded-full bg-blue-100 text-blue-800 border border-blue-200"></span>
+                  </div>
+                  <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh mula dahulu">
                 </div>
 
                 <!-- Masa Mula & Tamat -->
@@ -3031,6 +3060,7 @@ const StorageTool = {
       anjuranLain: document.getElementById('anjuran-lain')?.value || '',
       program: document.getElementById('program')?.value || '',
       tarikh: document.getElementById('tarikh')?.value || '',
+      tarikhTamat: document.getElementById('tarikh-tamat')?.value || '',
       hari: document.getElementById('hari')?.value || '',
       masaMula: document.getElementById('masa-mula')?.value || '',
       masaTamat: document.getElementById('masa-tamat')?.value || '',
@@ -3107,11 +3137,35 @@ const StorageTool = {
   },
 
   /**
+   * Mengasingkan julat tarikh (contoh: '2026-08-19 - 2026-08-21' atau '19/8/2026 - 21/8/2026')
+   * kepada { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' }
+   */
+  parseDateRange(val) {
+    if (!val) return { start: "", end: "" };
+    const str = String(val).trim();
+    const delimiterMatch = str.match(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+    if (delimiterMatch) {
+      const parts = str.split(delimiterMatch[0]);
+      if (parts.length >= 2) {
+        const s = this.normalizeDateToYMD(parts[0]);
+        const e = this.normalizeDateToYMD(parts[1]);
+        return { start: s, end: e };
+      }
+    }
+    return { start: this.normalizeDateToYMD(str), end: "" };
+  },
+
+  /**
    * Penyeragaman Tarikh ke format standard HTML YYYY-MM-DD
    */
   normalizeDateToYMD(val) {
     if (!val) return "";
     const str = String(val).trim();
+    // Sekiranya mengandungi julat tarikh, ambil tarikh mula sahaja
+    if (str.includes(" - ") || str.includes(" – ") || str.includes(" to ") || str.includes(" hingga ")) {
+      const parts = str.split(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+      return this.normalizeDateToYMD(parts[0]);
+    }
     if (str.includes("T")) {
       const d = new Date(str);
       if (!isNaN(d.getTime())) {
@@ -3192,7 +3246,9 @@ const StorageTool = {
       window.ImageTool.setLayout(data.photoLayout);
     }
 
-    const cleanTarikh = this.normalizeDateToYMD(data.tarikh);
+    const parsedDates = this.parseDateRange(data.tarikh);
+    const cleanTarikh = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
+    const cleanTarikhTamat = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
     const cleanMasaMula = this.normalizeTimeToHHMM(data.masaMula);
     const cleanMasaTamat = this.normalizeTimeToHHMM(data.masaTamat);
 
@@ -3201,6 +3257,7 @@ const StorageTool = {
       'anjuran-lain': data.anjuranLain,
       'program': data.program,
       'tarikh': cleanTarikh,
+      'tarikh-tamat': cleanTarikhTamat,
       'hari': data.hari,
       'masa-mula': cleanMasaMula,
       'masa-tamat': cleanMasaTamat,
@@ -3304,19 +3361,8 @@ const StorageTool = {
       const raw = localStorage.getItem(this.HISTORY_KEY);
       if (!raw) return [];
       const list = JSON.parse(raw);
-      if (Array.isArray(list)) {
-        // Tapis sebarang rekod ujian lama berkaitan sekolah pembangunan terdahulu jika wujud
-        const cleanList = list.filter(item => {
-          if (!item) return false;
-          const p = (item.program || '').toLowerCase();
-          const t = (item.tempat || '').toLowerCase();
-          return !p.includes('tampasuk') && !t.includes('tampasuk');
-        });
-        if (cleanList.length !== list.length) {
-          localStorage.setItem(this.HISTORY_KEY, JSON.stringify(cleanList));
-        }
+        const cleanList = list.filter(item => !!item && !!item.id);
         return cleanList.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
-      }
     } catch (e) {
       console.warn('Ralat membaca arkib sejarah:', e);
     }
@@ -3347,11 +3393,16 @@ const StorageTool = {
     const now = new Date().toISOString();
     const category = this.determineCategory(data);
 
+    const parsedDates = this.parseDateRange(data.tarikh);
+    const startDate = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
+    const endDate = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
+
     const record = {
       ...data,
       id: currentId,
       category: category,
-      tarikh: this.normalizeDateToYMD(data.tarikh),
+      tarikh: startDate,
+      tarikhTamat: endDate,
       masaMula: this.normalizeTimeToHHMM(data.masaMula),
       masaTamat: this.normalizeTimeToHHMM(data.masaTamat),
       updatedAt: now,
@@ -3505,7 +3556,13 @@ const StorageTool = {
         const localMap = new Map();
         local.forEach(item => {
           if (item && item.id) {
-            item.tarikh = this.normalizeDateToYMD(item.tarikh);
+            const parsedDates = this.parseDateRange(item.tarikh);
+            item.tarikh = parsedDates.start || this.normalizeDateToYMD(item.tarikh);
+            if (!item.tarikhTamat && parsedDates.end) {
+              item.tarikhTamat = parsedDates.end;
+            } else if (item.tarikhTamat) {
+              item.tarikhTamat = this.normalizeDateToYMD(item.tarikhTamat);
+            }
             item.masaMula = this.normalizeTimeToHHMM(item.masaMula);
             item.masaTamat = this.normalizeTimeToHHMM(item.masaTamat);
             localMap.set(item.id, item);
@@ -3514,7 +3571,13 @@ const StorageTool = {
 
         json.records.forEach(cloudItem => {
           if (cloudItem && cloudItem.id) {
-            cloudItem.tarikh = this.normalizeDateToYMD(cloudItem.tarikh);
+            const parsedDates = this.parseDateRange(cloudItem.tarikh);
+            cloudItem.tarikh = parsedDates.start || this.normalizeDateToYMD(cloudItem.tarikh);
+            if (!cloudItem.tarikhTamat && parsedDates.end) {
+              cloudItem.tarikhTamat = parsedDates.end;
+            } else if (cloudItem.tarikhTamat) {
+              cloudItem.tarikhTamat = this.normalizeDateToYMD(cloudItem.tarikhTamat);
+            }
             cloudItem.masaMula = this.normalizeTimeToHHMM(cloudItem.masaMula);
             cloudItem.masaTamat = this.normalizeTimeToHHMM(cloudItem.masaTamat);
             localMap.set(cloudItem.id, cloudItem);
@@ -3605,6 +3668,7 @@ const StorageTool = {
 window.StorageTool = StorageTool;
 window.normalizeDateToYMD = StorageTool.normalizeDateToYMD.bind(StorageTool);
 window.normalizeTimeToHHMM = StorageTool.normalizeTimeToHHMM.bind(StorageTool);
+window.parseDateRange = StorageTool.parseDateRange.bind(StorageTool);
 
 
 
@@ -4172,15 +4236,44 @@ function normalizeTimeToHHMM(timeStr) {
 }
 
 /**
- * Formatkan tarikh ke format standard Malaysia: DD/MM/YYYY
+ * Formatkan tarikh tunggal ke format standard Malaysia: D/M/YYYY (contoh: 19/8/2026)
  */
-function formatDate(value) {
-  if (!value) return placeholders.date;
+function formatSingleDate(value) {
+  if (!value) return "";
   const ymd = normalizeDateToYMD(value);
-  if (!ymd) return placeholders.date;
+  if (!ymd) return "";
   const parts = ymd.split("-");
   if (parts.length !== 3) return ymd;
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  const d = parseInt(parts[2], 10);
+  const m = parseInt(parts[1], 10);
+  const y = parts[0];
+  return `${d}/${m}/${y}`;
+}
+
+/**
+ * Formatkan tarikh atau julat tarikh ala aplikasi penerbangan
+ * Contoh: "19/8/2026 - 21/8/2026" jika memilih julat, atau "19/8/2026" jika satu hari
+ */
+function formatDate(startVal, endVal = "") {
+  if (!startVal && !endVal) return placeholders.date;
+
+  // Jika endVal tidak dibekalkan tetapi startVal mengandungi julat tarikh
+  if (!endVal && typeof startVal === "string" && (startVal.includes(" - ") || startVal.includes(" – ") || startVal.includes(" to ") || startVal.includes(" hingga "))) {
+    const range = (window.StorageTool && window.StorageTool.parseDateRange) ? 
+      window.StorageTool.parseDateRange(startVal) : null;
+    if (range && range.start && range.end) {
+      startVal = range.start;
+      endVal = range.end;
+    }
+  }
+
+  const s = formatSingleDate(startVal);
+  const e = formatSingleDate(endVal);
+
+  if (s && e && s !== e) {
+    return `${s} - ${e}`;
+  }
+  return s || e || placeholders.date;
 }
 
 /**
@@ -4265,7 +4358,7 @@ function updatePreview() {
   };
 
   setText("pv-program", $("program")?.value, placeholders.program);
-  setText("pv-date", formatDate($("tarikh")?.value), placeholders.date);
+  setText("pv-date", formatDate($("tarikh")?.value, $("tarikh-tamat")?.value), placeholders.date);
   setText("pv-day", $("hari")?.value, placeholders.day);
   setText("pv-time", time, placeholders.time);
   setText("pv-place", $("tempat")?.value, placeholders.place);
@@ -4294,17 +4387,72 @@ function updatePreview() {
 }
 
 /**
- * Kira hari automatik berdasarkan tarikh yang dipilih
+ * Kira hari & julat hari secara automatik ala aplikasi penerbangan
  */
 function updateDay() {
-  const rawValue = $("tarikh")?.value;
-  const value = normalizeDateToYMD(rawValue);
-  if ($("tarikh") && rawValue !== value) {
-    $("tarikh").value = value;
+  const rawStart = $("tarikh")?.value;
+  const startVal = normalizeDateToYMD(rawStart);
+  if ($("tarikh") && rawStart !== startVal) {
+    $("tarikh").value = startVal;
   }
-  if ($("hari")) {
-    $("hari").value = value ? dayNames[new Date(`${value}T12:00:00`).getDay()] : "";
+
+  const rawEnd = $("tarikh-tamat")?.value;
+  let endVal = normalizeDateToYMD(rawEnd);
+  if ($("tarikh-tamat") && rawEnd !== endVal) {
+    $("tarikh-tamat").value = endVal;
   }
+
+  const tarikhTamatInput = $("tarikh-tamat");
+  const btnClear = $("btn-clear-tarikh-tamat");
+  const badge = $("date-range-badge");
+
+  if (startVal) {
+    if (tarikhTamatInput) {
+      tarikhTamatInput.min = startVal;
+      if (endVal && endVal < startVal) {
+        endVal = "";
+        tarikhTamatInput.value = "";
+      }
+    }
+  } else {
+    if (tarikhTamatInput) {
+      tarikhTamatInput.removeAttribute("min");
+    }
+  }
+
+  if (endVal && startVal && endVal !== startVal) {
+    if (btnClear) btnClear.classList.remove("hidden");
+    const dStart = new Date(`${startVal}T12:00:00`);
+    const dEnd = new Date(`${endVal}T12:00:00`);
+    const startDay = dayNames[dStart.getDay()];
+    const endDay = dayNames[dEnd.getDay()];
+    
+    if ($("hari")) {
+      $("hari").value = `${startDay} – ${endDay}`;
+    }
+
+    const diffMs = dEnd.getTime() - dStart.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    if (badge && diffDays > 1) {
+      badge.textContent = `✈️ ${diffDays} Hari`;
+      badge.classList.remove("hidden");
+    } else if (badge) {
+      badge.classList.add("hidden");
+    }
+  } else {
+    if (btnClear) {
+      if (endVal && endVal === startVal) {
+        btnClear.classList.remove("hidden");
+      } else {
+        btnClear.classList.add("hidden");
+      }
+    }
+    if (badge) badge.classList.add("hidden");
+    if ($("hari")) {
+      $("hari").value = startVal ? dayNames[new Date(`${startVal}T12:00:00`).getDay()] : "";
+    }
+  }
+
   updatePreview();
 }
 
@@ -5011,7 +5159,7 @@ function renderHistoryView() {
     const t = themeColorMap[item.theme] || themeColorMap["pentadbiran"];
     const displayCategory = item.category || t.label;
     const programTitle = item.program || "PROGRAM TANPA TAJUK";
-    const dateFormatted = formatDate(item.tarikh);
+    const dateFormatted = formatDate(item.tarikh, item.tarikhTamat);
     const timeFormatted = item.masaMula ? `${formatTime(item.masaMula)}${item.masaTamat ? ' – ' + formatTime(item.masaTamat) : ''}` : "Masa Tidak Dinyatakan";
     
     // Kira gambar aktiviti
@@ -5212,7 +5360,7 @@ function resetOPRForm(skipConfirm = false) {
 
   // 2. Kosongkan setiap elemen input, textarea dan select secara eksplisit
   const fieldIds = [
-    "anjuran", "anjuran-lain", "program", "tarikh", "hari", 
+    "anjuran", "anjuran-lain", "program", "tarikh", "tarikh-tamat", "hari", 
     "masa-mula", "masa-tamat", "tempat", "sasaran", 
     "objektif", "aktiviti", "kelemahan", "cadangan", 
     "nama-penyedia", "jawatan-penyedia", "nama-penyemak", "jawatan-penyemak", 
@@ -5229,6 +5377,20 @@ function resetOPRForm(skipConfirm = false) {
       }
     }
   });
+
+  const btnClearTarikhTamat = document.getElementById("btn-clear-tarikh-tamat");
+  if (btnClearTarikhTamat) btnClearTarikhTamat.classList.add("hidden");
+
+  const dateRangeBadge = document.getElementById("date-range-badge");
+  if (dateRangeBadge) {
+    dateRangeBadge.classList.add("hidden");
+    dateRangeBadge.textContent = "";
+  }
+
+  const tarikhTamatEl = document.getElementById("tarikh-tamat");
+  if (tarikhTamatEl) {
+    tarikhTamatEl.removeAttribute("min");
+  }
 
   const otherWrap = document.getElementById("other-wrap");
   if (otherWrap) otherWrap.classList.add("hidden");
@@ -5333,6 +5495,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if ($("tarikh")) {
     $("tarikh").addEventListener("change", updateDay);
+    $("tarikh").addEventListener("input", updateDay);
+  }
+
+  if ($("tarikh-tamat")) {
+    $("tarikh-tamat").addEventListener("change", updateDay);
+    $("tarikh-tamat").addEventListener("input", updateDay);
+  }
+
+  const btnClearTarikhTamat = $("btn-clear-tarikh-tamat");
+  if (btnClearTarikhTamat) {
+    btnClearTarikhTamat.addEventListener("click", () => {
+      const el = $("tarikh-tamat");
+      if (el) el.value = "";
+      updateDay();
+    });
   }
 
   if ($("anjuran")) {

@@ -125,15 +125,44 @@ function normalizeTimeToHHMM(timeStr) {
 }
 
 /**
- * Formatkan tarikh ke format standard Malaysia: DD/MM/YYYY
+ * Formatkan tarikh tunggal ke format standard Malaysia: D/M/YYYY (contoh: 19/8/2026)
  */
-function formatDate(value) {
-  if (!value) return placeholders.date;
+function formatSingleDate(value) {
+  if (!value) return "";
   const ymd = normalizeDateToYMD(value);
-  if (!ymd) return placeholders.date;
+  if (!ymd) return "";
   const parts = ymd.split("-");
   if (parts.length !== 3) return ymd;
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  const d = parseInt(parts[2], 10);
+  const m = parseInt(parts[1], 10);
+  const y = parts[0];
+  return `${d}/${m}/${y}`;
+}
+
+/**
+ * Formatkan tarikh atau julat tarikh ala aplikasi penerbangan
+ * Contoh: "19/8/2026 - 21/8/2026" jika memilih julat, atau "19/8/2026" jika satu hari
+ */
+function formatDate(startVal, endVal = "") {
+  if (!startVal && !endVal) return placeholders.date;
+
+  // Jika endVal tidak dibekalkan tetapi startVal mengandungi julat tarikh
+  if (!endVal && typeof startVal === "string" && (startVal.includes(" - ") || startVal.includes(" – ") || startVal.includes(" to ") || startVal.includes(" hingga "))) {
+    const range = (window.StorageTool && window.StorageTool.parseDateRange) ? 
+      window.StorageTool.parseDateRange(startVal) : null;
+    if (range && range.start && range.end) {
+      startVal = range.start;
+      endVal = range.end;
+    }
+  }
+
+  const s = formatSingleDate(startVal);
+  const e = formatSingleDate(endVal);
+
+  if (s && e && s !== e) {
+    return `${s} - ${e}`;
+  }
+  return s || e || placeholders.date;
 }
 
 /**
@@ -218,7 +247,7 @@ function updatePreview() {
   };
 
   setText("pv-program", $("program")?.value, placeholders.program);
-  setText("pv-date", formatDate($("tarikh")?.value), placeholders.date);
+  setText("pv-date", formatDate($("tarikh")?.value, $("tarikh-tamat")?.value), placeholders.date);
   setText("pv-day", $("hari")?.value, placeholders.day);
   setText("pv-time", time, placeholders.time);
   setText("pv-place", $("tempat")?.value, placeholders.place);
@@ -247,17 +276,72 @@ function updatePreview() {
 }
 
 /**
- * Kira hari automatik berdasarkan tarikh yang dipilih
+ * Kira hari & julat hari secara automatik ala aplikasi penerbangan
  */
 function updateDay() {
-  const rawValue = $("tarikh")?.value;
-  const value = normalizeDateToYMD(rawValue);
-  if ($("tarikh") && rawValue !== value) {
-    $("tarikh").value = value;
+  const rawStart = $("tarikh")?.value;
+  const startVal = normalizeDateToYMD(rawStart);
+  if ($("tarikh") && rawStart !== startVal) {
+    $("tarikh").value = startVal;
   }
-  if ($("hari")) {
-    $("hari").value = value ? dayNames[new Date(`${value}T12:00:00`).getDay()] : "";
+
+  const rawEnd = $("tarikh-tamat")?.value;
+  let endVal = normalizeDateToYMD(rawEnd);
+  if ($("tarikh-tamat") && rawEnd !== endVal) {
+    $("tarikh-tamat").value = endVal;
   }
+
+  const tarikhTamatInput = $("tarikh-tamat");
+  const btnClear = $("btn-clear-tarikh-tamat");
+  const badge = $("date-range-badge");
+
+  if (startVal) {
+    if (tarikhTamatInput) {
+      tarikhTamatInput.min = startVal;
+      if (endVal && endVal < startVal) {
+        endVal = "";
+        tarikhTamatInput.value = "";
+      }
+    }
+  } else {
+    if (tarikhTamatInput) {
+      tarikhTamatInput.removeAttribute("min");
+    }
+  }
+
+  if (endVal && startVal && endVal !== startVal) {
+    if (btnClear) btnClear.classList.remove("hidden");
+    const dStart = new Date(`${startVal}T12:00:00`);
+    const dEnd = new Date(`${endVal}T12:00:00`);
+    const startDay = dayNames[dStart.getDay()];
+    const endDay = dayNames[dEnd.getDay()];
+    
+    if ($("hari")) {
+      $("hari").value = `${startDay} – ${endDay}`;
+    }
+
+    const diffMs = dEnd.getTime() - dStart.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    if (badge && diffDays > 1) {
+      badge.textContent = `✈️ ${diffDays} Hari`;
+      badge.classList.remove("hidden");
+    } else if (badge) {
+      badge.classList.add("hidden");
+    }
+  } else {
+    if (btnClear) {
+      if (endVal && endVal === startVal) {
+        btnClear.classList.remove("hidden");
+      } else {
+        btnClear.classList.add("hidden");
+      }
+    }
+    if (badge) badge.classList.add("hidden");
+    if ($("hari")) {
+      $("hari").value = startVal ? dayNames[new Date(`${startVal}T12:00:00`).getDay()] : "";
+    }
+  }
+
   updatePreview();
 }
 
@@ -964,7 +1048,7 @@ function renderHistoryView() {
     const t = themeColorMap[item.theme] || themeColorMap["pentadbiran"];
     const displayCategory = item.category || t.label;
     const programTitle = item.program || "PROGRAM TANPA TAJUK";
-    const dateFormatted = formatDate(item.tarikh);
+    const dateFormatted = formatDate(item.tarikh, item.tarikhTamat);
     const timeFormatted = item.masaMula ? `${formatTime(item.masaMula)}${item.masaTamat ? ' – ' + formatTime(item.masaTamat) : ''}` : "Masa Tidak Dinyatakan";
     
     // Kira gambar aktiviti
@@ -1165,7 +1249,7 @@ function resetOPRForm(skipConfirm = false) {
 
   // 2. Kosongkan setiap elemen input, textarea dan select secara eksplisit
   const fieldIds = [
-    "anjuran", "anjuran-lain", "program", "tarikh", "hari", 
+    "anjuran", "anjuran-lain", "program", "tarikh", "tarikh-tamat", "hari", 
     "masa-mula", "masa-tamat", "tempat", "sasaran", 
     "objektif", "aktiviti", "kelemahan", "cadangan", 
     "nama-penyedia", "jawatan-penyedia", "nama-penyemak", "jawatan-penyemak", 
@@ -1182,6 +1266,20 @@ function resetOPRForm(skipConfirm = false) {
       }
     }
   });
+
+  const btnClearTarikhTamat = document.getElementById("btn-clear-tarikh-tamat");
+  if (btnClearTarikhTamat) btnClearTarikhTamat.classList.add("hidden");
+
+  const dateRangeBadge = document.getElementById("date-range-badge");
+  if (dateRangeBadge) {
+    dateRangeBadge.classList.add("hidden");
+    dateRangeBadge.textContent = "";
+  }
+
+  const tarikhTamatEl = document.getElementById("tarikh-tamat");
+  if (tarikhTamatEl) {
+    tarikhTamatEl.removeAttribute("min");
+  }
 
   const otherWrap = document.getElementById("other-wrap");
   if (otherWrap) otherWrap.classList.add("hidden");
@@ -1286,6 +1384,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if ($("tarikh")) {
     $("tarikh").addEventListener("change", updateDay);
+    $("tarikh").addEventListener("input", updateDay);
+  }
+
+  if ($("tarikh-tamat")) {
+    $("tarikh-tamat").addEventListener("change", updateDay);
+    $("tarikh-tamat").addEventListener("input", updateDay);
+  }
+
+  const btnClearTarikhTamat = $("btn-clear-tarikh-tamat");
+  if (btnClearTarikhTamat) {
+    btnClearTarikhTamat.addEventListener("click", () => {
+      const el = $("tarikh-tamat");
+      if (el) el.value = "";
+      updateDay();
+    });
   }
 
   if ($("anjuran")) {

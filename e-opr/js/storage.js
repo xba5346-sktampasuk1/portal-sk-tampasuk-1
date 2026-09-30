@@ -29,6 +29,7 @@ const StorageTool = {
       anjuranLain: document.getElementById('anjuran-lain')?.value || '',
       program: document.getElementById('program')?.value || '',
       tarikh: document.getElementById('tarikh')?.value || '',
+      tarikhTamat: document.getElementById('tarikh-tamat')?.value || '',
       hari: document.getElementById('hari')?.value || '',
       masaMula: document.getElementById('masa-mula')?.value || '',
       masaTamat: document.getElementById('masa-tamat')?.value || '',
@@ -105,11 +106,35 @@ const StorageTool = {
   },
 
   /**
+   * Mengasingkan julat tarikh (contoh: '2026-08-19 - 2026-08-21' atau '19/8/2026 - 21/8/2026')
+   * kepada { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' }
+   */
+  parseDateRange(val) {
+    if (!val) return { start: "", end: "" };
+    const str = String(val).trim();
+    const delimiterMatch = str.match(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+    if (delimiterMatch) {
+      const parts = str.split(delimiterMatch[0]);
+      if (parts.length >= 2) {
+        const s = this.normalizeDateToYMD(parts[0]);
+        const e = this.normalizeDateToYMD(parts[1]);
+        return { start: s, end: e };
+      }
+    }
+    return { start: this.normalizeDateToYMD(str), end: "" };
+  },
+
+  /**
    * Penyeragaman Tarikh ke format standard HTML YYYY-MM-DD
    */
   normalizeDateToYMD(val) {
     if (!val) return "";
     const str = String(val).trim();
+    // Sekiranya mengandungi julat tarikh, ambil tarikh mula sahaja
+    if (str.includes(" - ") || str.includes(" – ") || str.includes(" to ") || str.includes(" hingga ")) {
+      const parts = str.split(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+      return this.normalizeDateToYMD(parts[0]);
+    }
     if (str.includes("T")) {
       const d = new Date(str);
       if (!isNaN(d.getTime())) {
@@ -190,7 +215,9 @@ const StorageTool = {
       window.ImageTool.setLayout(data.photoLayout);
     }
 
-    const cleanTarikh = this.normalizeDateToYMD(data.tarikh);
+    const parsedDates = this.parseDateRange(data.tarikh);
+    const cleanTarikh = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
+    const cleanTarikhTamat = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
     const cleanMasaMula = this.normalizeTimeToHHMM(data.masaMula);
     const cleanMasaTamat = this.normalizeTimeToHHMM(data.masaTamat);
 
@@ -199,6 +226,7 @@ const StorageTool = {
       'anjuran-lain': data.anjuranLain,
       'program': data.program,
       'tarikh': cleanTarikh,
+      'tarikh-tamat': cleanTarikhTamat,
       'hari': data.hari,
       'masa-mula': cleanMasaMula,
       'masa-tamat': cleanMasaTamat,
@@ -302,19 +330,8 @@ const StorageTool = {
       const raw = localStorage.getItem(this.HISTORY_KEY);
       if (!raw) return [];
       const list = JSON.parse(raw);
-      if (Array.isArray(list)) {
-        // Tapis sebarang rekod ujian lama berkaitan sekolah pembangunan terdahulu jika wujud
-        const cleanList = list.filter(item => {
-          if (!item) return false;
-          const p = (item.program || '').toLowerCase();
-          const t = (item.tempat || '').toLowerCase();
-          return !p.includes('tampasuk') && !t.includes('tampasuk');
-        });
-        if (cleanList.length !== list.length) {
-          localStorage.setItem(this.HISTORY_KEY, JSON.stringify(cleanList));
-        }
+        const cleanList = list.filter(item => !!item && !!item.id);
         return cleanList.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
-      }
     } catch (e) {
       console.warn('Ralat membaca arkib sejarah:', e);
     }
@@ -345,11 +362,16 @@ const StorageTool = {
     const now = new Date().toISOString();
     const category = this.determineCategory(data);
 
+    const parsedDates = this.parseDateRange(data.tarikh);
+    const startDate = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
+    const endDate = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
+
     const record = {
       ...data,
       id: currentId,
       category: category,
-      tarikh: this.normalizeDateToYMD(data.tarikh),
+      tarikh: startDate,
+      tarikhTamat: endDate,
       masaMula: this.normalizeTimeToHHMM(data.masaMula),
       masaTamat: this.normalizeTimeToHHMM(data.masaTamat),
       updatedAt: now,
@@ -503,7 +525,13 @@ const StorageTool = {
         const localMap = new Map();
         local.forEach(item => {
           if (item && item.id) {
-            item.tarikh = this.normalizeDateToYMD(item.tarikh);
+            const parsedDates = this.parseDateRange(item.tarikh);
+            item.tarikh = parsedDates.start || this.normalizeDateToYMD(item.tarikh);
+            if (!item.tarikhTamat && parsedDates.end) {
+              item.tarikhTamat = parsedDates.end;
+            } else if (item.tarikhTamat) {
+              item.tarikhTamat = this.normalizeDateToYMD(item.tarikhTamat);
+            }
             item.masaMula = this.normalizeTimeToHHMM(item.masaMula);
             item.masaTamat = this.normalizeTimeToHHMM(item.masaTamat);
             localMap.set(item.id, item);
@@ -512,7 +540,13 @@ const StorageTool = {
 
         json.records.forEach(cloudItem => {
           if (cloudItem && cloudItem.id) {
-            cloudItem.tarikh = this.normalizeDateToYMD(cloudItem.tarikh);
+            const parsedDates = this.parseDateRange(cloudItem.tarikh);
+            cloudItem.tarikh = parsedDates.start || this.normalizeDateToYMD(cloudItem.tarikh);
+            if (!cloudItem.tarikhTamat && parsedDates.end) {
+              cloudItem.tarikhTamat = parsedDates.end;
+            } else if (cloudItem.tarikhTamat) {
+              cloudItem.tarikhTamat = this.normalizeDateToYMD(cloudItem.tarikhTamat);
+            }
             cloudItem.masaMula = this.normalizeTimeToHHMM(cloudItem.masaMula);
             cloudItem.masaTamat = this.normalizeTimeToHHMM(cloudItem.masaTamat);
             localMap.set(cloudItem.id, cloudItem);
@@ -603,4 +637,5 @@ const StorageTool = {
 window.StorageTool = StorageTool;
 window.normalizeDateToYMD = StorageTool.normalizeDateToYMD.bind(StorageTool);
 window.normalizeTimeToHHMM = StorageTool.normalizeTimeToHHMM.bind(StorageTool);
+window.parseDateRange = StorageTool.parseDateRange.bind(StorageTool);
 

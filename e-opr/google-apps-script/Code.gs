@@ -6,12 +6,8 @@
  * - Storan Gambar Aktiviti Berpusat: Google Drive (Dinamik mengikut nama sekolah)
  * - Membenarkan perkongsian arkib antara semua peranti dan desktop guru
  * =========================================================================
- * PAUTAN WEB APP RASMI e-OPR SK TAMPASUK 1 KOTA BELUD (HARDCODED):
- * https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec
- * =========================================================================
  */
 
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec";
 const SHEET_NAME = "Rekod_OPR";
 
 /**
@@ -137,6 +133,11 @@ function saveOPRRecord(data) {
 
   const imagesJson = JSON.stringify(processedImages);
 
+  let tarikhValue = data.tarikh || "";
+  if (data.tarikhTamat && data.tarikhTamat !== data.tarikh) {
+    tarikhValue = data.tarikh + " - " + data.tarikhTamat;
+  }
+
   const rowData = [
     recordId,
     timestamp,
@@ -145,7 +146,7 @@ function saveOPRRecord(data) {
     data.anjuran || "",
     data.anjuranLain || "",
     data.program || "",
-    data.tarikh || "",
+    tarikhValue,
     data.hari || "",
     data.masaMula || "",
     data.masaTamat || "",
@@ -229,15 +230,41 @@ function getAllRecords() {
       images = {};
     }
 
-    // Format tarikh ke format standard YYYY-MM-DD
-    let cleanTarikh = dispRow[7] || "";
-    if (row[7] instanceof Date) {
-      cleanTarikh = Utilities.formatDate(row[7], "Asia/Kuala_Lumpur", "yyyy-MM-dd");
-    } else if (cleanTarikh && cleanTarikh.includes("/")) {
-      const parts = cleanTarikh.split("/");
-      if (parts.length === 3 && parts[2].length === 4) {
-        cleanTarikh = parts[2] + "-" + parts[1].padStart(2, "0") + "-" + parts[0].padStart(2, "0");
+    // Format tarikh dan tarikh tamat ke format standard YYYY-MM-DD
+    let rawTarikh = "";
+    if (row[7] instanceof Date && !isNaN(row[7].getTime())) {
+      rawTarikh = Utilities.formatDate(row[7], "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    } else if (row[7] && String(row[7]).trim().length > 4) {
+      rawTarikh = String(row[7]).trim();
+    } else if (dispRow[7] && String(dispRow[7]).trim().length > 4) {
+      rawTarikh = String(dispRow[7]).trim();
+    } else {
+      rawTarikh = String(row[7] || dispRow[7] || "").trim();
+    }
+    let cleanTarikh = "";
+    let cleanTarikhTamat = "";
+
+    function parseSingleDateStr(val, dateObj) {
+      if (dateObj instanceof Date && !isNaN(dateObj.getTime())) {
+        return Utilities.formatDate(dateObj, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
       }
+      let s = String(val || "").trim();
+      if (!s) return "";
+      if (s.includes("/")) {
+        const parts = s.split("/");
+        if (parts.length === 3 && parts[2].length === 4) {
+          return parts[2] + "-" + parts[1].padStart(2, "0") + "-" + parts[0].padStart(2, "0");
+        }
+      }
+      return s;
+    }
+
+    if (rawTarikh.includes(" - ") || rawTarikh.includes(" – ") || rawTarikh.includes(" to ") || rawTarikh.includes(" hingga ")) {
+      const parts = rawTarikh.split(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+      cleanTarikh = parseSingleDateStr(parts[0], null);
+      cleanTarikhTamat = parseSingleDateStr(parts[1], null);
+    } else {
+      cleanTarikh = parseSingleDateStr(rawTarikh, row[7]);
     }
 
     // Format masa mula ke HH:mm
@@ -261,6 +288,7 @@ function getAllRecords() {
       anjuranLain: dispRow[5] || row[5] || "",
       program: dispRow[6] || row[6] || "",
       tarikh: cleanTarikh,
+      tarikhTamat: cleanTarikhTamat,
       hari: dispRow[8] || row[8] || "",
       masaMula: cleanMasaMula,
       masaTamat: cleanMasaTamat,

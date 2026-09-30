@@ -269,16 +269,39 @@
                   <input id="program" class="form-control" type="text" placeholder="Cth: Sambutan Bulan Kemerdekaan & Hari Malaysia 2026">
                 </div>
 
-                <!-- Tarikh -->
+                <!-- Pilihan Tarikh: Tarikh Mula & Tarikh Tamat (Ala Aplikasi Penerbangan) -->
                 <div>
-                  <label class="field-label" for="tarikh">Tarikh</label>
-                  <input id="tarikh" class="form-control" type="date">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="tarikh">
+                      <i data-lucide="plane-takeoff" class="w-3.5 h-3.5 inline text-blue-600 mr-1"></i>Tarikh Mula (Dari) <span class="text-rose-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-slate-400 font-semibold">Mula Program</span>
+                  </div>
+                  <input id="tarikh" class="form-control" type="date" title="Pilih tarikh mula program">
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="tarikh-tamat">
+                      <i data-lucide="plane-landing" class="w-3.5 h-3.5 inline text-indigo-600 mr-1"></i>Tarikh Tamat (Hingga)
+                    </label>
+                    <span class="text-[10px] text-slate-400 font-semibold">Pilihan jika &gt; 1 hari</span>
+                  </div>
+                  <div class="relative">
+                    <input id="tarikh-tamat" class="form-control pr-8" type="date" title="Pilih tarikh tamat sekiranya program melebihi 1 hari">
+                    <button type="button" id="btn-clear-tarikh-tamat" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 p-1 rounded-lg transition" title="Padam tarikh tamat (Jadikan 1 hari)">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Hari (Automatik) -->
-                <div>
-                  <label class="field-label" for="hari">Hari (Automatik)</label>
-                  <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh dahulu">
+                <div class="sm:col-span-2">
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="field-label m-0" for="hari">Hari (Automatik)</label>
+                    <span id="date-range-badge" class="hidden px-2.5 py-0.5 text-[11px] font-extrabold rounded-full bg-blue-100 text-blue-800 border border-blue-200"></span>
+                  </div>
+                  <input id="hari" class="form-control bg-slate-100 font-semibold text-slate-700" type="text" readonly placeholder="Pilih tarikh mula dahulu">
                 </div>
 
                 <!-- Masa Mula & Tamat -->

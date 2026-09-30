@@ -929,6 +929,12 @@ textarea.form-control {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 11px;
+}
+
+#pv-date, #pv-day {
+  font-size: 10.5px;
+  letter-spacing: -0.2px;
 }
 
 .target-content {
