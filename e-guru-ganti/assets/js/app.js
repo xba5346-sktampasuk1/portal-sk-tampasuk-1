@@ -1348,6 +1348,7 @@ function renderPage5() {
 
   updateStatCards();
   renderWeeklyReport();
+  renderGoogleSheetRecordsTable();
   updateMonthlyPdfButtonLabel();
 }
 
@@ -1388,6 +1389,7 @@ if (statBulanFilter) {
   statBulanFilter.addEventListener("change", () => {
     updateStatCards();
     renderWeeklyReport();
+    renderGoogleSheetRecordsTable();
     updateMonthlyPdfButtonLabel();
   });
 }
@@ -1397,6 +1399,7 @@ if (statMingguFilter) {
   statMingguFilter.addEventListener("change", () => {
     updateStatCards();
     renderWeeklyReport();
+    renderGoogleSheetRecordsTable();
   });
 }
 
@@ -1567,6 +1570,77 @@ function renderWeeklyReport() {
   });
 
   container.innerHTML = html;
+  if (window.lucide) window.lucide.createIcons();
+}
+
+/**
+ * Memaparkan Jadual Terperinci Semua Rekod Penggantian daripada Google Sheet
+ */
+function renderGoogleSheetRecordsTable() {
+  const tbody = document.getElementById("tbody-google-sheet-records");
+  if (!tbody) return;
+
+  const filtered = getFilteredRecords();
+  if (!filtered.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align:center; padding:2.5rem 1rem; color:var(--text-muted); font-size:0.875rem;">
+          <div style="width:48px; height:48px; border-radius:50%; background:var(--bg-subtle); display:flex; align-items:center; justify-content:center; margin:0 auto 0.75rem;">
+            <i data-lucide="inbox" style="width:24px;height:24px; opacity:0.6;"></i>
+          </div>
+          <div style="font-weight:700; color:var(--text-primary); margin-bottom:0.25rem;">Tiada Rekod Penggantian Ditemui</div>
+          <div>Sila pilih "Semua Bulan" pada penapis di atas untuk melihat kesemua rekod Google Sheet.</div>
+        </td>
+      </tr>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
+
+  let html = "";
+  filtered.forEach((r, idx) => {
+    const formattedDate = formatDateDisplay(r.tarikh);
+    const dayName = r.hari || getDayFromDate(r.tarikh) || "—";
+    const waktuMasa = r.masa ? `${r.masa}` : (r.slot ? `Slot ${r.slot}` : "—");
+    const kelasSubjek = [r.kelas, r.mata_pelajaran].filter(Boolean).join(" • ") || "—";
+
+    html += `
+      <tr style="border-bottom:1px solid var(--border-subtle); transition:background 0.15s ease;">
+        <td style="padding:0.75rem 1rem; font-weight:700; color:var(--text-muted); text-align:center;">${idx + 1}</td>
+        <td style="padding:0.75rem 1rem; font-weight:700; color:var(--text-primary); white-space:nowrap;">
+          <div>${formattedDate}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:500;">${dayName}</div>
+        </td>
+        <td style="padding:0.75rem 1rem; font-weight:600; white-space:nowrap;">
+          <span style="background:#eef2ff; color:#4338ca; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700; border:1px solid #c7d2fe;">
+            ${r.minggu || "—"}
+          </span>
+        </td>
+        <td style="padding:0.75rem 1rem; font-weight:700; color:#e11d48; white-space:nowrap;">
+          ${r.guru_tidak_hadir || "—"}
+        </td>
+        <td style="padding:0.75rem 1rem; font-size:0.78rem; color:var(--text-secondary); max-width:200px;">
+          <span style="background:#fef2f2; color:#991b1b; padding:2px 6px; border-radius:4px; font-weight:600; font-size:0.72rem; border:1px solid #fecaca; display:inline-block;">
+            ${r.sebab || "—"}
+          </span>
+        </td>
+        <td style="padding:0.75rem 1rem; font-weight:600; color:var(--text-primary); white-space:nowrap;">
+          ${waktuMasa}
+        </td>
+        <td style="padding:0.75rem 1rem; font-weight:700; color:var(--text-primary);">
+          ${kelasSubjek}
+        </td>
+        <td style="padding:0.75rem 1rem; font-weight:800; color:#059669; white-space:nowrap;">
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <i data-lucide="check-circle" style="width:14px;height:14px; color:#10b981;"></i>
+            <span>${r.guru_ganti || "—"}</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
   if (window.lucide) window.lucide.createIcons();
 }
 
@@ -2681,11 +2755,22 @@ async function triggerCloudSync(isManual = false) {
       recordCount = res.count || allRecords.length;
       isSuccess = true;
 
-      // Segar semula paparan tab statistik jika sedang dibuka
-      const p5 = document.getElementById("page5");
-      if (p5 && !p5.classList.contains("page-hidden") && typeof renderPage5 === "function") {
-        renderPage5();
+      // Pintar: Jika penapis bulan semasa tiada rekod, lalai kepada "" (Semua Bulan) supaya data Google Sheet sentiasa terpapar
+      const statBulanEl = document.getElementById("stat-bulan-filter");
+      if (statBulanEl && statBulanEl.value) {
+        const selMonth = parseInt(statBulanEl.value, 10);
+        const hasSelMonthRecords = allRecords.some(r => {
+          if (!r || !r.tarikh) return false;
+          const parts = r.tarikh.split('-');
+          return parts.length >= 2 && parseInt(parts[1], 10) === selMonth;
+        });
+        if (!hasSelMonthRecords) {
+          statBulanEl.value = ""; // Tukar ke 'Semua Bulan' secara automatik
+        }
       }
+
+      // Segar semula paparan tab statistik
+      renderPage5();
     } else {
       isSuccess = false;
       statusMsg = res ? res.message : "Gagal menghubungi Google Sheet";
@@ -3037,20 +3122,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Muat turun data sedia ada daripada API / Storan Tempatan
   allRecords = await DatabaseAPI.getAllRecords();
 
-  // Tetapkan bulan semasa sebagai pilihan lalai di dropdown Page 5 jika belum dipilih
+  // Tetapkan pilihan lalai di dropdown Page 5:
+  // Jika terdapat rekod bagi bulan semasa, pilih bulan tersebut.
+  // Jika tiada rekod bagi bulan semasa, lalai kepada "" (Semua Bulan) supaya rekod Google Sheet terpapar serta-merta!
   const statBulanEl = document.getElementById("stat-bulan-filter");
-  if (statBulanEl && !statBulanEl.value) {
-    statBulanEl.value = String(today.getMonth() + 1);
+  if (statBulanEl) {
+    const curMonth = today.getMonth() + 1;
+    const hasCurMonth = allRecords.some(r => {
+      if (!r || !r.tarikh) return false;
+      const parts = r.tarikh.split('-');
+      return parts.length >= 2 && parseInt(parts[1], 10) === curMonth;
+    });
+    statBulanEl.value = hasCurMonth ? String(curMonth) : "";
   }
 
   // Inisialisasi Semakan Jadual Khas daripada Storan Tempatan
   initActiveTimetable();
 
-  renderPage5();
-
-  // Inisialisasi Butang Segerak Awan Header & Automatik Segerak Pada Permulaan
+  // Inisialisasi Butang Segerak Awan Header & Automatik Segerak Terus Dari Google Sheet
   setupCloudSync();
-  triggerCloudSync(false);
+  await triggerCloudSync(false);
+
+  renderPage5();
 
   // Permulaan Modul WhatsApp Guru Ganti
   setupWhatsAppModalEvents();

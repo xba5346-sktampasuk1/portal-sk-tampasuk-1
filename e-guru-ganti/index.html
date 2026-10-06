@@ -487,6 +487,47 @@
         <!-- Bekas Paparan Kandungan Mingguan (Dinamik) -->
         <div id="weekly-report-container"></div>
       </div>
+
+      <!-- Seksyen Senarai Penuh Rekod Penggantian (Langsung daripada Google Sheet) -->
+      <div class="section-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #059669, #10b981); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(16,185,129,0.25);">
+              <i data-lucide="file-spreadsheet" style="width:20px;height:20px"></i>
+            </div>
+            <div>
+              <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary); letter-spacing:-0.01em;">Senarai Rekod Penggantian Terperinci</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Rekod penggantian yang telah disegerakkan secara langsung daripada Google Sheet sekolah.</p>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="badge" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-weight:700; font-size:0.75rem; padding:0.35rem 0.75rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem;">
+              <i data-lucide="check-circle-2" style="width:13px;height:13px;"></i> Pangkalan Data Google Sheet
+            </span>
+          </div>
+        </div>
+
+        <!-- Jadual Rekod Terperinci Google Sheet -->
+        <div class="overflow-x-auto" style="border-radius:10px; border:1px solid var(--border-color);">
+          <table class="data-table" id="table-google-sheet-records" style="width:100%; border-collapse:collapse; font-size:0.825rem;">
+            <thead>
+              <tr style="background:var(--bg-subtle); text-align:left;">
+                <th style="padding:0.75rem 1rem;">Bil</th>
+                <th style="padding:0.75rem 1rem;">Tarikh &amp; Hari</th>
+                <th style="padding:0.75rem 1rem;">Minggu</th>
+                <th style="padding:0.75rem 1rem;">Guru Tidak Hadir</th>
+                <th style="padding:0.75rem 1rem;">Sebab</th>
+                <th style="padding:0.75rem 1rem;">Waktu / Masa</th>
+                <th style="padding:0.75rem 1rem;">Kelas &amp; Subjek</th>
+                <th style="padding:0.75rem 1rem;">Guru Ganti</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-google-sheet-records">
+              <!-- Baris rekod dijana secara dinamik melalui JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </main>
 
     <!-- PAGE 6: Kehadiran Guru & Pemantauan Pentadbir -->
