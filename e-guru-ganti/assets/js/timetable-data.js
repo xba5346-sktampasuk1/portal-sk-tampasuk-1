@@ -5,7 +5,7 @@
  * Disediakan oleh: Pn. Zuraidah Hj. Marjin & Pn. Milnah Namih
  */
 
-// Senarai 26 Guru Rasmi Master
+// Senarai Guru Rasmi Master (28 Guru Rasmi)
 let MASTER_TEACHERS = [
   "En. Mudah Hj. Admaim",
   "Datin Razana Hj. Abd. Wahid",
@@ -33,7 +33,8 @@ let MASTER_TEACHERS = [
   "Pn. Yunizah Esun",
   "Pn. Zuraidah Hj. Marjin",
   "Pn. Zurinah Jubidi",
-  "Cik Anizah Anis Dalinsip"
+  "Cik Anizah Anis Dalinsip",
+  "Cik Prettnyrina Dualis"
 ];
 
 // 4 Kumpulan Guru Bertugas
@@ -263,6 +264,12 @@ const TEACHER_UNIQUE_PALETTE = {
     text: "#155e75",
     bg: "#ecfeff"
   },
+  "Cik Prettnyrina Dualis": {
+    primary: "#8b5cf6", // Ungu Lavender Moden
+    border: "#ddd6fe",
+    text: "#6d28d9",
+    bg: "#f5f3ff"
+  },
   "Guru UBK": {
     primary: "#9333ea", // Ungu UBK
     border: "#d8b4fe",
@@ -424,6 +431,13 @@ let JADUAL_INDIVIDU_GURU = {
     Jumaat: "1|BM|1B;2|BM|1B;4|BM|2B;5|BM|2B;7|BM|2B"
   },
   "Pn. Jamlinah Maliasan": {
+    Isnin: "",
+    Selasa: "",
+    Rabu: "",
+    Khamis: "",
+    Jumaat: ""
+  },
+  "Cik Prettnyrina Dualis": {
     Isnin: "2|BM|5B;4|BM|6B;5|BM|6B;10|BM|5B;11|BM|5B",
     Selasa: "1|BM|5B;2|BM|5B",
     Rabu: "1|BM|5B;2|BM|5B;4|BM|6B;5|BM|6B",
@@ -555,9 +569,9 @@ const CLASS_SUBJECT_TEACHERS = {
   "4A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "Pn. Anidah Samad", "M3": "Pn. Anna Octavia Ninteh", "MZ": "Pn. Yunizah Esun", "PI": "Pn. Fatimah Daud", "PJ": "En. Amriee Abdullah", "PK": "En. Amriee Abdullah", "PM": "Cik Anizah Anis Dalinsip", "PSV": "Pn. Anidah Samad", "RBT": "Pn. Milnah Namih", "SEJ": "Pn. Kasmalah Ismail", "SN": "En. Mohd. Hafiz Qayyum Ahmad", "TASMEK": "Pn. Salhah Awang Tengah" },
   "4B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zurinah Jubidi", "BM": "Pn. Anidah Samad", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "En. Muhd. Huzaifah Arman", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "Pn. Anidah Samad", "RBT": "En. Rejos Baking", "SEJ": "Pn. Anidah Samad", "SN": "En. Mohd. Hafiz Qayyum Ahmad", "TASMEK": "En. Muhd. Huzaifah Arman" },
   "5A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "En. L Asmara Luandim", "M3": "Cik Rozie Sumil", "MZ": "Pn. Jennet Gindawa", "PI": "En. Muhd. Huzaifah Arman", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PM": "Datin Razana Hj. Abd. Wahid", "PSV": "En. Rejos Baking", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "En. Mohd. Hafiz Qayyum Ahmad", "TASMEK": "En. Muhd. Huzaifah Arman" },
-  "5B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Pn. Jamlinah Maliasan", "M3": "Cik Anizah Anis Dalinsip", "MZ": "En. George Simun", "PI": "En. Mudah Hj. Admaim", "PJ": "En. Mohd. Hafiz Qayyum Ahmad", "PK": "En. Mohd. Hafiz Qayyum Ahmad", "PSV": "Pn. Yunizah Esun", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Jennet Gindawa", "TASMEK": "En. Muhd. Huzaifah Arman" },
+  "5B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Anizah Anis Dalinsip", "MZ": "En. George Simun", "PI": "En. Mudah Hj. Admaim", "PJ": "En. Mohd. Hafiz Qayyum Ahmad", "PK": "En. Mohd. Hafiz Qayyum Ahmad", "PSV": "Pn. Yunizah Esun", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Jennet Gindawa", "TASMEK": "En. Muhd. Huzaifah Arman" },
   "6A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "En. L Asmara Luandim", "M3": "Pn. Anna Octavia Ninteh", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PM": "Pn. Hamisah Janah", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Fatimah Daud" },
-  "6B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Pn. Jamlinah Maliasan", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Salhah Awang Tengah" }
+  "6B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Salhah Awang Tengah" }
 };
 
 // Grid Jadual Waktu Penuh Kelas Mengikut Hari & Slot (Berasaskan PDF Rasmi 2026)
@@ -854,7 +868,8 @@ const DEFAULT_TEACHER_PHONES = {
 
   // Guru Simpanan Tambahan
   "Pn. Zuraidah Hj. Marjin": "+60198714410",
-  "Cik Anizah Anis Dalinsip": "+601131680157"
+  "Cik Anizah Anis Dalinsip": "+601131680157",
+  "Cik Prettnyrina Dualis": ""
 };
 
 // Pilihan Pegawai UBK Rasmi SK Tampasuk 1
