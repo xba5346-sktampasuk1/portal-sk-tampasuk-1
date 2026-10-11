@@ -681,6 +681,14 @@ function autoFillSchedule() {
   activeTeachers.forEach(t => {
     const lessons = (TIMETABLE[t.name] && TIMETABLE[t.name][day]) || [];
     lessons.forEach(([masa, subjek, kelas]) => {
+      // Perkara A (Pilihan 1): Kelas Prasekolah tidak memerlukan guru ganti kerana sentiasa diawasi Guru Pra & PPM
+      const isPraClass = kelas && (
+        kelas.toUpperCase().includes("PRA") ||
+        kelas.toUpperCase().includes("DAHLIA") ||
+        kelas.toUpperCase().includes("ANGGERIK")
+      );
+      if (isPraClass) return;
+
       splitTimeSlot(masa).forEach(slotTime => {
         const partnerInfo = getConcurrentPartnerInfo(kelas, day, slotTime, subjek, absentTeacherNames);
         addRow({
@@ -1100,7 +1108,7 @@ function renderPage2() {
     }
   });
 
-  const classes = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B"];
+  const classes = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B", "Pra Dahlia", "Pra Anggerik"];
   classes.forEach(kelas => {
     const card = document.createElement("div");
     card.className = "section-card overflow-hidden";
@@ -1109,11 +1117,13 @@ function renderPage2() {
       `<span>Kelas ${kelas} - ${hari} (Sesi 2026)</span>` +
       `</div><div class="overflow-x-auto"><table class="tt-table"><thead><tr><th>Masa</th><th>Subjek</th><th>Guru</th><th>Status</th></tr></thead><tbody>`;
 
+    let hasAnySlot = false;
     for (let si = 1; si <= 13; si++) {
       if (si === 6) continue; // Rehat
       const slotTime = STANDARD_SLOTS[si];
       const slotInfo = getClassTimetableSlot(kelas, hari, si);
       if (!slotInfo) continue;
+      hasAnySlot = true;
 
       const { guru, subjek, guruList } = slotInfo;
       const key = `${kelas}|${si}`;
@@ -1139,6 +1149,10 @@ function renderPage2() {
         `<td class="tt-col-guru">${guru}</td>` +
         `<td class="tt-col-status">${status}</td>` +
         `</tr>`;
+    }
+
+    if (!hasAnySlot) {
+      html += `<tr><td colspan="4" class="text-center text-slate-400 dark:text-slate-500 py-4 text-xs italic">Tiada slot jadual waktu didaftarkan bagi kelas ini pada hari ${hari}.</td></tr>`;
     }
 
     html += `</tbody></table></div>`;
@@ -2320,7 +2334,10 @@ function setupAttendanceEventListenersOnce() {
 // PAGE 7: Kalendar & Jadual Keseluruhan Sekolah Harian
 let selectedCalDate = null;
 
-const ALL_MASTER_CLASSES = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B"];
+const ALL_MASTER_CLASSES = [
+  "1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B",
+  "Pra Dahlia", "Pra Anggerik"
+];
 const MASTER_CLASS_LABELS = {
   "1A": "1 Arif",
   "1B": "1 Bestari",
@@ -2333,7 +2350,9 @@ const MASTER_CLASS_LABELS = {
   "5A": "5 Arif",
   "5B": "5 Bestari",
   "6A": "6 Arif",
-  "6B": "6 Bestari"
+  "6B": "6 Bestari",
+  "Pra Dahlia": "Pra Dahlia",
+  "Pra Anggerik": "Pra Anggerik"
 };
 
 function normalizeClassKey(k) {
@@ -2351,6 +2370,8 @@ function normalizeClassKey(k) {
   if (clean.includes("5") && clean.includes("B")) return "5B";
   if (clean.includes("6") && clean.includes("A")) return "6A";
   if (clean.includes("6") && clean.includes("B")) return "6B";
+  if (clean.includes("DAHLIA")) return "Pra Dahlia";
+  if (clean.includes("ANGGERIK")) return "Pra Anggerik";
   return clean;
 }
 

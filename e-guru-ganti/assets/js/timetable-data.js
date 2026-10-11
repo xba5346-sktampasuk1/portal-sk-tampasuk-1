@@ -1,4 +1,4 @@
-/**
+﻿/**
  * e-Guru Ganti V2 - Data Jadual Waktu Rasmi Sesi 2026
  * SK Tampasuk 1 Kota Belud, Sabah
  * Rujukan Utama: PDF Jadual Waktu Rasmi 2026 (Berkuat kuasa 07 September 2026)
@@ -522,11 +522,11 @@ let JADUAL_INDIVIDU_GURU = {
     Jumaat: "5|M3|4B"
   },
   "Pn. Salhah Awang Tengah": {
-    Isnin: "2|BA|6A;4|BA|3A;5|BA|3A;10|BA|5A;11|BA|5A",
+    Isnin: "2|BA|6A;4|BA|3A;5|BA|3A;7|PI|Pra Dahlia;10|BA|5A;11|BA|5A",
     Selasa: "1|BA|3B;2|BA|3B;4|BA|5B;5|BA|5B;10|BA|4A;11|BA|4A",
     Rabu: "3|BA|2B;4|BA|2B;7|BA|6B;8|BA|2A;9|BA|2A;10|BA|6A;11|TASMEK|4A;12|TASMEK|4A",
-    Khamis: "1|BA|1A;2|BA|1A;4|BA|1B;5|BA|1B;10|BA|6B;11|TASMEK|6B;12|TASMEK|6B",
-    Jumaat: "3|BA|4B;4|BA|4B"
+    Khamis: "1|BA|1A;2|BA|1A;4|BA|1B;5|BA|1B;7|PI|Pra Dahlia;10|BA|6B;11|TASMEK|6B;12|TASMEK|6B",
+    Jumaat: "3|BA|4B;4|BA|4B;7|PI|Pra Dahlia;8|PI|Pra Dahlia"
   },
   "Pn. Yunizah Esun": {
     Isnin: "4|SN|2A;5|SN|2A;7|SN|6A;8|SN|6A;9|MZ|4A;11|SN|2B",
@@ -571,7 +571,9 @@ const CLASS_SUBJECT_TEACHERS = {
   "5A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "En. L Asmara Luandim", "M3": "Cik Rozie Sumil", "MZ": "Pn. Jennet Gindawa", "PI": "En. Muhd. Huzaifah Arman", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PM": "Datin Razana Hj. Abd. Wahid", "PSV": "En. Rejos Baking", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "En. Mohd. Hafiz Qayyum Ahmad", "TASMEK": "En. Muhd. Huzaifah Arman" },
   "5B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Anizah Anis Dalinsip", "MZ": "En. George Simun", "PI": "En. Mudah Hj. Admaim", "PJ": "En. Mohd. Hafiz Qayyum Ahmad", "PK": "En. Mohd. Hafiz Qayyum Ahmad", "PSV": "Pn. Yunizah Esun", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Jennet Gindawa", "TASMEK": "En. Muhd. Huzaifah Arman" },
   "6A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "En. L Asmara Luandim", "M3": "Pn. Anna Octavia Ninteh", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PM": "Pn. Hamisah Janah", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Fatimah Daud" },
-  "6B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Salhah Awang Tengah" }
+  "6B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Salhah Awang Tengah" },
+  "Pra Dahlia": { "PI": "Pn. Salhah Awang Tengah" },
+  "Pra Anggerik": {}
 };
 
 // Grid Jadual Waktu Penuh Kelas Mengikut Hari & Slot (Berasaskan PDF Rasmi 2026)
@@ -659,6 +661,20 @@ const CLASS_TIMETABLES = {
     "Rabu": [ "1|PJ", "2|SN", "3|SN", "4|BM", "5|BM", "7|BA", "8|M3", "9|MZ", "10|PI" ],
     "Khamis": [ "1|BM", "2|BM", "3|M3", "4|M3", "5|PI", "7|RBT", "8|BI", "9|BI", "10|BA", "11|TASMEK", "12|TASMEK" ],
     "Jumaat": [ "1|PSV", "2|PSV", "3|BI", "4|BI", "5|BM", "7|BM", "8|BM" ]
+  },
+  "Pra Dahlia": {
+    "Isnin": [ "7|PI" ],
+    "Selasa": [],
+    "Rabu": [],
+    "Khamis": [ "7|PI" ],
+    "Jumaat": [ "7|PI", "8|PI" ]
+  },
+  "Pra Anggerik": {
+    "Isnin": [],
+    "Selasa": [],
+    "Rabu": [],
+    "Khamis": [],
+    "Jumaat": []
   }
 };
 
