@@ -1,4 +1,4 @@
-﻿/**
+/**
  * e-Guru Ganti V2 - Data Jadual Waktu Rasmi Sesi 2026
  * SK Tampasuk 1 Kota Belud, Sabah
  * Rujukan Utama: PDF Jadual Waktu Rasmi 2026 (Berkuat kuasa 07 September 2026)
@@ -459,11 +459,11 @@ let JADUAL_INDIVIDU_GURU = {
     Jumaat: "3|PJ|3A;5|PJ|3B;7|BM|6A;8|BM|6A"
   },
   "Pn. Mastikahjunaidah Shahrom": {
-    Isnin: "10|PI|2A;11|PI|2A;12|TASMEK|2A;13|TASMEK|2A",
+    Isnin: "4|PI|Pra Anggerik;5|PI|Pra Anggerik;10|PI|2A;11|PI|2A;12|TASMEK|2A;13|TASMEK|2A",
     Selasa: "2|PI|1B;3|PI|1B;7|PI|2A;8|PI|2A;10|PI|1A;11|PI|1A",
     Rabu: "3|PI|1B;4|PI|1B;9|PI|1A;10|PI|1A;11|TASMEK|2B;12|TASMEK|2B",
     Khamis: "2|PI|1B;3|PI|1B;9|PI|2A;10|PI|2A;11|TASMEK|1B;12|TASMEK|1B",
-    Jumaat: "1|PI|1A;2|PI|1A"
+    Jumaat: "1|PI|1A;2|PI|1A;4|PI|Pra Anggerik;5|PI|Pra Anggerik"
   },
   "Pn. Milnah Namih": {
     Isnin: "3|BI|6A;4|BI|6A;7|BI|4A;8|BI|4A",
@@ -573,7 +573,7 @@ const CLASS_SUBJECT_TEACHERS = {
   "6A": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Milnah Namih", "BKD": "Cik Rozeline Francis", "BM": "En. L Asmara Luandim", "M3": "Pn. Anna Octavia Ninteh", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PM": "Pn. Hamisah Janah", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Fatimah Daud" },
   "6B": { "BA": "Pn. Salhah Awang Tengah", "BI": "Pn. Zuraidah Hj. Marjin", "BM": "Cik Prettnyrina Dualis", "M3": "Cik Rozie Sumil", "MZ": "En. Rejos Baking", "PI": "Pn. Fatimah Daud", "PJ": "En. Rejos Baking", "PK": "En. Rejos Baking", "PSV": "En. Amriee Abdullah", "RBT": "En. Mohd. Hafiz Qayyum Ahmad", "SEJ": "En. Amriee Abdullah", "SN": "Pn. Yunizah Esun", "TASMEK": "Pn. Salhah Awang Tengah" },
   "Pra Dahlia": { "PI": "Pn. Salhah Awang Tengah" },
-  "Pra Anggerik": {}
+  "Pra Anggerik": { "PI": "Pn. Mastikahjunaidah Shahrom" }
 };
 
 // Grid Jadual Waktu Penuh Kelas Mengikut Hari & Slot (Berasaskan PDF Rasmi 2026)
@@ -670,11 +670,11 @@ const CLASS_TIMETABLES = {
     "Jumaat": [ "7|PI", "8|PI" ]
   },
   "Pra Anggerik": {
-    "Isnin": [],
+    "Isnin": [ "4|PI", "5|PI" ],
     "Selasa": [],
     "Rabu": [],
     "Khamis": [],
-    "Jumaat": []
+    "Jumaat": [ "4|PI", "5|PI" ]
   }
 };
 
