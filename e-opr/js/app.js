@@ -440,7 +440,7 @@ function getSchoolSettings() {
     schoolName: "SK TAMPASUK 1 KOTA BELUD",
     schoolShortName: "SK TAMPASUK 1",
     schoolSubtitle: "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
-    schoolAddress: "WDT 11, 89158 KOTA BELUD, SABAH",
+    schoolAddress: "SK TAMPASUK 1\nW.D.T 158, 89150, KOTA BELUD SABAH",
     schoolLogo: (window.OFFICIAL_SCHOOL_LOGO || "assets/logo-sekolah.png"),
     backendUrl: "https://script.google.com/macros/s/AKfycbxPyNckbOzetRy-11gdxD5UurEFM90d4bPNuyY8Z8OMz7DHssk5Gq08b8_iMD5wnxSP/exec",
     defaultTempatPlaceholder: "Cth: Dewan Terbuka / Bilik Mesyuarat",
@@ -451,8 +451,12 @@ function getSchoolSettings() {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Sekiranya simpanan peranti ini masih mengandungi nama placeholder atau logo dummy lama, tetapkan semula
-      if (parsed && (parsed.schoolName === "NAMA SEKOLAH ANDA" || parsed.schoolName.includes('Tampasuk'))) {
+      // Sekiranya simpanan peranti ini masih mengandungi nama placeholder atau alamat lama WDT 11 / 89158, tetapkan semula
+      if (parsed && (
+        parsed.schoolName === "NAMA SEKOLAH ANDA" || 
+        parsed.schoolName.includes('Tampasuk') ||
+        (parsed.schoolAddress && (parsed.schoolAddress.includes('WDT 11') || parsed.schoolAddress.includes('89158')))
+      )) {
         localStorage.removeItem(SETTINGS_KEY);
         return fallback;
       }
@@ -486,10 +490,28 @@ function applySchoolBranding() {
     footerCopyright.textContent = settings.footerCopyright;
   }
 
-  // 4. Alamat Rasmi Sekolah pada Kepala Surat Kertas OPR
+  // 4. Alamat Rasmi Sekolah pada Kepala Surat Kertas OPR (2 Baris Kemas)
   const paperAddress = $("paper-school-address");
-  if (paperAddress && settings.schoolAddress) {
-    paperAddress.textContent = settings.schoolAddress;
+  if (paperAddress) {
+    const rawAddress = (settings.schoolAddress || "SK TAMPASUK 1\nW.D.T 158, 89150, KOTA BELUD SABAH").trim();
+    if (rawAddress.includes("\n")) {
+      const parts = rawAddress.split("\n").map(s => s.trim()).filter(Boolean);
+      paperAddress.innerHTML = `
+        <div class="header-school-title">${parts[0]}</div>
+        <div class="header-school-location">${parts.slice(1).join(" ")}</div>
+      `;
+    } else if (rawAddress.toUpperCase().includes("SK TAMPASUK 1")) {
+      const sub = rawAddress.replace(/SK TAMPASUK 1\s*[-–,]?\s*/i, "").trim();
+      paperAddress.innerHTML = `
+        <div class="header-school-title">SK TAMPASUK 1</div>
+        <div class="header-school-location">${sub || "W.D.T 158, 89150, KOTA BELUD SABAH"}</div>
+      `;
+    } else {
+      paperAddress.innerHTML = `
+        <div class="header-school-title">${settings.schoolShortName || "SK TAMPASUK 1"}</div>
+        <div class="header-school-location">${rawAddress}</div>
+      `;
+    }
   }
 
   // 5. Placeholder Input Tempat
@@ -590,7 +612,7 @@ function saveSchoolSettings() {
     schoolName: name || "NAMA SEKOLAH ANDA",
     schoolShortName: shortName || "SEKOLAH",
     schoolSubtitle: subtitle || "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
-    schoolAddress: address || "NAMA & ALAMAT RASMI SEKOLAH ANDA",
+    schoolAddress: address || "SK TAMPASUK 1\nW.D.T 158, 89150, KOTA BELUD SABAH",
     backendUrl: backend
   };
 
@@ -627,7 +649,7 @@ const EOPR_CONFIG = {
   schoolName: "${(s.schoolName || '').replace(/"/g, '\\"')}",
   schoolShortName: "${(s.schoolShortName || '').replace(/"/g, '\\"')}",
   schoolSubtitle: "${(s.schoolSubtitle || '').replace(/"/g, '\\"')}",
-  schoolAddress: "${(s.schoolAddress || '').replace(/"/g, '\\"')}",
+  schoolAddress: "${(s.schoolAddress || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\"')}",
   schoolLogo: "${(s.schoolLogo && !s.schoolLogo.startsWith('data:') ? s.schoolLogo : 'assets/logo-sekolah.png')}",
   backendUrl: "${(s.backendUrl || '').trim()}",
   defaultTempatPlaceholder: "${(s.defaultTempatPlaceholder || 'Cth: Dewan Terbuka / Bilik Mesyuarat').replace(/"/g, '\\"')}",
@@ -1127,9 +1149,10 @@ function renderHistoryView() {
                   <img src="${(getSchoolSettings().schoolLogo || window.OFFICIAL_SCHOOL_LOGO || 'assets/logo-sekolah.png')}" onerror="this.onerror=null; if(window.OFFICIAL_SCHOOL_LOGO) this.src=window.OFFICIAL_SCHOOL_LOGO;" alt="Logo Sekolah" class="w-full h-full object-contain">
                 </div>
               </div>
-              <div class="flex-1 min-w-0 text-center">
-                <div class="text-[10px] font-black tracking-wider text-amber-300 uppercase leading-none" style="font-family: 'Cinzel', serif;">ONE PAGE REPORT</div>
-                <div class="text-[7.5px] font-bold text-amber-100/90 truncate tracking-wide mt-0.5">${(getSchoolSettings().schoolName || 'SEKOLAH').toUpperCase()}</div>
+              <div class="flex-1 min-w-0 text-center px-0.5">
+                <div class="text-[9.5px] font-black tracking-wider text-amber-300 uppercase leading-none" style="font-family: 'Cinzel', serif;">ONE PAGE REPORT</div>
+                <div class="text-[7.5px] font-extrabold text-amber-100 tracking-wider mt-0.5 leading-tight">SK TAMPASUK 1</div>
+                <div class="text-[6.5px] font-semibold text-amber-200/90 tracking-tight leading-tight">W.D.T 158, 89150, KOTA BELUD SABAH</div>
               </div>
               <div class="px-1.5 py-0.5 rounded text-[8px] font-black text-amber-950 uppercase flex-none border border-amber-700/60 shadow-sm" style="background: linear-gradient(135deg, #fcedc5, #dfb753, #aa771c); font-family: 'Cinzel', serif;">
                 ${t.label}

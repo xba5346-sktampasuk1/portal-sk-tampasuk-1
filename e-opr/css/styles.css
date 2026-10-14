@@ -633,11 +633,31 @@ textarea.form-control {
 
 .header-school-address {
   font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.6px;
-  color: #e5c07b;
   text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5px;
+  line-height: 1.25;
+  text-align: center;
+  width: 100%;
+}
+
+.header-school-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  white-space: nowrap;
+}
+
+.header-school-location {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  color: #e5c07b;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   opacity: 0.95;

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * =========================================================================
  * SISTEM e-OPR â€¢ FAIL KONFIGURASI PUSAT (SK TAMPASUK 1 KOTA BELUD)
  * =========================================================================
@@ -19,7 +19,7 @@ const EOPR_CONFIG = {
   schoolName: "SK TAMPASUK 1 KOTA BELUD",
   schoolShortName: "SK TAMPASUK 1",
   schoolSubtitle: "Sistem Penjana One Page Report (OPR) Rasmi Sekolah",
-  schoolAddress: "WDT 11, 89158 KOTA BELUD, SABAH",
+  schoolAddress: "SK TAMPASUK 1\nW.D.T 158, 89150, KOTA BELUD SABAH",
 
   // -----------------------------------------------------------------------
   // 2. LOGO RASMI SEKOLAH
