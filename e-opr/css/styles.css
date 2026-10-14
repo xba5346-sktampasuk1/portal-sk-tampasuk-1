@@ -438,19 +438,12 @@ textarea.form-control {
 }
 
 /* ==================== PRATONTON (PREVIEW STAGE) ==================== */
-.preview-stage {
-  padding: 16px;
-  border-radius: 20px;
-  background: #cbd5e1;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  overflow: hidden;
-  position: relative;
+#preview-area {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
-/* ==================== PRATONTON (PREVIEW STAGE) ==================== */
 .preview-stage {
   padding: 16px;
   border-radius: 20px;
@@ -461,6 +454,10 @@ textarea.form-control {
   align-items: flex-start;
   overflow: hidden;
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* Dokumen A4 Rasmi Berhias & Sempadan Sijil */
@@ -1318,8 +1315,10 @@ body.view-phone main {
   max-width: 640px;
 }
 body.view-phone .workspace {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  width: 100%;
+  max-width: 100%;
 }
 body.view-phone .sticky-panel {
   position: static;
@@ -1328,7 +1327,10 @@ body.view-phone .sticky-panel {
 
 @media (max-width: 1120px) {
   .workspace {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
   .sticky-panel {
     position: static;
@@ -1442,17 +1444,21 @@ body.view-phone .sticky-panel {
   }
 
   /* ==========================================================================
-     PERLINDUNGAN MUTLAK 1 HALAMAN A4 BAGI PERANTI TELEFON (IOS & ANDROID)
-     Penyelarasan skala 0.92 menyerap margin pencetak mandatori iOS Safari &
-     Android Chrome (~5-7mm) agar dokumen kekal 100% tepat 1 muka surat sahaja.
+     PERLINDUNGAN MUTLAK 1 HALAMAN A4 BAGI SEMUA PERANTI (DESKTOP & TELEFON)
+     Kertas kekal pasak pada skala 1.0 (210mm x 297mm) tanpa sebarang penyusutan,
+     memastikan output cetak / PDF sama persis 100% dengan pratonton A4.
      ========================================================================== */
   body.is-mobile-device .opr-paper,
   body.view-phone .opr-paper,
   body.is-mobile-print .opr-paper {
     width: 210mm !important;
+    height: 297mm !important;
+    min-width: 210mm !important;
     max-width: 210mm !important;
-    transform: scale(0.92) !important;
-    transform-origin: top center !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    transform: none !important;
+    box-sizing: border-box !important;
     margin: 0 auto !important;
     page-break-inside: avoid !important;
     page-break-after: avoid !important;

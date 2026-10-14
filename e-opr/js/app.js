@@ -193,10 +193,16 @@ function fitPreviewToPage() {
   const paper = document.querySelector(".opr-paper");
   if (!stage || !paper) return;
 
-  const padding = window.innerWidth <= 640 ? 16 : 32;
-  const availableWidth = Math.max(260, stage.clientWidth - padding);
+  const isMobile = window.innerWidth <= 800 || document.body.classList.contains('view-phone') || document.body.classList.contains('view-tablet');
+  const padding = isMobile ? (window.innerWidth <= 640 ? 16 : 24) : 32;
+
+  // Ambil lebar ruang kerja sebenar untuk memastikan pratonton muat 100% pada skrin telefon tanpa terpotong
+  const stageWidth = stage.clientWidth || (stage.getBoundingClientRect ? stage.getBoundingClientRect().width : 0);
+  const maxAvailable = Math.min(window.innerWidth - (window.innerWidth <= 640 ? 24 : 48), stageWidth > 0 ? stageWidth : 794);
+  const availableWidth = Math.max(260, maxAvailable - padding);
   const scale = Math.min(1, availableWidth / 794);
 
+  paper.style.transformOrigin = "top center";
   paper.style.transform = `scale(${scale})`;
   stage.style.height = `${Math.ceil(1123 * scale + padding)}px`;
 }
@@ -853,6 +859,12 @@ function loadOPRToEditor(recordId) {
  * Persediaan Sebelum Cetakan (Sokongan Penuh Desktop & Mobile iOS/Android)
  */
 function prepareForPrint() {
+  const paper = document.querySelector(".opr-paper");
+  if (paper) {
+    paper.dataset.savedTransform = paper.style.transform || "";
+    paper.style.transform = "none";
+  }
+
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
                 || window.innerWidth <= 800 
                 || document.body.classList.contains('view-phone') 
@@ -860,6 +872,11 @@ function prepareForPrint() {
 
   if (isMobile) {
     document.body.classList.add('is-mobile-print');
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (vp) {
+      vp.dataset.savedContent = vp.getAttribute("content") || "";
+      vp.setAttribute("content", "width=794, initial-scale=1.0");
+    }
   } else {
     document.body.classList.remove('is-mobile-print');
   }
@@ -871,6 +888,16 @@ function prepareForPrint() {
 
 function finishPrint() {
   document.body.classList.remove('is-mobile-print');
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp && vp.dataset.savedContent) {
+    vp.setAttribute("content", vp.dataset.savedContent);
+    delete vp.dataset.savedContent;
+  }
+  const paper = document.querySelector(".opr-paper");
+  if (paper && paper.dataset.savedTransform !== undefined) {
+    paper.style.transform = paper.dataset.savedTransform;
+    delete paper.dataset.savedTransform;
+  }
   fitPreviewToPage();
 }
 
@@ -886,9 +913,12 @@ function printRecordFromHistory(recordId) {
   window.StorageTool.setCurrentEditingId(record.id);
   switchView("generator");
   prepareForPrint();
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                || window.innerWidth <= 800;
   setTimeout(() => {
     window.print();
-  }, 350);
+    setTimeout(finishPrint, 500);
+  }, isMobile ? 350 : 200);
 }
 
 /**
@@ -1636,15 +1666,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 10. Cetakan Terus / Simpan PDF (Standard Browser Print A4)
+  const handlePrintAction = () => {
+    updatePreview();
+    prepareForPrint();
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                  || window.innerWidth <= 800;
+    setTimeout(() => {
+      window.print();
+      setTimeout(finishPrint, 500);
+    }, isMobile ? 200 : 60);
+  };
+
   const printBtn = $("print-btn");
   if (printBtn) {
-    printBtn.addEventListener("click", () => {
-      updatePreview();
-      prepareForPrint();
-      setTimeout(() => {
-        window.print();
-      }, 60);
-    });
+    printBtn.addEventListener("click", handlePrintAction);
+  }
+  const quickPrintBtn = $("quick-print-btn");
+  if (quickPrintBtn) {
+    quickPrintBtn.addEventListener("click", handlePrintAction);
   }
 
   // 10.5 Inisialisasi Penjenamaan Sekolah daripada config.js / settings
