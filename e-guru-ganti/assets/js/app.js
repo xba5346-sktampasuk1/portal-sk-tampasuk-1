@@ -149,64 +149,55 @@ function setupDeviceModeToggle() {
   }
 }
 
-// Pengurusan Aksesibiliti Universal (WCAG 2.1 AA/AAA - MyGov & UI/UX Pro Max)
-const A11Y_FONT_KEY = "eGuruGanti_a11y_font_size";
-const A11Y_CONTRAST_KEY = "eGuruGanti_high_contrast";
+// Pengurusan Aksesibiliti: Pelaras % Saiz Paparan
+const A11Y_ZOOM_KEY = "eGuruGanti_display_zoom_pct";
 
-function setFontSizeA11y(size, save = true) {
-  const validSizes = ["sm", "md", "lg"];
-  if (!validSizes.includes(size)) size = "md";
+function setDisplayZoomA11y(pct, save = true) {
+  const validPcts = ["90", "100", "115"];
+  if (!validPcts.includes(String(pct))) pct = "100";
 
-  document.documentElement.classList.remove("a11y-font-sm", "a11y-font-md", "a11y-font-lg");
-  document.documentElement.classList.add(`a11y-font-${size}`);
+  document.documentElement.classList.remove("a11y-zoom-90", "a11y-zoom-100", "a11y-zoom-115");
+  document.documentElement.classList.add(`a11y-zoom-${pct}`);
+
+  // Mengubah % saiz paparan
+  const zoomValues = { "90": "0.9", "100": "1", "115": "1.15" };
+  document.documentElement.style.zoom = zoomValues[pct] || "1";
 
   const btnSm = document.getElementById("btn-font-decrease");
   const btnMd = document.getElementById("btn-font-reset");
   const btnLg = document.getElementById("btn-font-increase");
 
-  if (btnSm) btnSm.classList.toggle("active", size === "sm");
-  if (btnMd) btnMd.classList.toggle("active", size === "md");
-  if (btnLg) btnLg.classList.toggle("active", size === "lg");
+  if (btnSm) btnSm.classList.toggle("active", pct === "90");
+  if (btnMd) btnMd.classList.toggle("active", pct === "100");
+  if (btnLg) btnLg.classList.toggle("active", pct === "115");
 
   if (save) {
     try {
-      localStorage.setItem(A11Y_FONT_KEY, size);
+      localStorage.setItem(A11Y_ZOOM_KEY, pct);
+      const label = pct === "100" ? "100% (Asal)" : `${pct}%`;
+      showToast(`Saiz Paparan: ${label}`, "info");
     } catch (e) {}
   }
-}
-
-function toggleHighContrastA11y() {
-  const isContrast = document.documentElement.classList.toggle("high-contrast-mode");
-  const btnContrast = document.getElementById("btn-high-contrast");
-  if (btnContrast) btnContrast.classList.toggle("active", isContrast);
-
-  try {
-    localStorage.setItem(A11Y_CONTRAST_KEY, isContrast ? "1" : "0");
-  } catch (e) {}
-
-  showToast(isContrast ? "Mod Kontras Tinggi: Diaktifkan (WCAG AAA)" : "Mod Kontras Biasa: Diaktifkan", "info");
 }
 
 function setupAccessibilityControls() {
   const btnSm = document.getElementById("btn-font-decrease");
   const btnMd = document.getElementById("btn-font-reset");
   const btnLg = document.getElementById("btn-font-increase");
-  const btnContrast = document.getElementById("btn-high-contrast");
 
-  if (btnSm) btnSm.addEventListener("click", () => setFontSizeA11y("sm"));
-  if (btnMd) btnMd.addEventListener("click", () => setFontSizeA11y("md"));
-  if (btnLg) btnLg.addEventListener("click", () => setFontSizeA11y("lg"));
-  if (btnContrast) btnContrast.addEventListener("click", toggleHighContrastA11y);
+  if (btnSm) btnSm.addEventListener("click", () => setDisplayZoomA11y("90"));
+  if (btnMd) btnMd.addEventListener("click", () => setDisplayZoomA11y("100"));
+  if (btnLg) btnLg.addEventListener("click", () => setDisplayZoomA11y("115"));
 
   // Pulihkan tetapan simpanan
   try {
-    const savedSize = localStorage.getItem(A11Y_FONT_KEY);
-    if (savedSize) setFontSizeA11y(savedSize, false);
-
-    const savedContrast = localStorage.getItem(A11Y_CONTRAST_KEY) === "1";
-    if (savedContrast) {
-      document.documentElement.classList.add("high-contrast-mode");
-      if (btnContrast) btnContrast.classList.add("active");
+    const saved = localStorage.getItem(A11Y_ZOOM_KEY) || localStorage.getItem("eGuruGanti_a11y_font_size");
+    if (saved === "sm" || saved === "90") {
+      setDisplayZoomA11y("90", false);
+    } else if (saved === "lg" || saved === "115") {
+      setDisplayZoomA11y("115", false);
+    } else {
+      setDisplayZoomA11y("100", false);
     }
   } catch (e) {}
 }

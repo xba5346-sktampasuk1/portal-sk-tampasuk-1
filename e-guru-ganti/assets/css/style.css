@@ -3520,14 +3520,20 @@ html[data-device-mode="mobile"] .wa-modal-footer {
   padding: 2px 5px;
 }
 
-/* Mod Saiz Teks Skrin */
+/* Mod % Saiz Paparan Skrin Aksesibiliti */
+html.a11y-zoom-90,
 html.a11y-font-sm {
+  zoom: 0.9;
   font-size: 14.5px;
 }
+html.a11y-zoom-100,
 html.a11y-font-md {
+  zoom: 1;
   font-size: 16px;
 }
+html.a11y-zoom-115,
 html.a11y-font-lg {
+  zoom: 1.15;
   font-size: 18px;
 }
 
