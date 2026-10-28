@@ -3561,6 +3561,22 @@ html.high-contrast-mode .nav-tab.active {
   margin: 0 auto;
 }
 
+.gov-footer-brand-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .gov-footer-brand-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .gov-footer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
