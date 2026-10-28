@@ -218,6 +218,7 @@ function setupNavigation() {
       const pageId = btn.dataset.page;
       showPage(pageId);
 
+      if (pageId === "page1") loadDailyScheduleForDate(dateInput.value);
       if (pageId === "page2") renderPage2();
       if (pageId === "page3") renderPage3();
       if (pageId === "page5") {
@@ -360,32 +361,110 @@ function updateTeacherRowColor(row) {
   }
 }
 
-function addTeacherRow(defaultName = "", defaultReason = "") {
+function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, isEmergency = false) {
   const tpl = document.getElementById("teacher-row-template");
   const row = tpl.content.cloneNode(true).firstElementChild;
   const ts = row.querySelector(".teacher-select");
   const rs = row.querySelector(".reason-select");
 
-  // Isi senarai pilihan guru rasmi 26 orang
+  row.dataset.isSaved = isSaved ? "true" : "false";
+  row.dataset.isEmergency = isEmergency ? "true" : "false";
+
+  // Isi senarai pilihan guru rasmi 28 orang
   ts.innerHTML = '<option value="">PILIH NAMA GURU</option>' +
     MASTER_TEACHERS.map(g => `<option value="${g}">${g}</option>`).join("");
 
   ts.value = defaultName;
   rs.value = defaultReason;
 
+  if (isEmergency) {
+    row.style.border = "1.5px solid #3b82f6";
+    row.style.background = "#eff6ff";
+    const label = row.querySelector(".teacher-field-label");
+    if (label) {
+      label.innerHTML = `Nama Guru Tidak Hadir <span class="badge-tag-new" style="margin-left:4px;">Kecemasan</span>`;
+    }
+  } else if (isSaved) {
+    const label = row.querySelector(".teacher-field-label");
+    if (label) {
+      label.innerHTML = `Nama Guru Tidak Hadir <span class="badge-tag-saved" style="margin-left:4px;">Tersimpan</span>`;
+    }
+  }
+
   ts.addEventListener("change", () => {
     updateTeacherRowColor(row);
     autoFillSchedule();
   });
-  rs.addEventListener("change", autoFillSchedule);
+  rs.addEventListener("change", () => {
+    const teacherName = ts.value;
+    if (teacherName) {
+      [...entryRows.querySelectorAll(".schedule-row")].forEach(er => {
+        if (er.dataset.guruTidakHadir === teacherName) {
+          er.dataset.sebab = rs.value;
+          if (er.dataset.saved === "true") {
+            er.dataset.modified = "true";
+            er.classList.add("row-is-modified");
+          }
+        }
+      });
+    }
+  });
 
-  row.querySelector(".remove-teacher").addEventListener("click", () => {
+  row.querySelector(".remove-teacher").addEventListener("click", async () => {
+    const teacherName = ts.value;
+    const hasSavedRows = [...entryRows.querySelectorAll(".schedule-row")]
+      .some(r => r.dataset.guruTidakHadir === teacherName && r.dataset.saved === "true");
+
+    if (hasSavedRows) {
+      if (!confirm(`Perhatian: Terdapat tugasan guru ganti yang telah disimpan bagi ${teacherName}.\n\nAdakah anda pasti mahu memadam guru ini dan membatalkan semua tugasan gantian beliau untuk tarikh ini?`)) {
+        return;
+      }
+      const rowsToDelete = [...entryRows.querySelectorAll(".schedule-row")]
+        .filter(r => r.dataset.guruTidakHadir === teacherName && r.dataset.saved === "true");
+
+      for (const r of rowsToDelete) {
+        if (r.dataset.id) {
+          await DatabaseAPI.deleteRecord(r.dataset.id, {
+            tarikh: dateInput.value,
+            masa: r.querySelector(".row-masa").value,
+            kelas: r.querySelector(".row-kelas").value,
+            guru_tidak_hadir: teacherName,
+            guru_ganti: r.querySelector(".row-ganti").value
+          });
+        }
+        r.remove();
+      }
+      allRecords = await DatabaseAPI.getAllRecords();
+      showToast(`Semua tugasan bagi ${teacherName} telah dibatalkan.`, "info");
+    } else {
+      [...entryRows.querySelectorAll(".schedule-row")].forEach(r => {
+        if (r.dataset.guruTidakHadir === teacherName && r.dataset.saved !== "true") {
+          r.remove();
+        }
+      });
+    }
+
     if (teachersContainer.children.length > 1) {
       row.remove();
-      autoFillSchedule();
     } else {
-      showToast("Sekurang-kurangnya satu orang guru tidak hadir diperlukan.", "error");
+      ts.value = "";
+      rs.value = "";
+      row.dataset.isSaved = "false";
+      row.dataset.isEmergency = "false";
+      updateTeacherRowColor(row);
     }
+
+    if (!entryRows.children.length) addRow();
+    kemasKiniSemuaCadanganGuruGanti();
+
+    const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
+    showDailyStatusBanner({
+      type: curSaved.length ? "saved" : "empty",
+      count: curSaved.length,
+      teacherCount: [...new Set(curSaved.map(r => r.guru_tidak_hadir))].length,
+      date: dateInput.value,
+      day: dayInput.value
+    });
   });
 
   teachersContainer.appendChild(row);
@@ -393,7 +472,7 @@ function addTeacherRow(defaultName = "", defaultReason = "") {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// Kemas Kini Hari & Jadual Automatik
+// Kemas Kini Hari & Jadual Automatik (Memuatkan jadual tersimpan jika ada)
 function updateDay() {
   const day = dateInput.value ? getDayFromDate(dateInput.value) : "";
   dayInput.value = day;
@@ -401,12 +480,12 @@ function updateDay() {
   if (p2 && day && !p2.value) p2.value = day;
   const p3 = document.getElementById("page3-hari");
   if (p3 && day && !p3.value) p3.value = day;
-  autoFillSchedule();
+  loadDailyScheduleForDate(dateInput.value);
 }
 
 dateInput.addEventListener("change", updateDay);
 
-// Menambah Baris Jadual Gantian
+// Menambah Baris Jadual Gantian (Menyokong ID dan Status Tersimpan / Kecemasan)
 function addRow(data = {}) {
   const tpl = document.getElementById("entry-row-template");
   const row = tpl.content.cloneNode(true).firstElementChild;
@@ -418,12 +497,39 @@ function addRow(data = {}) {
   const customTrigger = row.querySelector(".custom-ganti-trigger");
   const customLabel = row.querySelector(".custom-ganti-label");
   const customMenu = row.querySelector(".custom-ganti-menu");
+  const teacherBadgeEl = row.querySelector(".row-teacher-badge");
 
   masaInput.value = data.masa || "";
   subjekInput.value = data.subjek || "";
   kelasInput.value = data.kelas || "";
   row.dataset.guruTidakHadir = data.guru_tidak_hadir || "";
   row.dataset.sebab = data.sebab || "";
+  row.dataset.id = data.id || "";
+  row.dataset.saved = data.saved ? "true" : "false";
+  row.dataset.isEmergency = data.isEmergency ? "true" : "false";
+
+  // Visual cues
+  if (data.saved) {
+    row.classList.add("row-is-saved");
+  } else if (data.isEmergency) {
+    row.classList.add("row-is-new");
+  }
+
+  // Kemas kini badge maklumat guru asal & status
+  if (teacherBadgeEl) {
+    let badgeHtml = "";
+    if (data.guru_tidak_hadir) {
+      badgeHtml += `<span style="color:#0369a1; background:#e0f2fe; padding:1px 6px; border-radius:4px; font-size:10.5px;">Ganti: ${data.guru_tidak_hadir}</span>`;
+    }
+    if (data.saved) {
+      badgeHtml += `<span class="badge-tag-saved">● Tersimpan</span>`;
+    } else if (data.isEmergency) {
+      badgeHtml += `<span class="badge-tag-new">● Kecemasan</span>`;
+    } else if (data.guru_tidak_hadir) {
+      badgeHtml += `<span class="badge-tag-new">● Draf</span>`;
+    }
+    teacherBadgeEl.innerHTML = badgeHtml;
+  }
 
   if (data.guru_tidak_hadir) {
     const col = getTeacherColor(data.guru_tidak_hadir);
@@ -492,18 +598,71 @@ function addRow(data = {}) {
     });
   }
 
-  row.querySelector(".remove-row").addEventListener("click", () => {
+  // Pengendali Padam / Batal Baris
+  row.querySelector(".remove-row").addEventListener("click", async () => {
     hideTeacherHoverPopover();
-    row.remove();
+    if (row.dataset.saved === "true") {
+      const gantiVal = gantiSelect.value || "Belum dipilih";
+      const guruAsal = row.dataset.guruTidakHadir || "Guru Asal";
+      const masaVal = masaInput.value;
+      const kelasVal = kelasInput.value;
+
+      if (!confirm(`BATAL TUGASAN GURU GANTI\n\nAdakah anda pasti mahu membatalkan tugasan ini?\n• Guru Pengganti: ${gantiVal}\n• Menggantikan: ${guruAsal}\n• Waktu: ${masaVal} (Kelas ${kelasVal})\n\nRekod ini akan dipadam daripada pangkalan data harian.`)) {
+        return;
+      }
+
+      const delRes = await DatabaseAPI.deleteRecord(row.dataset.id, {
+        tarikh: dateInput.value,
+        masa: masaVal,
+        kelas: kelasVal,
+        guru_tidak_hadir: guruAsal,
+        guru_ganti: gantiVal
+      });
+
+      allRecords = await DatabaseAPI.getAllRecords();
+      row.remove();
+      showToast(delRes.message || "Tugasan berjaya dibatalkan.", "info");
+
+      const remaining = allRecords.filter(r => r && r.tarikh === dateInput.value);
+      showDailyStatusBanner({
+        type: remaining.length ? "saved" : "empty",
+        count: remaining.length,
+        teacherCount: [...new Set(remaining.map(r => r.guru_tidak_hadir))].length,
+        date: dateInput.value,
+        day: dayInput.value
+      });
+    } else {
+      row.remove();
+    }
+
     if (!entryRows.children.length) addRow();
     kemasKiniSemuaCadanganGuruGanti();
   });
 
-  const onInputChange = () => kemasKiniSemuaCadanganGuruGanti();
-  masaInput.addEventListener("input", onInputChange);
-  subjekInput.addEventListener("input", onInputChange);
-  kelasInput.addEventListener("input", onInputChange);
-  gantiSelect.addEventListener("change", onInputChange);
+  // Pengendali Pengesanan Perubahan (Modification Tracking)
+  const markRowAsModified = () => {
+    if (row.dataset.saved === "true") {
+      row.dataset.modified = "true";
+      row.classList.add("row-is-modified");
+      if (teacherBadgeEl) {
+        const modBadge = teacherBadgeEl.querySelector(".badge-tag-modified");
+        if (!modBadge) {
+          teacherBadgeEl.insertAdjacentHTML("beforeend", `<span class="badge-tag-modified">✏️ Diubah</span>`);
+        }
+      }
+      const saveBtn = document.getElementById("save-sheet-btn");
+      if (saveBtn) {
+        saveBtn.innerHTML = `<i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN PERUBAHAN JADUAL`;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+    kemasKiniSemuaCadanganGuruGanti();
+  };
+
+  masaInput.addEventListener("input", markRowAsModified);
+  subjekInput.addEventListener("input", markRowAsModified);
+  kelasInput.addEventListener("input", markRowAsModified);
+  gantiSelect.addEventListener("change", markRowAsModified);
 
   entryRows.appendChild(row);
 
@@ -715,8 +874,8 @@ function hideTeacherHoverPopover() {
   }
 }
 
-// Pengisian Automatik Berdasarkan Guru Tidak Hadir & Hari
-function autoFillSchedule() {
+// Pengisian Automatik Berdasarkan Guru Tidak Hadir & Hari (Append Mode: Kekalkan Rekod Sedia Ada)
+function autoFillSchedule(options = {}) {
   updateGroupMembers();
   const day = dayInput.value;
   if (!day) return;
@@ -725,22 +884,39 @@ function autoFillSchedule() {
   const activeTeachers = rows
     .map(r => ({
       name: r.querySelector(".teacher-select").value,
-      reason: r.querySelector(".reason-select").value
+      reason: r.querySelector(".reason-select").value,
+      isEmergency: r.dataset.isEmergency === "true"
     }))
     .filter(t => t.name);
 
-  entryRows.innerHTML = "";
-
   if (!activeTeachers.length) {
-    addRow();
+    if (!entryRows.children.length) addRow();
     autoMessage.classList.add("hidden");
     return;
   }
 
-  const absentTeacherNames = activeTeachers.map(t => t.name);
+  // Kenal pasti guru yang sudah mempunyai baris dalam entryRows
+  const existingDomRows = [...entryRows.querySelectorAll(".schedule-row")];
+  const existingTeachersWithRows = new Set(existingDomRows.map(r => r.dataset.guruTidakHadir).filter(Boolean));
 
-  let totalSlots = 0;
+  // Buang baris draft kosong tanpa sebarang maklumat jika ada
+  existingDomRows.forEach(r => {
+    const masa = r.querySelector(".row-masa").value.trim();
+    const ganti = r.querySelector(".row-ganti").value.trim();
+    if (!masa && !ganti && !r.dataset.guruTidakHadir) {
+      r.remove();
+    }
+  });
+
+  const absentTeacherNames = activeTeachers.map(t => t.name);
+  let newlyAddedSlots = 0;
+
   activeTeachers.forEach(t => {
+    // Jika guru ini sudah ada slot dalam jadual, KEKALKAN dan jangan overwrite!
+    if (existingTeachersWithRows.has(t.name) && !options.forceRegenerate) {
+      return;
+    }
+
     const lessons = (TIMETABLE[t.name] && TIMETABLE[t.name][day]) || [];
     lessons.forEach(([masa, subjek, kelas]) => {
       // Perkara A (Pilihan 1): Kelas Prasekolah tidak memerlukan guru ganti kerana sentiasa diawasi Guru Pra & PPM
@@ -759,17 +935,19 @@ function autoFillSchedule() {
           kelas,
           guru_tidak_hadir: t.name,
           sebab: t.reason,
-          ganti: partnerInfo ? partnerInfo.nama : ""
+          ganti: partnerInfo ? partnerInfo.nama : "",
+          saved: false,
+          isEmergency: t.isEmergency
         });
-        totalSlots++;
+        newlyAddedSlots++;
       });
     });
   });
 
-  if (totalSlots > 0) {
-    autoMessage.textContent = `${totalSlots} waktu pengajaran berjaya diisi secara automatik.`;
+  if (newlyAddedSlots > 0) {
+    autoMessage.textContent = `${newlyAddedSlots} waktu kelas baharu berjaya diisi secara automatik. Sila tentukan guru ganti dan klik Simpan.`;
     autoMessage.classList.remove("hidden");
-  } else {
+  } else if (!entryRows.children.length) {
     addRow();
     autoMessage.textContent = `Tiada rekod waktu kelas untuk guru terpilih pada hari ${day}.`;
     autoMessage.classList.remove("hidden");
@@ -1117,19 +1295,174 @@ function checkOverload() {
   }
 }
 
-// Reset dan Tambah Baris Manual
-document.getElementById("add-row").addEventListener("click", () => addRow());
-document.getElementById("add-teacher").addEventListener("click", () => addTeacherRow());
-document.getElementById("reset-teachers").addEventListener("click", () => {
+// Aliran Tambah Guru Ganti (Kecemasan)
+function addEmergencyTeacherFlow() {
+  addTeacherRow("", "Kecemasan", false, true);
+  teachersContainer.lastElementChild?.scrollIntoView({ behavior: "smooth", block: "center" });
+  showToast("Baris guru kecemasan ditambah. Sila pilih nama guru tidak hadir.", "info");
+}
+
+document.getElementById("add-emergency-teacher")?.addEventListener("click", addEmergencyTeacherFlow);
+document.getElementById("add-row")?.addEventListener("click", () => addRow({ saved: false }));
+document.getElementById("add-teacher")?.addEventListener("click", () => addTeacherRow());
+
+document.getElementById("reset-teachers")?.addEventListener("click", () => {
+  const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
+  if (curSaved.length > 0) {
+    if (!confirm(`Perhatian: Terdapat ${curSaved.length} rekod tersimpan bagi tarikh ini.\n\nReset hanya akan mengosongkan borang semasa pada skrin tanpa memadam data dalam pangkalan data. Adakah anda pasti?`)) {
+      return;
+    }
+  }
   teachersContainer.innerHTML = "";
   addTeacherRow();
-  autoFillSchedule();
+  autoFillSchedule({ forceRegenerate: true });
   showToast("Senarai guru tidak hadir telah di-reset.", "neutral");
 });
-document.getElementById("reset-rows").addEventListener("click", () => {
-  autoFillSchedule();
+
+document.getElementById("reset-rows")?.addEventListener("click", () => {
+  const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
+  if (curSaved.length > 0) {
+    if (!confirm(`Perhatian: Terdapat rekod tersimpan bagi tarikh ini.\n\nAdakah anda pasti mahu memuatkan semula jadual asal daripada pangkalan data?`)) {
+      return;
+    }
+    loadDailyScheduleForDate(dateInput.value);
+    return;
+  }
+  autoFillSchedule({ forceRegenerate: true });
   showToast("Jadual gantian telah dijana semula.", "neutral");
 });
+
+// Paparan Banner Status Harian (Saved vs Fresh Entry)
+function showDailyStatusBanner(state) {
+  const banner = document.getElementById("daily-schedule-status-banner");
+  if (!banner) return;
+
+  if (state.type === "saved") {
+    banner.className = "daily-status-banner banner-saved";
+    banner.innerHTML = `
+      <div>
+        <div class="daily-banner-title">
+          <i data-lucide="check-circle-2" style="width:20px;height:20px;color:#10b981;"></i>
+          <span>Jadual Guru Ganti [${formatDateDisplay(state.date) || state.date}] — Tersimpan &amp; Sah (${state.day})</span>
+        </div>
+        <p style="margin:4px 0 0; font-size:12.5px; opacity:0.95;">
+          Terdapat <strong>${state.count} tugasan guru ganti</strong> direkodkan untuk <strong>${state.teacherCount} guru tidak hadir</strong>. Data asal selamat dalam sistem. Anda boleh menambah guru ganti kecemasan atau mengedit rekod pada bila-bila masa.
+        </p>
+      </div>
+      <div class="daily-banner-actions">
+        <button type="button" id="btn-banner-add-emergency" class="action-btn" style="background:#2563eb; color:#fff; font-size:0.78rem; padding:0.45rem 0.85rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+          <i data-lucide="alert-circle" style="width:14px;height:14px;"></i> Tambah Guru Ganti (Kecemasan)
+        </button>
+      </div>
+    `;
+    banner.classList.remove("hidden");
+    document.getElementById("btn-banner-add-emergency")?.addEventListener("click", addEmergencyTeacherFlow);
+  } else {
+    banner.className = "daily-status-banner banner-empty";
+    banner.innerHTML = `
+      <div>
+        <div class="daily-banner-title">
+          <i data-lucide="calendar" style="width:18px;height:18px;color:#3b82f6;"></i>
+          <span>Jadual Guru Ganti [${formatDateDisplay(state.date) || state.date}] — Belum Disimpan (${state.day})</span>
+        </div>
+        <p style="margin:4px 0 0; font-size:12.5px; color:#64748b;">
+          Pilih guru tidak hadir di bawah untuk menjana jadual waktu guru ganti bagi hari ${state.day}.
+        </p>
+      </div>
+    `;
+    banner.classList.remove("hidden");
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// Memuatkan Jadual Guru Ganti Lengkap Mengikut Tarikh (Persistent & Isolated by Date)
+function loadDailyScheduleForDate(dateStr) {
+  if (!dateStr) dateStr = dateInput.value || getLocalDateString();
+  const day = getDayFromDate(dateStr);
+  dayInput.value = day;
+
+  const p2 = document.getElementById("page2-hari");
+  if (p2 && day && !p2.value) p2.value = day;
+  const p3 = document.getElementById("page3-hari");
+  if (p3 && day && !p3.value) p3.value = day;
+
+  // Filter rekod bagi tarikh yang dipilih
+  const savedRecords = allRecords.filter(r => r && r.tarikh === dateStr);
+  const saveBtn = document.getElementById("save-sheet-btn");
+
+  if (savedRecords.length > 0) {
+    if (savedRecords[0].minggu) mingguSelect.value = savedRecords[0].minggu;
+    if (savedRecords[0].kumpulan) {
+      kumpulanSelect.value = savedRecords[0].kumpulan;
+      updateGroupMembers();
+    }
+
+    // Ekstrak guru tidak hadir unik
+    const absentMap = {};
+    savedRecords.forEach(r => {
+      const g = r.guru_tidak_hadir;
+      if (g && !absentMap[g]) {
+        absentMap[g] = r.sebab || "Urusan Rasmi";
+      }
+    });
+
+    teachersContainer.innerHTML = "";
+    Object.keys(absentMap).forEach(name => {
+      addTeacherRow(name, absentMap[name], true, false);
+    });
+
+    // Muat semula entryRows dengan rekod tersimpan
+    entryRows.innerHTML = "";
+    savedRecords.forEach(r => {
+      addRow({
+        id: r.id,
+        masa: r.masa,
+        subjek: r.mata_pelajaran,
+        kelas: r.kelas,
+        ganti: r.guru_ganti,
+        guru_tidak_hadir: r.guru_tidak_hadir,
+        sebab: r.sebab,
+        saved: true
+      });
+    });
+
+    showDailyStatusBanner({
+      type: "saved",
+      count: savedRecords.length,
+      teacherCount: Object.keys(absentMap).length,
+      date: dateStr,
+      day: day
+    });
+
+    if (saveBtn) {
+      saveBtn.innerHTML = `<i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN PERUBAHAN JADUAL`;
+    }
+
+    autoMessage.textContent = `${savedRecords.length} rekod jadual guru ganti sedia ada dimuatkan bagi tarikh ${formatDateDisplay(dateStr) || dateStr}.`;
+    autoMessage.classList.remove("hidden");
+  } else {
+    // Tiada rekod bagi tarikh ini: mod pengisian awal
+    teachersContainer.innerHTML = "";
+    addTeacherRow();
+    entryRows.innerHTML = "";
+    addRow();
+
+    showDailyStatusBanner({
+      type: "empty",
+      date: dateStr,
+      day: day
+    });
+
+    if (saveBtn) {
+      saveBtn.innerHTML = `<i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN JADUAL GURU GANTI`;
+    }
+    autoMessage.classList.add("hidden");
+  }
+
+  kemasKiniSemuaCadanganGuruGanti();
+  if (window.lucide) window.lucide.createIcons();
+}
 
 // PAGE 2: Jadual Kelas
 const page2HariSelect = document.getElementById("page2-hari");
@@ -3088,7 +3421,7 @@ document.getElementById("monthly-pdf-btn").addEventListener("click", () => {
   win.document.close();
 });
 
-// Simpan Borang (Submit)
+// Simpan Borang (Submit): Menyokong Mod Tambah (Append) & Kemas Kini Rekod Sedia Ada
 document.getElementById("schedule-form").addEventListener("submit", async (ev) => {
   ev.preventDefault();
 
@@ -3098,28 +3431,48 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
     return;
   }
 
-  const rows = [...entryRows.querySelectorAll(".schedule-row")];
-  if (!rows.length) {
+  const allDomRows = [...entryRows.querySelectorAll(".schedule-row")];
+  if (!allDomRows.length) {
     showToast("Sila tambah sekurang-kurangnya satu waktu kelas.", "error");
     return;
   }
 
-  const activeTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
-    .map(r => ({
-      name: r.querySelector(".teacher-select").value,
-      reason: r.querySelector(".reason-select").value
-    }))
-    .filter(t => t.name);
-
-  if (!activeTeachers.length) {
-    showToast("Sila pilih guru tidak hadir terlebih dahulu.", "error");
+  // Semak jika semua baris telah mempunyai pilihan guru pengganti
+  const unassigned = allDomRows.filter(r => {
+    const gVal = r.querySelector(".row-ganti") ? r.querySelector(".row-ganti").value.trim() : "";
+    return !gVal || gVal === "Pilih guru ganti";
+  });
+  if (unassigned.length) {
+    showToast("Sila pilih guru pengganti untuk semua waktu kelas sebelum menyimpan.", "error");
     return;
+  }
+
+  // Semak pertindihan masa bagi guru pengganti yang sama (Validation Rules 2 & 3)
+  const slotAssignments = {};
+  let clashWarning = null;
+  for (const r of allDomRows) {
+    const masa = r.querySelector(".row-masa").value.trim();
+    const ganti = r.querySelector(".row-ganti").value.trim();
+    if (ganti && ganti !== "Guru UBK") {
+      const key = `${masa}__${ganti}`;
+      if (slotAssignments[key]) {
+        clashWarning = { masa, ganti };
+        break;
+      }
+      slotAssignments[key] = true;
+    }
+  }
+
+  if (clashWarning) {
+    if (!confirm(`AMARAN PERTINDIHAN WAKTU:\n\nGuru ${clashWarning.ganti} telah ditugaskan menggantikan lebih daripada 1 kelas pada slot masa yang sama (${clashWarning.masa}).\n\nAdakah anda pasti mahu meneruskan simpanan?`)) {
+      return;
+    }
   }
 
   const submitBtn = document.getElementById("save-sheet-btn");
   const origBtnContent = submitBtn.innerHTML;
   submitBtn.disabled = true;
-  submitBtn.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Menyimpan rekod...`;
+  submitBtn.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Menyimpan rekod ke sistem...`;
 
   const commonData = {
     minggu: mingguSelect.value,
@@ -3128,10 +3481,24 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
     kumpulan: kumpulanSelect.value
   };
 
-  const recordsToSave = rows.map(r => {
-    const rg = r.dataset.guruTidakHadir || activeTeachers[0].name;
-    const rs = r.dataset.sebab || activeTeachers[0].reason;
-    return {
+  const activeTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
+    .map(r => ({
+      name: r.querySelector(".teacher-select").value,
+      reason: r.querySelector(".reason-select").value
+    }))
+    .filter(t => t.name);
+
+  // Asingkan rekod baharu (untuk di-APPEND) dan rekod tersimpan yang diubah (untuk di-UPDATE)
+  const newRecordsToSave = [];
+  const modifiedRecordsToUpdate = [];
+
+  allDomRows.forEach(r => {
+    const isSaved = r.dataset.saved === "true";
+    const isModified = r.dataset.modified === "true";
+    const rg = r.dataset.guruTidakHadir || (activeTeachers[0] ? activeTeachers[0].name : "");
+    const rs = r.dataset.sebab || (activeTeachers[0] ? activeTeachers[0].reason : "");
+
+    const recData = {
       ...commonData,
       guru_tidak_hadir: rg,
       sebab: rs,
@@ -3141,32 +3508,59 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
       guru_ganti: r.querySelector(".row-ganti").value.trim(),
       catatan: `Ganti ${rg}`
     };
+
+    if (!isSaved) {
+      newRecordsToSave.push(recData);
+    } else if (isModified) {
+      recData.id = r.dataset.id;
+      modifiedRecordsToUpdate.push(recData);
+    }
   });
 
-  const saveResult = await DatabaseAPI.saveRecords(recordsToSave);
+  let hasUpdates = false;
+
+  // 1. Simpan rekod baharu (Append: tidak menggantikan rekod pagi)
+  if (newRecordsToSave.length > 0) {
+    const saveResult = await DatabaseAPI.saveRecords(newRecordsToSave);
+    if (!saveResult.success) {
+      showToast(saveResult.message || "Gagal menyimpan rekod baharu.", "error");
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = origBtnContent;
+      return;
+    }
+    hasUpdates = true;
+  }
+
+  // 2. Kemas kini rekod sedia ada yang telah diedit
+  if (modifiedRecordsToUpdate.length > 0) {
+    for (const modRec of modifiedRecordsToUpdate) {
+      await DatabaseAPI.updateRecord(modRec);
+    }
+    hasUpdates = true;
+  }
 
   submitBtn.disabled = false;
   submitBtn.innerHTML = origBtnContent;
 
-  if (saveResult.success) {
-    showToast(saveResult.message, "success");
-
-    // Kemas kini senarai tempatan
-    allRecords = await DatabaseAPI.getAllRecords();
-
-    // Reset borang dengan betul (Hanya 1 baris kosong baharu)
-    ev.currentTarget.reset();
-    teachersContainer.innerHTML = "";
-    addTeacherRow();
-    entryRows.innerHTML = "";
-    autoMessage.classList.add("hidden");
-
-    dateInput.value = getLocalDateString();
-    updateDay();
-    // addRow() dipanggil automatik dalam autoFillSchedule()
+  if (hasUpdates) {
+    showToast(
+      newRecordsToSave.length && modifiedRecordsToUpdate.length
+        ? `${newRecordsToSave.length} tugasan baharu ditambah (Append) & ${modifiedRecordsToUpdate.length} rekod sedia ada dikemas kini!`
+        : newRecordsToSave.length
+        ? `${newRecordsToSave.length} tugasan guru ganti berjaya disimpan & dikekalkan!`
+        : "Perubahan rekod berjaya dikemas kini!",
+      "success"
+    );
   } else {
-    showToast(saveResult.message || "Gagal menyimpan rekod.", "error");
+    showToast("Semua rekod harian bagi tarikh ini telah pun tersimpan rapi.", "info");
   }
+
+  // Segerakkan allRecords dan muat semula paparan harian tanpa mengosongkan borang
+  allRecords = await DatabaseAPI.getAllRecords();
+  loadDailyScheduleForDate(dateInput.value);
+
+  // Segerakkan paparan tab lain jika sedang aktif
+  renderPage5();
 });
 
 // Prapemuatan Sistem (Initialization)
@@ -3189,10 +3583,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     todayDisplay.textContent = `${MALAY_DAYS[today.getDay()]}, ${today.getDate()} ${MALAY_MONTHS[today.getMonth()]} ${today.getFullYear()}`;
   }
 
-  // Mulakan guru tidak hadir dan hari
-  addTeacherRow();
-  updateDay();
-
   // Prapemuatan ikon Lucide
   if (window.lucide) window.lucide.createIcons();
 
@@ -3206,9 +3596,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Muat turun data sedia ada daripada API / Storan Tempatan
   allRecords = await DatabaseAPI.getAllRecords();
 
+  // Inisialisasi Jadual Harian bagi Tarikh Semasa (Kekalkan Data Pagi!)
+  loadDailyScheduleForDate(todayStr);
+
   // Tetapkan pilihan lalai di dropdown Page 5:
-  // Jika terdapat rekod bagi bulan semasa, pilih bulan tersebut.
-  // Jika tiada rekod bagi bulan semasa, lalai kepada "" (Semua Bulan) supaya rekod Google Sheet terpapar serta-merta!
   const statBulanEl = document.getElementById("stat-bulan-filter");
   if (statBulanEl) {
     const curMonth = today.getMonth() + 1;
@@ -3226,6 +3617,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Inisialisasi Butang Segerak Awan Header & Automatik Segerak Terus Dari Google Sheet
   setupCloudSync();
   await triggerCloudSync(false);
+
+  // Muat semula paparan harian sekiranya terdapat data baharu daripada Google Sheet
+  if (dateInput.value) {
+    loadDailyScheduleForDate(dateInput.value);
+  }
+
+  renderPage5();
+
+  // Permulaan Modul WhatsApp Guru Ganti
+  setupWhatsAppModalEvents();
 
   renderPage5();
 

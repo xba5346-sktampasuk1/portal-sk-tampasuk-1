@@ -210,6 +210,9 @@
           </div>
         </div>
 
+        <!-- Banner Status Jadual Harian & Kawalan Pantas (Kecemasan & Tersimpan) -->
+        <div id="daily-schedule-status-banner" class="daily-status-banner hidden" role="region" aria-live="polite"></div>
+
         <form id="schedule-form" style="padding:1.5rem 1.75rem;" novalidate>
           <!-- Grid Minggu, Tarikh, Hari -->
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
@@ -243,9 +246,12 @@
                 <i data-lucide="user" class="text-blue-600 dark:text-blue-400" style="width:18px;height:18px"></i>
                 <span>Maklumat Guru Tidak Hadir</span>
               </div>
-              <div style="display:flex; gap:0.5rem; align-items:center;">
+              <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                 <button id="reset-teachers" type="button" class="section-ghost-btn">
                   <i data-lucide="rotate-ccw" style="width:15px;height:15px"></i> Reset
+                </button>
+                <button id="add-emergency-teacher" type="button" class="action-btn" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-size:0.8rem; padding:0.45rem 0.85rem; border-radius:8px; display:inline-flex; align-items:center; gap:5px; font-weight:700;">
+                  <i data-lucide="alert-circle" style="width:15px;height:15px; color:#2563eb;"></i> Tambah Guru (Kecemasan)
                 </button>
                 <button id="add-teacher" type="button" class="section-ghost-btn" style="font-weight:700;">
                   <i data-lucide="plus" style="width:15px;height:15px"></i> Tambah Guru
@@ -312,19 +318,26 @@
           </div>
 
           <!-- Butang Simpan & Tindakan Cetak -->
-          <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:0.75rem; flex-wrap:wrap;">
-            <button id="btn-open-wa-modal" type="button" class="action-btn btn-whatsapp-action">
-              <i data-lucide="message-circle" style="width:17px;height:17px"></i> HANTAR WHATSAPP GURU GANTI
-            </button>
-            <button id="print-mini-slips-btn" type="button" class="action-btn" style="background:#0284c7; color:#ffffff; font-weight:700;">
-              <i data-lucide="scissors" style="width:17px;height:17px"></i> Cetak Slip Mini (A4)
-            </button>
-            <button id="print-pdf-btn" type="button" class="action-btn btn-success">
-              <i data-lucide="printer" style="width:17px;height:17px"></i> Jana Laporan Penuh (PDF)
-            </button>
-            <button id="save-sheet-btn" type="submit" class="action-btn btn-primary">
-              <i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN KE GOOGLE SHEET
-            </button>
+          <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+            <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+              <button id="btn-view-daily-history" type="button" class="action-btn btn-secondary" onclick="document.querySelector('[data-page=page5]').click()">
+                <i data-lucide="history" style="width:17px;height:17px"></i> LIHAT REKOD HARIAN
+              </button>
+            </div>
+            <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+              <button id="btn-open-wa-modal" type="button" class="action-btn btn-whatsapp-action">
+                <i data-lucide="message-circle" style="width:17px;height:17px"></i> HANTAR WHATSAPP GURU GANTI
+              </button>
+              <button id="print-mini-slips-btn" type="button" class="action-btn" style="background:#0284c7; color:#ffffff; font-weight:700;">
+                <i data-lucide="scissors" style="width:17px;height:17px"></i> Cetak Slip Mini (A4)
+              </button>
+              <button id="print-pdf-btn" type="button" class="action-btn btn-success">
+                <i data-lucide="printer" style="width:17px;height:17px"></i> Jana Laporan Penuh (PDF)
+              </button>
+              <button id="save-sheet-btn" type="submit" class="action-btn btn-primary">
+                <i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN JADUAL GURU GANTI
+              </button>
+            </div>
           </div>
         </form>
       </section>
@@ -964,9 +977,16 @@
   <!-- HTML Templates -->
   <template id="entry-row-template">
     <tr class="schedule-row">
-      <td style="padding-left:14px;"><input class="row-pill-input row-masa" aria-label="Masa" required placeholder="cth: 7.40-8.10"></td>
-      <td><input class="row-pill-input row-subjek" aria-label="Mata pelajaran" required placeholder="cth: BM"></td>
-      <td><input class="row-pill-input row-kelas" aria-label="Kelas" required placeholder="cth: 4A"></td>
+      <td style="padding-left:14px;">
+        <input class="row-pill-input row-masa" aria-label="Masa" required placeholder="cth: 7.40-8.10">
+        <div class="row-teacher-badge" style="font-size:11px; margin-top:4px; color:#64748b; font-weight:600; display:flex; align-items:center; gap:4px; flex-wrap:wrap;"></div>
+      </td>
+      <td>
+        <input class="row-pill-input row-subjek" aria-label="Mata pelajaran" required placeholder="cth: BM">
+      </td>
+      <td>
+        <input class="row-pill-input row-kelas" aria-label="Kelas" required placeholder="cth: 4A">
+      </td>
       <td>
         <div class="custom-ganti-wrapper">
           <button type="button" class="custom-ganti-trigger" aria-haspopup="listbox" aria-expanded="false">
@@ -977,7 +997,9 @@
           <select class="row-select-ganti row-ganti hidden" aria-label="Guru ganti" required><option value="">Pilih guru ganti</option></select>
         </div>
       </td>
-      <td style="text-align:center;"><button type="button" class="remove-row row-remove-btn" aria-label="Buang baris"><i data-lucide="x" style="width:18px;height:18px"></i></button></td>
+      <td style="text-align:center;">
+        <button type="button" class="remove-row row-remove-btn" aria-label="Buang baris" title="Batal tugasan ini"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+      </td>
     </tr>
   </template>
 

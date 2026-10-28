@@ -69,6 +69,58 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
+    // Tindakan Padam / Batal Tugasan
+    if (data.action === "deleteRecord") {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      let sheetRekod = ss.getSheetByName(SHEET_REKOD);
+      if (sheetRekod) {
+        const rows = sheetRekod.getDataRange().getValues();
+        for (let i = rows.length - 1; i >= 1; i--) {
+          const row = rows[i];
+          const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
+          if (rTarikh === data.tarikh && 
+              String(row[6]).trim() === String(data.masa || "").trim() && 
+              String(row[8]).trim() === String(data.kelas || "").trim() &&
+              String(row[4]).trim() === String(data.guru_tidak_hadir || "").trim()) {
+            sheetRekod.deleteRow(i + 1);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        message: "Rekod berjaya dipadam dari Google Sheet"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Tindakan Kemas Kini Tugasan
+    if (data.action === "updateRecord" && data.record) {
+      const r = data.record;
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      let sheetRekod = ss.getSheetByName(SHEET_REKOD);
+      if (sheetRekod) {
+        const rows = sheetRekod.getDataRange().getValues();
+        for (let i = rows.length - 1; i >= 1; i--) {
+          const row = rows[i];
+          const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
+          if (rTarikh === r.tarikh && 
+              String(row[6]).trim() === String(r.masa || "").trim() && 
+              String(row[8]).trim() === String(r.kelas || "").trim() &&
+              String(row[4]).trim() === String(r.guru_tidak_hadir || "").trim()) {
+            if (r.guru_ganti) sheetRekod.getRange(i + 1, 10).setValue(r.guru_ganti);
+            if (r.mata_pelajaran) sheetRekod.getRange(i + 1, 8).setValue(r.mata_pelajaran);
+            if (r.sebab) sheetRekod.getRange(i + 1, 6).setValue(r.sebab);
+            sheetRekod.getRange(i + 1, 12).setValue(new Date()); // Kemas kini cap masa
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        message: "Rekod berjaya dikemas kini di Google Sheet"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
       message: "Tindakan tidak sah"

@@ -136,5 +136,117 @@ const DatabaseAPI = {
         ? `Berjaya disimpan ke Google Sheet & Emel Sekolah${emailStatus}!`
         : "Berjaya disimpan dalam peranti (Luar Talian)."
     };
+  },
+
+  /**
+   * Mengemas kini rekod guru ganti sedia ada
+   * @param {Object} updatedRecord - Objek rekod yang mengandungi id dan medan yang diubah
+   */
+  async updateRecord(updatedRecord) {
+    if (!updatedRecord || !updatedRecord.id) {
+      return { success: false, message: "ID rekod diperlukan untuk kemas kini." };
+    }
+
+    let existing = [];
+    try {
+      const local = localStorage.getItem(APP_CONFIG.storageKeys.records);
+      existing = local ? JSON.parse(local) : [];
+    } catch (e) {
+      existing = [];
+    }
+
+    const idx = existing.findIndex(r => r.id === updatedRecord.id);
+    if (idx !== -1) {
+      existing[idx] = {
+        ...existing[idx],
+        ...updatedRecord,
+        updated_at: new Date().toISOString()
+      };
+      localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(existing));
+    }
+
+    // Segerakkan ke Google Apps Script jika sambungan dalam talian
+    let sheetSynced = false;
+    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
+      try {
+        const response = await fetch(APP_CONFIG.googleAppsScriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "updateRecord",
+            record: updatedRecord
+          })
+        });
+        if (response.ok) {
+          const res = await response.json();
+          if (res.status === "success") sheetSynced = true;
+        }
+      } catch (err) {
+        console.warn("Gagal menyegerakkan kemas kini ke Google Apps Script:", err);
+      }
+    }
+
+    return {
+      success: true,
+      sheetSynced,
+      message: sheetSynced
+        ? "Rekod berjaya dikemas kini di Google Sheet & Peranti!"
+        : "Rekod berjaya dikemas kini dalam peranti (Luar Talian)."
+    };
+  },
+
+  /**
+   * Memadam / Membatalkan satu tugasan guru ganti
+   * @param {String} recordId - ID rekod yang hendak dipadam
+   * @param {Object} [recordDetails] - Maklumat rekod untuk pemadaman tepat di Google Sheet
+   */
+  async deleteRecord(recordId, recordDetails = null) {
+    if (!recordId) return { success: false, message: "ID rekod tidak sah." };
+
+    let existing = [];
+    try {
+      const local = localStorage.getItem(APP_CONFIG.storageKeys.records);
+      existing = local ? JSON.parse(local) : [];
+    } catch (e) {
+      existing = [];
+    }
+
+    const targetRec = existing.find(r => r.id === recordId) || recordDetails;
+    const filtered = existing.filter(r => r.id !== recordId);
+    localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(filtered));
+
+    // Padam dari Google Apps Script jika ada sambungan
+    let sheetSynced = false;
+    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine && targetRec) {
+      try {
+        const response = await fetch(APP_CONFIG.googleAppsScriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "deleteRecord",
+            recordId: recordId,
+            tarikh: targetRec.tarikh,
+            masa: targetRec.masa,
+            kelas: targetRec.kelas,
+            guru_tidak_hadir: targetRec.guru_tidak_hadir,
+            guru_ganti: targetRec.guru_ganti
+          })
+        });
+        if (response.ok) {
+          const res = await response.json();
+          if (res.status === "success") sheetSynced = true;
+        }
+      } catch (err) {
+        console.warn("Gagal memadam rekod dari Google Sheet:", err);
+      }
+    }
+
+    return {
+      success: true,
+      sheetSynced,
+      message: sheetSynced
+        ? "Tugasan berjaya dibatalkan dari Google Sheet & Peranti!"
+        : "Tugasan berjaya dibatalkan dalam peranti."
+    };
   }
 };
