@@ -229,8 +229,22 @@ h1, h2, h3, h4, h5, h6,
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--text-primary);
-  margin: 1.5rem 0 1.5rem;
+  margin: 1.5rem 0 0.4rem;
   text-transform: uppercase;
+}
+
+.main-page-subtitle {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.03em;
+  margin: 0 0 1.5rem;
+  transition: color 0.15s ease;
+}
+
+.dark .main-page-subtitle {
+  color: #94a3b8;
 }
 
 /* Panel Pengepala Bahagian (Page Header Panel) */
@@ -2825,6 +2839,11 @@ html[data-device-mode="mobile"] .nav-tab {
 
 html[data-device-mode="mobile"] .main-page-title {
   font-size: 1.3rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+html[data-device-mode="mobile"] .main-page-subtitle {
+  font-size: 0.72rem !important;
   margin-bottom: 1rem !important;
 }
 
