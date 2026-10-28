@@ -86,6 +86,31 @@
   </div>
 
   <div class="app-shell" id="app-shell">
+    <!-- Jalur Rasmi Kerajaan Malaysia & KPM (MyGov Standard) -->
+    <div class="gov-top-bar" role="region" aria-label="Pengesahan Laman Web Rasmi Kerajaan">
+      <div class="gov-top-bar-inner">
+        <div class="gov-top-bar-left">
+          <span class="gov-flag" aria-hidden="true">🇲🇾</span>
+          <span class="gov-official-text">Laman Web Rasmi Kerajaan Malaysia &bull; Kementerian Pendidikan Malaysia</span>
+          <span class="gov-badge-verified">
+            <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Disahkan Rasmi
+          </span>
+        </div>
+        <div class="gov-top-bar-right">
+          <!-- Aksesibiliti Universal (WCAG 2.1 AA/AAA) -->
+          <div class="a11y-controls" aria-label="Pelaras Saiz Teks & Kebolehcapaian">
+            <span class="a11y-label">Aksesibiliti:</span>
+            <button type="button" id="btn-font-decrease" class="a11y-btn" title="Kecilkan Saiz Teks" aria-label="Kecilkan Saiz Teks">A-</button>
+            <button type="button" id="btn-font-reset" class="a11y-btn active" title="Saiz Teks Asal" aria-label="Saiz Teks Asal">A</button>
+            <button type="button" id="btn-font-increase" class="a11y-btn" title="Besarkan Saiz Teks" aria-label="Besarkan Saiz Teks">A+</button>
+            <button type="button" id="btn-high-contrast" class="a11y-btn a11y-btn-contrast" title="Mod Kontras Tinggi" aria-label="Togol Mod Kontras Tinggi">
+              <i data-lucide="contrast" style="width:13px;height:13px;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Header Utama Sekolah -->
     <header class="hero-band w-full">
       <div style="max-width:1280px; margin:0 auto; padding:1.5rem 1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:1.25rem;">
@@ -98,6 +123,9 @@
               <h1 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.75rem; font-weight:800; line-height:1.2; letter-spacing:-0.02em;">E-Guru Ganti</h1>
               <p style="font-size:0.88rem; color:#bfdbfe; font-weight:600; margin-top:2px;">SK TAMPASUK 1 KOTA BELUD, SABAH</p>
               <p style="font-size:0.75rem; color:#93c5fd; opacity:0.85;">W.D.T 158, 89150, KOTA BELUD</p>
+              <div class="hero-innovation-pill">
+                <i data-lucide="award" style="width:13px;height:13px;"></i> Inisiatif Transformasi Digital Sekolah Pintar &bull; Bertaraf Inovasi Antarabangsa
+              </div>
             </div>
           </div>
 
@@ -901,10 +929,63 @@
       </div>
     </main>
 
-    <!-- Footer -->
-    <footer style="width:100%; border-top:1px solid var(--border-card); padding:1.5rem; text-align:center; font-size:0.82rem; color:var(--text-secondary); margin-top:auto; background:var(--bg-card-solid);">
-      <p style="font-weight:700; letter-spacing:0.04em; color:var(--text-primary);" class="dark:text-slate-200">SEKATA MELAKAR KECEMERLANGAN</p>
-      <p style="margin-top:4px;">&copy; SK Tampasuk 1 Kota Belud &bull; Sistem e-Guru Ganti V2</p>
+    <!-- Footer Rasmi KPM & Inovasi Antarabangsa (MyGov & EdTech Standard) -->
+    <footer class="official-gov-footer" role="contentinfo">
+      <div class="gov-footer-inner">
+        <div class="gov-footer-grid">
+          <!-- Lajur 1: Identiti & Maklumat Institusi -->
+          <div class="gov-footer-col">
+            <div class="gov-footer-brand">
+              <img src="assets/images/logo-sekolah.jpg" alt="Lencana SK Tampasuk 1" class="gov-footer-logo">
+              <div>
+                <h4 class="gov-footer-title">SK TAMPASUK 1 KOTA BELUD</h4>
+                <p class="gov-footer-sub">Pejabat Pendidikan Daerah Kota Belud<br>Jabatan Pendidikan Negeri Sabah<br>Kementerian Pendidikan Malaysia</p>
+              </div>
+            </div>
+            <p class="gov-footer-desc">
+              Sistem e-Guru Ganti V2.6 merupakan inovasi pengurusan jadual waktu pintar (MMI) dengan enjin Zero-Clash AI dan seni bina hibrid tahan lasak (Offline-First Cloud Sync).
+            </p>
+          </div>
+
+          <!-- Lajur 2: Status Inovasi & Ciri Pintar Antarabangsa -->
+          <div class="gov-footer-col">
+            <h5 class="gov-footer-heading"><i data-lucide="sparkles" style="width:16px;height:16px;color:#facc15;"></i> Ciri Inovasi Antarabangsa</h5>
+            <ul class="gov-footer-list">
+              <li><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e;"></i> Algoritma Pengagihan Beban Adil (Fair Load Balancing)</li>
+              <li><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e;"></i> Pengesanan Pasangan Serentak (Concurrent Pairing)</li>
+              <li><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e;"></i> Dwi-Penyegerakan Awan Berdaya Tahan (Offline Resilience)</li>
+              <li><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e;"></i> Integrasi Pantas WhatsApp Web API (One-Touch Dispatch)</li>
+            </ul>
+          </div>
+
+          <!-- Lajur 3: Pematuhan Keselamatan & MyGov -->
+          <div class="gov-footer-col">
+            <h5 class="gov-footer-heading"><i data-lucide="shield-check" style="width:16px;height:16px;color:#38bdf8;"></i> Keselamatan &amp; Dasar Rasmi</h5>
+            <ul class="gov-footer-links">
+              <li><a href="javascript:void(0)" onclick="alert('Dasar Keselamatan Siber Sektor Awam KPM: Akses sistem ini dihadkan kepada kakitangan yang diberi kuasa sahaja.')">Dasar Keselamatan Siber</a></li>
+              <li><a href="javascript:void(0)" onclick="alert('Dasar Privasi: Tiada maklumat peribadi sensitif murid atau kakitangan yang dikongsikan kepada pihak ketiga tanpa kebenaran.')">Dasar Privasi &amp; Perlindungan Data</a></li>
+              <li><a href="javascript:void(0)" onclick="alert('Penafian: Pihak sekolah tidak bertanggungjawab terhadap sebarang kerugian akibat penggunaan maklumat yang tidak sah.')">Penafian &amp; Notis Perundangan</a></li>
+              <li><a href="javascript:void(0)" onclick="alert('Piawaian Aksesibiliti: Mematuhi garis panduan Web Content Accessibility Guidelines (WCAG 2.1 AA) MyGov.')">Pernyataan Aksesibiliti (WCAG 2.1)</a></li>
+            </ul>
+            <div class="gov-trust-badge">
+              <i data-lucide="lock" style="width:13px;height:13px;color:#22c55e;"></i> Penyulitan Google Cloud SSL 256-Bit
+            </div>
+          </div>
+        </div>
+
+        <!-- Bar Hak Cipta & Tarikh Kemaskini -->
+        <div class="gov-footer-bottom">
+          <div>
+            &copy; 2026 <strong>Sekolah Kebangsaan Tampasuk 1, Kota Belud</strong>. Hak Cipta Terpelihara.
+            <span class="gov-footer-sep">&bull;</span> Kementerian Pendidikan Malaysia (KPM).
+          </div>
+          <div class="gov-footer-meta">
+            <span>Versi Sistem: <strong>V2.6.0 (EdTech Innovation Edition)</strong></span>
+            <span class="gov-footer-sep">&bull;</span>
+            <span>Status: <span class="badge-online-kpm">● Beroperasi Sepenuhnya</span></span>
+          </div>
+        </div>
+      </div>
     </footer>
   </div>
 

@@ -3369,3 +3369,376 @@ html[data-device-mode="mobile"] .wa-modal-footer {
   animation: pulse 1s infinite;
 }
 
+
+
+/* ==========================================================================
+   E-GURU GANTI & PORTAL SK TAMPASUK 1 - UI/UX PRO MAX UPGRADE
+   Piawaian Portal Rasmi Kerajaan KPM (MyGov) & Inovasi Antarabangsa (EdTech)
+   ========================================================================== */
+
+/* 1. Jalur Rasmi Kerajaan Malaysia & KPM (MyGov Standard) */
+.gov-top-bar {
+  background: #090e1a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  padding: 0.45rem 1.25rem;
+  font-size: 0.76rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.01em;
+  position: relative;
+  z-index: 50;
+}
+
+.gov-top-bar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.gov-top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.gov-flag {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-block;
+}
+
+.gov-official-text {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.gov-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.gov-top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Kawalan Aksesibiliti Universal (WCAG 2.1 AA/AAA) */
+.a11y-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.a11y-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-right: 3px;
+  font-weight: 600;
+}
+
+.a11y-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #cbd5e1;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+}
+
+.a11y-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.a11y-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.a11y-btn-contrast {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 5px;
+}
+
+/* Mod Saiz Teks Skrin */
+html.a11y-font-sm {
+  font-size: 14.5px;
+}
+html.a11y-font-md {
+  font-size: 16px;
+}
+html.a11y-font-lg {
+  font-size: 18px;
+}
+
+/* Mod Kontras Tinggi (High Contrast Mode - WCAG AAA) */
+html.high-contrast-mode {
+  --bg-main: #000000 !important;
+  --bg-card: #0a0a0a !important;
+  --bg-subtle: #171717 !important;
+  --text-primary: #ffffff !important;
+  --text-secondary: #facc15 !important;
+  --text-muted: #e5e5e5 !important;
+  --border-subtle: #525252 !important;
+  --border-card: #ffffff !important;
+  --border-color: #ffffff !important;
+}
+
+html.high-contrast-mode .section-card,
+html.high-contrast-mode .guru-card,
+html.high-contrast-mode .nav-tab {
+  border-color: #ffffff !important;
+}
+
+html.high-contrast-mode .nav-tab.active {
+  background: #facc15 !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+/* 2. Lencana Inovasi Antarabangsa di Header */
+.hero-innovation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.22) 0%, rgba(245, 158, 11, 0.14) 100%);
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  color: #fef08a;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-innovation-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
+}
+
+/* 3. Footer Rasmi Sektor Awam KPM & Inovasi Antarabangsa */
+.official-gov-footer {
+  background: #090e1a;
+  border-top: 1px solid #1e293b;
+  color: #94a3b8;
+  margin-top: 3.5rem;
+  padding: 3rem 1.25rem 1.75rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.gov-footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.gov-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 2.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.gov-footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.gov-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.gov-footer-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 2px;
+  border: 2px solid #38bdf8;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.gov-footer-title {
+  color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 0.98rem;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.gov-footer-sub {
+  color: #93c5fd;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  margin: 3px 0 0;
+  font-weight: 500;
+}
+
+.gov-footer-desc {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #64748b;
+  margin: 0;
+}
+
+.gov-footer-heading {
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gov-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+}
+
+.gov-footer-list li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.gov-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.gov-footer-links a {
+  color: #93c5fd;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  display: inline-block;
+}
+
+.gov-footer-links a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.gov-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #86efac;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  width: fit-content;
+}
+
+.gov-footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.gov-footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.gov-footer-sep {
+  margin: 0 5px;
+  color: #475569;
+}
+
+.badge-online-kpm {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* 4. Sentuhan Mikro-Interaksi & Kebolehcapaian Papan Kekunci (UI/UX Pro Max) */
+button, select, input, a {
+  cursor: pointer;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid #0284c7 !important;
+  outline-offset: 2px !important;
+}
+
+/* Animasi Denyut Indikator Awan */
+@keyframes cloudBeaconPulse {
+  0% { transform: scale(0.95); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.9; }
+}
+
+.cloud-sync-btn.status-success #cloud-sync-status-dot {
+  animation: cloudBeaconPulse 2s infinite ease-in-out;
+}
+
+/* Card Depth Enhancement (Soft UI Evolution) */
+.section-card {
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.dark .section-card {
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+}

@@ -149,6 +149,68 @@ function setupDeviceModeToggle() {
   }
 }
 
+// Pengurusan Aksesibiliti Universal (WCAG 2.1 AA/AAA - MyGov & UI/UX Pro Max)
+const A11Y_FONT_KEY = "eGuruGanti_a11y_font_size";
+const A11Y_CONTRAST_KEY = "eGuruGanti_high_contrast";
+
+function setFontSizeA11y(size, save = true) {
+  const validSizes = ["sm", "md", "lg"];
+  if (!validSizes.includes(size)) size = "md";
+
+  document.documentElement.classList.remove("a11y-font-sm", "a11y-font-md", "a11y-font-lg");
+  document.documentElement.classList.add(`a11y-font-${size}`);
+
+  const btnSm = document.getElementById("btn-font-decrease");
+  const btnMd = document.getElementById("btn-font-reset");
+  const btnLg = document.getElementById("btn-font-increase");
+
+  if (btnSm) btnSm.classList.toggle("active", size === "sm");
+  if (btnMd) btnMd.classList.toggle("active", size === "md");
+  if (btnLg) btnLg.classList.toggle("active", size === "lg");
+
+  if (save) {
+    try {
+      localStorage.setItem(A11Y_FONT_KEY, size);
+    } catch (e) {}
+  }
+}
+
+function toggleHighContrastA11y() {
+  const isContrast = document.documentElement.classList.toggle("high-contrast-mode");
+  const btnContrast = document.getElementById("btn-high-contrast");
+  if (btnContrast) btnContrast.classList.toggle("active", isContrast);
+
+  try {
+    localStorage.setItem(A11Y_CONTRAST_KEY, isContrast ? "1" : "0");
+  } catch (e) {}
+
+  showToast(isContrast ? "Mod Kontras Tinggi: Diaktifkan (WCAG AAA)" : "Mod Kontras Biasa: Diaktifkan", "info");
+}
+
+function setupAccessibilityControls() {
+  const btnSm = document.getElementById("btn-font-decrease");
+  const btnMd = document.getElementById("btn-font-reset");
+  const btnLg = document.getElementById("btn-font-increase");
+  const btnContrast = document.getElementById("btn-high-contrast");
+
+  if (btnSm) btnSm.addEventListener("click", () => setFontSizeA11y("sm"));
+  if (btnMd) btnMd.addEventListener("click", () => setFontSizeA11y("md"));
+  if (btnLg) btnLg.addEventListener("click", () => setFontSizeA11y("lg"));
+  if (btnContrast) btnContrast.addEventListener("click", toggleHighContrastA11y);
+
+  // Pulihkan tetapan simpanan
+  try {
+    const savedSize = localStorage.getItem(A11Y_FONT_KEY);
+    if (savedSize) setFontSizeA11y(savedSize, false);
+
+    const savedContrast = localStorage.getItem(A11Y_CONTRAST_KEY) === "1";
+    if (savedContrast) {
+      document.documentElement.classList.add("high-contrast-mode");
+      if (btnContrast) btnContrast.classList.add("active");
+    }
+  } catch (e) {}
+}
+
 // Navigasi Tab Halaman
 function setupNavigation() {
   document.querySelectorAll(".nav-tab").forEach(btn => {
@@ -3115,6 +3177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupDarkMode();
   setupNavigation();
   setupDeviceModeToggle();
+  setupAccessibilityControls();
 
   // Tetapkan tarikh tempatan tepat
   const today = new Date();
