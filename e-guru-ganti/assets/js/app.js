@@ -3237,7 +3237,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Permulaan Modul Import Jadual Waktu
   setupImportPageEvents();
+
+  // Inisialisasi Pengalaman Skrol Pantas & Butang Kembali Ke Atas (Scroll Experience)
+  setupScrollExperience();
 });
+
+// Fungsi Navigasi Skrol Kembali Ke Atas (Taste and Craft)
+function setupScrollExperience() {
+  const backToTopBtn = document.getElementById("btn-back-to-top");
+  if (!backToTopBtn) return;
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 280) {
+      backToTopBtn.classList.remove("hidden");
+    } else {
+      backToTopBtn.classList.add("hidden");
+    }
+  }, { passive: true });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
 /* ========================================================
    MODUL HANTAR WHATSAPP INDIVIDU GURU GANTI

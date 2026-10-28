@@ -145,53 +145,65 @@ h1, h2, h3, h4, h5, h6,
 .nav-tabs-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  gap: 0.45rem;
+  padding: 6px;
+  background: rgba(241, 245, 249, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.dark .nav-tabs-wrapper {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(51, 65, 85, 0.7);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .nav-tab {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: 8px;
-  padding: 0.55rem 1rem;
+  font-size: 0.86rem;
+  border-radius: 9px;
+  padding: 0.55rem 1.05rem;
   cursor: pointer;
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  color: #334155;
-  transition: all 0.2s ease;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #475569;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .dark .nav-tab {
-  background-color: #1e293b;
-  border-color: #334155;
-  color: #cbd5e1;
+  background-color: transparent;
+  border-color: transparent;
+  color: #94a3b8;
 }
 
 .nav-tab:hover {
-  border-color: #3b82f6 !important;
-  color: #2563eb !important;
-  background-color: #eff6ff !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+  color: #1d4ed8 !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .dark .nav-tab:hover {
-  border-color: #60a5fa !important;
+  border-color: rgba(96, 165, 250, 0.3) !important;
   color: #93c5fd !important;
-  background-color: #1e293b !important;
+  background-color: rgba(30, 41, 59, 0.85) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .nav-tab.active,
 .nav-tab.bg-blue-600 {
-  background-color: #2563eb !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
   color: #ffffff !important;
-  border-color: #2563eb !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-1px);
 }
 
 .nav-tab.active svg,
@@ -204,9 +216,10 @@ h1, h2, h3, h4, h5, h6,
 
 .dark .nav-tab.active,
 .dark .nav-tab.bg-blue-600 {
-  background-color: #2563eb !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
   color: #ffffff !important;
-  border-color: #3b82f6 !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* Tajuk Utama Halaman (Tengah & Bersih) */
@@ -3874,8 +3887,10 @@ a:focus-visible {
 
 .action-btn:active,
 .nav-tab:active,
-.device-mode-btn:active {
-  transform: translateY(0);
+.device-mode-btn:active,
+.a11y-btn:active {
+  transform: scale(0.97) !important;
+  transition-duration: 0.08s !important;
 }
 
 /* Kotak Siaran WhatsApp Berkilat (Glass Tint) */
@@ -3890,6 +3905,148 @@ a:focus-visible {
 .wa-group-broadcast-box:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(22, 163, 74, 0.12);
+}
+
+/* ==========================================================================
+   6. UI/UX PRO MAX SUITE - PILIHAN 1 (UI-DESIGN + MOTION-DESIGN + TASTE-AND-CRAFT)
+   Prinsip Jony Ive / Apple, Google Material Motion & Paul Graham Craftsmanship
+   ========================================================================== */
+
+/* A. Peralihan Halaman Dinamik & Lancar (Page Gliding Transition) */
+.page:not(.page-hidden) {
+  animation: antigravityPageIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes antigravityPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* B. Animasi Masuk Bertingkat Kad Guru (Staggered Cascade Waterfall Reveal) */
+.guru-cards-grid > .guru-card:nth-child(1) { animation-delay: 0.02s; }
+.guru-cards-grid > .guru-card:nth-child(2) { animation-delay: 0.04s; }
+.guru-cards-grid > .guru-card:nth-child(3) { animation-delay: 0.06s; }
+.guru-cards-grid > .guru-card:nth-child(4) { animation-delay: 0.08s; }
+.guru-cards-grid > .guru-card:nth-child(5) { animation-delay: 0.10s; }
+.guru-cards-grid > .guru-card:nth-child(6) { animation-delay: 0.12s; }
+.guru-cards-grid > .guru-card:nth-child(7) { animation-delay: 0.14s; }
+.guru-cards-grid > .guru-card:nth-child(8) { animation-delay: 0.16s; }
+.guru-cards-grid > .guru-card:nth-child(9) { animation-delay: 0.18s; }
+.guru-cards-grid > .guru-card:nth-child(10) { animation-delay: 0.20s; }
+.guru-cards-grid > .guru-card:nth-child(11) { animation-delay: 0.22s; }
+.guru-cards-grid > .guru-card:nth-child(12) { animation-delay: 0.24s; }
+.guru-cards-grid > .guru-card:nth-child(13) { animation-delay: 0.26s; }
+.guru-cards-grid > .guru-card:nth-child(14) { animation-delay: 0.28s; }
+.guru-cards-grid > .guru-card:nth-child(15) { animation-delay: 0.30s; }
+.guru-cards-grid > .guru-card:nth-child(16) { animation-delay: 0.32s; }
+
+/* C. Header Jadual Melekat (Sticky Table Headers dengan Bayang Pemisah) */
+.schedule-table thead th,
+.tt-table thead th,
+.popover-tt-table th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background-color: #f8fafc !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dark .schedule-table thead th,
+.dark .tt-table thead th,
+.dark .popover-tt-table th {
+  background-color: #0f172a !important;
+  box-shadow: 0 1px 2px rgba(255, 255, 255, 0.06) !important;
+}
+
+/* D. Bar Skrol Langsing & Elegan (Slim Custom Scrollbar - Taste & Craft) */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.32);
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.42);
+}
+
+/* E. Butang Terapung Kembali Ke Atas (Floating Back-to-Top FAB) */
+.floating-back-to-top {
+  position: fixed;
+  bottom: 2.25rem;
+  right: 2.25rem;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 25px -4px rgba(37, 99, 235, 0.45), 0 4px 10px -2px rgba(37, 99, 235, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9998;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, box-shadow 0.22s ease;
+}
+
+.floating-back-to-top:hover {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 16px 32px -4px rgba(37, 99, 235, 0.55);
+}
+
+.floating-back-to-top:active {
+  transform: scale(0.94);
+  transition-duration: 0.08s;
+}
+
+.floating-back-to-top.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.88);
+}
+
+/* F. Maklum Balas Taktil & Fokus Aksesibiliti Universal (WCAG 2.1 AAA) */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* G. Penambahbaikan Tipografi & Pelicinan Fon (Text Smoothing) */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Perlindungan Pengguna Sensitif Pergerakan (Accessibility First) */
