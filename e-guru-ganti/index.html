@@ -301,6 +301,9 @@
             <div id="overload-banner" class="hidden" style="background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:12.5px;" aria-live="polite"></div>
             <div id="auto-message" class="hidden" style="background:#eef2ff; border-left:4px solid #6366f1; border-top:1px solid #c7d2fe; border-right:1px solid #c7d2fe; border-bottom:1px solid #c7d2fe; color:#3730a3; border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:12.5px; font-weight:600;" aria-live="polite"></div>
 
+            <!-- Paparan Rasmi: SEMUA GURU HADIR / TIADA PENGGANTIAN -->
+            <div id="all-present-schedule-box" class="all-present-box hidden" role="region" aria-live="polite"></div>
+
             <div class="schedule-table-wrap">
               <table class="schedule-table">
                 <thead>
@@ -977,9 +980,9 @@
   <!-- HTML Templates -->
   <template id="entry-row-template">
     <tr class="schedule-row">
-      <td style="padding-left:14px;">
+      <td>
         <input class="row-pill-input row-masa" aria-label="Masa" required placeholder="cth: 7.40-8.10">
-        <div class="row-teacher-badge" style="font-size:11px; margin-top:4px; color:#64748b; font-weight:600; display:flex; align-items:center; gap:4px; flex-wrap:wrap;"></div>
+        <div class="row-teacher-badge"></div>
       </td>
       <td>
         <input class="row-pill-input row-subjek" aria-label="Mata pelajaran" required placeholder="cth: BM">
@@ -997,7 +1000,7 @@
           <select class="row-select-ganti row-ganti hidden" aria-label="Guru ganti" required><option value="">Pilih guru ganti</option></select>
         </div>
       </td>
-      <td style="text-align:center;">
+      <td>
         <button type="button" class="remove-row row-remove-btn" aria-label="Buang baris" title="Batal tugasan ini"><i data-lucide="x" style="width:18px;height:18px"></i></button>
       </td>
     </tr>

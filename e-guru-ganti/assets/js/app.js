@@ -454,17 +454,22 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
       updateTeacherRowColor(row);
     }
 
-    if (!entryRows.children.length) addRow();
-    kemasKiniSemuaCadanganGuruGanti();
-
     const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
-    showDailyStatusBanner({
-      type: curSaved.length ? "saved" : "empty",
-      count: curSaved.length,
-      teacherCount: [...new Set(curSaved.map(r => r.guru_tidak_hadir))].length,
-      date: dateInput.value,
-      day: dayInput.value
-    });
+    const activeAbsent = [...teachersContainer.querySelectorAll(".teacher-row")].filter(r => r.querySelector(".teacher-select") && r.querySelector(".teacher-select").value);
+
+    if (!curSaved.length && !activeAbsent.length) {
+      loadDailyScheduleForDate(dateInput.value);
+    } else {
+      if (!entryRows.children.length) addRow();
+      kemasKiniSemuaCadanganGuruGanti();
+      showDailyStatusBanner({
+        type: curSaved.length ? "saved" : "draft",
+        count: curSaved.length,
+        teacherCount: [...new Set(curSaved.map(r => r.guru_tidak_hadir))].length,
+        date: dateInput.value,
+        day: dayInput.value
+      });
+    }
   });
 
   teachersContainer.appendChild(row);
@@ -889,10 +894,35 @@ function autoFillSchedule(options = {}) {
     }))
     .filter(t => t.name);
 
+  const allPresentBox = document.getElementById("all-present-schedule-box");
+
   if (!activeTeachers.length) {
-    if (!entryRows.children.length) addRow();
+    const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
+    if (!curSaved.length) {
+      if (allPresentBox) allPresentBox.classList.remove("hidden");
+      entryRows.innerHTML = "";
+      showDailyStatusBanner({
+        type: "all_present",
+        date: dateInput.value,
+        day: day
+      });
+    } else {
+      if (!entryRows.children.length) addRow();
+    }
     autoMessage.classList.add("hidden");
     return;
+  }
+
+  // Ada guru tidak hadir dipilih -> sembunyikan kotak Semua Guru Hadir
+  if (allPresentBox) allPresentBox.classList.add("hidden");
+
+  const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
+  if (!curSaved.length) {
+    showDailyStatusBanner({
+      type: "draft",
+      date: dateInput.value,
+      day: day
+    });
   }
 
   // Kenal pasti guru yang sudah mempunyai baris dalam entryRows
@@ -1332,7 +1362,7 @@ document.getElementById("reset-rows")?.addEventListener("click", () => {
   showToast("Jadual gantian telah dijana semula.", "neutral");
 });
 
-// Paparan Banner Status Harian (Saved vs Fresh Entry)
+// Paparan Banner Status Harian (Saved vs All Present vs Draft)
 function showDailyStatusBanner(state) {
   const banner = document.getElementById("daily-schedule-status-banner");
   if (!banner) return;
@@ -1357,16 +1387,48 @@ function showDailyStatusBanner(state) {
     `;
     banner.classList.remove("hidden");
     document.getElementById("btn-banner-add-emergency")?.addEventListener("click", addEmergencyTeacherFlow);
+  } else if (state.type === "all_present") {
+    banner.className = "daily-status-banner banner-all-present";
+    banner.innerHTML = `
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="background:#d1fae5; color:#059669; padding:8px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;">
+          <i data-lucide="shield-check" style="width:24px;height:24px;color:#059669;"></i>
+        </div>
+        <div>
+          <div class="daily-banner-title" style="color:#065f46;">
+            <span>STATUS HARIAN [${formatDateDisplay(state.date) || state.date} — ${state.day}]:</span>
+            <span class="badge-all-present">SEMUA GURU HADIR / TIADA PENGGANTIAN</span>
+          </div>
+          <p style="margin:4px 0 0; font-size:12.5px; color:#047857; line-height:1.5;">
+            Alhamdulillah, tiada ketidakhadiran guru direkodkan bagi tarikh ini. Semua guru hadir bertugas dan sesi Pengajaran &amp; Pembelajaran (PdP) berjalan sepenuhnya mengikut jadual asal.
+          </p>
+        </div>
+      </div>
+      <div class="daily-banner-actions">
+        <button type="button" id="btn-banner-record-absent" class="action-btn" style="background:#059669; color:#fff; font-size:0.8rem; padding:0.5rem 0.95rem; border-radius:8px; display:inline-flex; align-items:center; gap:6px; font-weight:700;">
+          <i data-lucide="user-plus" style="width:15px;height:15px;"></i> Rekod Guru Tidak Hadir (Jika Ada)
+        </button>
+      </div>
+    `;
+    banner.classList.remove("hidden");
+    document.getElementById("btn-banner-record-absent")?.addEventListener("click", () => {
+      const firstTs = teachersContainer.querySelector(".teacher-select");
+      if (firstTs) {
+        firstTs.scrollIntoView({ behavior: "smooth", block: "center" });
+        firstTs.focus();
+        showToast("Sila pilih nama guru tidak hadir untuk menjana jadual guru ganti.", "info");
+      }
+    });
   } else {
     banner.className = "daily-status-banner banner-empty";
     banner.innerHTML = `
       <div>
         <div class="daily-banner-title">
           <i data-lucide="calendar" style="width:18px;height:18px;color:#3b82f6;"></i>
-          <span>Jadual Guru Ganti [${formatDateDisplay(state.date) || state.date}] — Belum Disimpan (${state.day})</span>
+          <span>Jadual Guru Ganti [${formatDateDisplay(state.date) || state.date}] — Draf Pengisian (${state.day})</span>
         </div>
         <p style="margin:4px 0 0; font-size:12.5px; color:#64748b;">
-          Pilih guru tidak hadir di bawah untuk menjana jadual waktu guru ganti bagi hari ${state.day}.
+          Tentukan guru pengganti bagi setiap slot kelas di bawah, kemudian klik SIMPAN JADUAL GURU GANTI.
         </p>
       </div>
     `;
@@ -1387,11 +1449,15 @@ function loadDailyScheduleForDate(dateStr) {
   const p3 = document.getElementById("page3-hari");
   if (p3 && day && !p3.value) p3.value = day;
 
+  const allPresentBox = document.getElementById("all-present-schedule-box");
+
   // Filter rekod bagi tarikh yang dipilih
   const savedRecords = allRecords.filter(r => r && r.tarikh === dateStr);
   const saveBtn = document.getElementById("save-sheet-btn");
 
   if (savedRecords.length > 0) {
+    if (allPresentBox) allPresentBox.classList.add("hidden");
+
     if (savedRecords[0].minggu) mingguSelect.value = savedRecords[0].minggu;
     if (savedRecords[0].kumpulan) {
       kumpulanSelect.value = savedRecords[0].kumpulan;
@@ -1442,17 +1508,54 @@ function loadDailyScheduleForDate(dateStr) {
     autoMessage.textContent = `${savedRecords.length} rekod jadual guru ganti sedia ada dimuatkan bagi tarikh ${formatDateDisplay(dateStr) || dateStr}.`;
     autoMessage.classList.remove("hidden");
   } else {
-    // Tiada rekod bagi tarikh ini: mod pengisian awal
+    // Tiada rekod tersimpan bagi tarikh ini:
     teachersContainer.innerHTML = "";
     addTeacherRow();
     entryRows.innerHTML = "";
-    addRow();
 
-    showDailyStatusBanner({
-      type: "empty",
-      date: dateStr,
-      day: day
-    });
+    // Semak sama ada terdapat nama guru tidak hadir aktif dipilih
+    const activeAbsent = [...teachersContainer.querySelectorAll(".teacher-row")]
+      .filter(r => r.querySelector(".teacher-select") && r.querySelector(".teacher-select").value);
+
+    if (activeAbsent.length === 0) {
+      // Mod: SEMUA GURU HADIR / TIADA PENGGANTIAN
+      if (allPresentBox) {
+        allPresentBox.innerHTML = `
+          <div class="all-present-inner">
+            <div class="all-present-badge-header">
+              <i data-lucide="award" style="width:16px;height:16px;color:#059669;"></i>
+              <span>PENGESAHAN RASMI PENTADBIRAN SEKOLAH</span>
+            </div>
+            <h3 style="margin:10px 0 6px; font-size:1.35rem; font-weight:800; color:#065f46; letter-spacing:-0.01em;">
+              SEMUA GURU HADIR / TIADA PENGGANTIAN
+            </h3>
+            <p style="margin:0 auto 16px; font-size:0.92rem; color:#047857; max-width:620px; line-height:1.6;">
+              Bagi tarikh <strong>${formatDateDisplay(dateStr) || dateStr} (${day})</strong>, tiada penugasan guru ganti diperlukan kerana semua guru SK Tampasuk 1 dilaporkan hadir bertugas. Semua kelas beroperasi sepenuhnya mengikut Jadual Waktu Induk.
+            </p>
+            <div class="all-present-stats">
+              <div class="stat-pill"><i data-lucide="check-circle-2" style="width:16px;height:16px;color:#10b981;"></i> 100% Kehadiran Guru</div>
+              <div class="stat-pill"><i data-lucide="book-open" style="width:16px;height:16px;color:#10b981;"></i> Jadual Induk Berjalan Biasa</div>
+              <div class="stat-pill"><i data-lucide="sparkles" style="width:16px;height:16px;color:#10b981;"></i> Tiada Waktu Kelas Terabai</div>
+            </div>
+          </div>
+        `;
+        allPresentBox.classList.remove("hidden");
+      }
+
+      showDailyStatusBanner({
+        type: "all_present",
+        date: dateStr,
+        day: day
+      });
+    } else {
+      if (allPresentBox) allPresentBox.classList.add("hidden");
+      addRow();
+      showDailyStatusBanner({
+        type: "draft",
+        date: dateStr,
+        day: day
+      });
+    }
 
     if (saveBtn) {
       saveBtn.innerHTML = `<i data-lucide="save" style="width:17px;height:17px"></i> SIMPAN JADUAL GURU GANTI`;
@@ -3054,28 +3157,78 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
     })
     .filter(Boolean);
 
-  let tableHtml = "";
-  rows.forEach(r => {
-    const masa = r.querySelector(".row-masa").value.trim() || "—";
-    const subjek = r.querySelector(".row-subjek").value.trim() || "—";
-    const kelas = r.querySelector(".row-kelas").value.trim() || "—";
-    const guruGanti = r.querySelector(".row-ganti").value.trim() || "—";
-    const guruAsal = r.dataset.guruTidakHadir || "—";
+  const hasValidRows = rows.length > 0 && rows.some(r => r.querySelector(".row-ganti") && r.querySelector(".row-ganti").value && r.querySelector(".row-ganti").value !== "Pilih guru ganti");
+  const isAllPresent = activeAbsent.length === 0 && !hasValidRows;
 
-    tableHtml += `<tr style="border-bottom:1px solid #cbd5e1">` +
-      `<td style="padding:8px 10px;font-family:monospace;font-weight:bold">${masa}</td>` +
-      `<td style="padding:8px 10px">${subjek}</td>` +
-      `<td style="padding:8px 10px">${kelas}</td>` +
-      `<td style="padding:8px 10px;font-weight:bold;color:#1e3a8a">${guruGanti}</td>` +
-      `<td style="padding:8px 10px;font-size:11px;color:#475569">${guruAsal}</td>` +
-      `</tr>`;
-  });
+  let tableHtml = "";
+  if (!isAllPresent) {
+    rows.forEach(r => {
+      const masa = r.querySelector(".row-masa").value.trim() || "—";
+      const subjek = r.querySelector(".row-subjek").value.trim() || "—";
+      const kelas = r.querySelector(".row-kelas").value.trim() || "—";
+      const guruGanti = r.querySelector(".row-ganti").value.trim() || "—";
+      const guruAsal = r.dataset.guruTidakHadir || "—";
+
+      tableHtml += `<tr style="border-bottom:1px solid #cbd5e1">` +
+        `<td style="padding:8px 10px;font-family:monospace;font-weight:bold">${masa}</td>` +
+        `<td style="padding:8px 10px">${subjek}</td>` +
+        `<td style="padding:8px 10px">${kelas}</td>` +
+        `<td style="padding:8px 10px;font-weight:bold;color:#1e3a8a">${guruGanti}</td>` +
+        `<td style="padding:8px 10px;font-size:11px;color:#475569">${guruAsal}</td>` +
+        `</tr>`;
+    });
+  }
 
   const win = window.open("", "_blank");
   if (!win) {
     showToast("Sila benarkan pop-up pada pelayar web anda.", "error");
     return;
   }
+
+  const mainBodyContent = isAllPresent ? `
+        <div class="section-title">STATUS KEHADIRAN GURU &amp; PENGGANTIAN</div>
+        <div style="background:#ecfdf5; border:1.5px solid #10b981; padding:22px 26px; border-radius:10px; margin:15px 0 25px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <span style="background:#059669; color:#fff; font-size:11px; font-weight:800; padding:3px 10px; border-radius:4px; letter-spacing:0.04em;">STATUS RASMI</span>
+            <span style="font-size:16px; font-weight:800; color:#065f46;">SEMUA GURU HADIR / TIADA PENGGANTIAN</span>
+          </div>
+          <p style="margin:0; font-size:12.5px; color:#047857; line-height:1.6;">
+            <strong>PENGESAHAN RASMI PENTADBIRAN:</strong> Tiada sebarang rekod ketidakhadiran guru dicatatkan bagi tarikh <strong>${tarikhStr} (${hariStr})</strong>. Semua guru SK Tampasuk 1 dilaporkan hadir bertugas. Semua sesi Pengajaran dan Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.
+          </p>
+          <div style="margin-top:14px; font-size:11.5px; color:#065f46; font-weight:700; display:flex; gap:18px; flex-wrap:wrap;">
+            <span>✓ 100% Kehadiran Guru Dilaporkan</span>
+            <span>✓ Tiada Jadual Guru Ganti Diperlukan</span>
+            <span>✓ Semua Kelas Beroperasi Penuh Mengikut Jadual Asal</span>
+          </div>
+        </div>
+
+        <div style="margin-top:60px; display:flex; justify-content:space-between; font-size:11px; color:#475569;">
+          <div>
+            <p>Disediakan oleh:</p>
+            <div style="margin-top:55px; border-top:1px solid #94a3b8; width:200px; padding-top:4px;">
+              <strong>Guru Bertugas Mingguan</strong>
+            </div>
+          </div>
+          <div>
+            <p>Disahkan oleh:</p>
+            <div style="margin-top:55px; border-top:1px solid #94a3b8; width:200px; padding-top:4px;">
+              <strong>Guru Besar / PK Pentadbiran</strong><br>SK Tampasuk 1
+            </div>
+          </div>
+        </div>
+  ` : `
+        <div class="section-title">SENARAI GURU TIDAK HADIR</div>
+        <div class="absent-box">${activeAbsent.length ? activeAbsent.join("<br>") : "Tiada guru tidak hadir."}</div>
+        <div class="section-title">JADUAL WAKTU GURU GANTI</div>
+        <table class="report-table">
+          <thead><tr><th>Masa</th><th>Mata Pelajaran</th><th>Kelas</th><th>Guru Ganti</th><th>Guru Asal</th></tr></thead>
+          <tbody>${tableHtml}</tbody>
+        </table>
+        <footer class="report-footer">
+          <span>Dokumen Rasmi ${APP_CONFIG.schoolName}</span>
+          <span>${APP_CONFIG.appName} • ${tarikhStr}</span>
+        </footer>
+  `;
 
   win.document.write(`<!DOCTYPE html>
     <html lang="ms">
@@ -3115,7 +3268,7 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
               <div class="school-name">${APP_CONFIG.schoolName}</div>
               <div class="school-sub">${APP_CONFIG.schoolAddress}</div>
               <div class="school-motto">"${APP_CONFIG.schoolSubMotto}" • "${APP_CONFIG.schoolMotto}"</div>
-              <div class="report-title">JADUAL GURU GANTI</div>
+              <div class="report-title">${isAllPresent ? "PENGESAHAN KEHADIRAN GURU" : "JADUAL GURU GANTI"}</div>
             </div>
           </div>
         </header>
@@ -3125,17 +3278,7 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
           <div class="meta-box"><strong>Kumpulan Bertugas:</strong> ${kumpulanStr}</div>
           <div class="meta-box"><strong>Masa Dijana:</strong> ${new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
-        <div class="section-title">SENARAI GURU TIDAK HADIR</div>
-        <div class="absent-box">${activeAbsent.length ? activeAbsent.join("<br>") : "Tiada guru tidak hadir."}</div>
-        <div class="section-title">JADUAL WAKTU GURU GANTI</div>
-        <table class="report-table">
-          <thead><tr><th>Masa</th><th>Mata Pelajaran</th><th>Kelas</th><th>Guru Ganti</th><th>Guru Asal</th></tr></thead>
-          <tbody>${tableHtml}</tbody>
-        </table>
-        <footer class="report-footer">
-          <span>Dokumen Rasmi ${APP_CONFIG.schoolName}</span>
-          <span>${APP_CONFIG.appName} • ${tarikhStr}</span>
-        </footer>
+        ${mainBodyContent}
       </div>
     </body>
     </html>`);
@@ -3824,13 +3967,52 @@ function openWhatsAppModal() {
   bodyEl.innerHTML = "";
 
   if (teachers.length === 0) {
+    const waAllPresentText = `*MAKLUMAN KEHADIRAN GURU SK TAMPASUK 1*\n` +
+      `Tarikh: ${formatDateDisplay(dateStr) || dateStr} (${dayStr})\n` +
+      `Minggu: ${mingguSelect.value || "—"} | Kumpulan: ${kumpulanSelect.value || "—"}\n\n` +
+      `*STATUS: SEMUA GURU HADIR / TIADA PENGGANTIAN*\n` +
+      `Alhamdulillah, semua guru SK Tampasuk 1 dilaporkan hadir bertugas pada hari ini. Semua sesi Pengajaran & Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.\n\n` +
+      `Terima kasih atas komitmen dan dedikasi semua warga pendidik.\n` +
+      `_Portal e-Guru Ganti SK Tampasuk 1_`;
+
     bodyEl.innerHTML = `
-      <div style="text-align:center; padding:3rem 1rem; color:var(--text-secondary);">
-        <i data-lucide="alert-circle" style="width:48px;height:48px; margin:0 auto 12px; color:#f59e0b;"></i>
-        <p style="font-weight:800; font-size:1.05rem; color:var(--text-primary); margin:0 0 6px;">Tiada Guru Pengganti Ditemui</p>
-        <p style="font-size:0.85rem; max-width:400px; margin:0 auto;">Sila pastikan sekurang-kurangnya satu baris jadual di Halaman 1 telah dipilih nama guru pengganti sebelum membuka modul ini.</p>
+      <div style="padding:1.5rem 1rem; text-align:center;">
+        <div style="width:58px; height:58px; background:#ecfdf5; border:2px solid #a7f3d0; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+          <i data-lucide="shield-check" style="width:32px;height:32px; color:#059669;"></i>
+        </div>
+        <div style="display:inline-block; padding:3px 12px; background:#d1fae5; color:#065f46; font-size:11px; font-weight:800; border-radius:9999px; margin-bottom:8px;">
+          STATUS RASMI HARIAN
+        </div>
+        <h3 style="font-size:1.2rem; font-weight:800; color:#065f46; margin:0 0 6px;">
+          SEMUA GURU HADIR / TIADA PENGGANTIAN
+        </h3>
+        <p style="font-size:0.88rem; color:#047857; max-width:480px; margin:0 auto 16px; line-height:1.5;">
+          Bagi tarikh <strong>${formatDateDisplay(dateStr) || dateStr} (${dayStr})</strong>, tiada guru ganti diperlukan kerana semua guru hadir bertugas. Anda boleh menyalin atau menghantar makluman kehadiran penuh ini terus ke WhatsApp Group sekolah.
+        </p>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; max-width:520px; margin:0 auto 16px; text-align:left; font-family:monospace; font-size:12px; white-space:pre-wrap; color:#334155; line-height:1.5;">${waAllPresentText}</div>
+
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+          <button type="button" id="btn-copy-wa-all-present" class="action-btn btn-secondary" style="font-weight:700;">
+            <i data-lucide="copy" style="width:16px;height:16px;"></i> Salin Makluman
+          </button>
+          <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(waAllPresentText)}" target="_blank" class="action-btn btn-whatsapp-action" style="font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <i data-lucide="send" style="width:16px;height:16px;"></i> Hantar ke WhatsApp Group
+          </a>
+        </div>
       </div>
     `;
+
+    document.getElementById("btn-copy-wa-all-present")?.addEventListener("click", () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(waAllPresentText).then(() => {
+          showToast("Makluman Semua Guru Hadir berjaya disalin untuk WhatsApp Group!", "success");
+        }).catch(() => fallbackCopyText(waAllPresentText));
+      } else {
+        fallbackCopyText(waAllPresentText);
+      }
+    });
+
     modal.classList.remove("hidden");
     if (window.lucide) window.lucide.createIcons();
     return;

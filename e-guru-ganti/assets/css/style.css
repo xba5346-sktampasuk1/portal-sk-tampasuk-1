@@ -511,12 +511,21 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .schedule-table th {
-  padding: 14px 14px;
+  padding: 12px 10px;
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #475569;
+  vertical-align: middle;
+}
+
+.schedule-table th:first-child {
+  padding-left: 14px;
+}
+
+.schedule-table th:last-child {
+  padding-right: 14px;
 }
 
 .dark .schedule-table th {
@@ -528,8 +537,19 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .schedule-row td {
-  padding: 8px 10px;
-  vertical-align: middle;
+  padding: 10px 10px 12px 10px;
+  vertical-align: top;
+}
+
+.schedule-row td:first-child {
+  padding-left: 14px;
+}
+
+.schedule-row td:last-child {
+  padding-right: 14px;
+  text-align: center;
+  vertical-align: top;
+  padding-top: 15px;
 }
 
 .row-pill-input {
@@ -4105,6 +4125,110 @@ html {
   color: #cbd5e1;
 }
 
+.daily-status-banner.banner-all-present {
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.98) 0%, rgba(209, 250, 229, 0.95) 100%);
+  border: 1.5px solid #10b981;
+  color: #065f46;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
+}
+
+.dark .daily-status-banner.banner-all-present {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.9) 0%, rgba(4, 120, 87, 0.85) 100%);
+  border-color: #10b981;
+  color: #a7f3d0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.badge-all-present {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: #059669;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+}
+
+.dark .badge-all-present {
+  background: #10b981;
+  color: #064e3b;
+}
+
+/* Kotak Pengesahan Rasmi Semua Guru Hadir di atas jadual */
+.all-present-box {
+  margin: 0.5rem 0 1.25rem;
+  padding: 1.6rem 1.8rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #e6fffa 100%);
+  border: 1.5px solid #6ee7b7;
+  color: #065f46;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.08);
+  animation: antigravityFloatIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dark .all-present-box {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.8) 0%, rgba(19, 78, 74, 0.8) 100%);
+  border-color: #059669;
+  color: #d1fae5;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.all-present-badge-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #047857;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.dark .all-present-badge-header {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.all-present-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.all-present-stats .stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #065f46;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.dark .all-present-stats .stat-pill {
+  background: #0f172a;
+  border-color: #047857;
+  color: #a7f3d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
 .daily-banner-title {
   font-weight: 800;
   font-size: 0.98rem;
@@ -4124,6 +4248,17 @@ html {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #64748b;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.row-teacher-badge:empty {
+  display: none !important;
+  margin-top: 0 !important;
 }
 
 .badge-tag-saved {
