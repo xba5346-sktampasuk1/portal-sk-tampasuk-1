@@ -210,8 +210,24 @@ function setupNavigation() {
       showPage(pageId);
 
       if (pageId === "page1") loadDailyScheduleForDate(dateInput.value);
-      if (pageId === "page2") renderPage2();
-      if (pageId === "page3") renderPage3();
+      if (pageId === "page2") {
+        const p2Tarikh = document.getElementById("page2-tarikh");
+        const p2Hari = document.getElementById("page2-hari");
+        if (p2Tarikh && dateInput.value && p2Tarikh.value !== dateInput.value) {
+          p2Tarikh.value = dateInput.value;
+          if (p2Hari) p2Hari.value = dayInput.value || getDayFromDate(dateInput.value);
+        }
+        renderPage2();
+      }
+      if (pageId === "page3") {
+        const p3Tarikh = document.getElementById("page3-tarikh");
+        const p3Hari = document.getElementById("page3-hari");
+        if (p3Tarikh && dateInput.value && p3Tarikh.value !== dateInput.value) {
+          p3Tarikh.value = dateInput.value;
+          if (p3Hari) p3Hari.value = dayInput.value || getDayFromDate(dateInput.value);
+        }
+        renderPage3();
+      }
       if (pageId === "page5") {
         renderPage5();
         // Segerakkan data terkini daripada Google Sheet di latar belakang
@@ -472,11 +488,25 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
 function updateDay() {
   const day = dateInput.value ? getDayFromDate(dateInput.value) : "";
   dayInput.value = day;
-  const p2 = document.getElementById("page2-hari");
-  if (p2 && day && !p2.value) p2.value = day;
-  const p3 = document.getElementById("page3-hari");
-  if (p3 && day && !p3.value) p3.value = day;
+
+  // Selaraskan juga tarikh dan hari ke JADUAL KELAS (Page 2) dan JADUAL GURU (Page 3)
+  const p2Tarikh = document.getElementById("page2-tarikh");
+  const p2Hari = document.getElementById("page2-hari");
+  if (p2Tarikh && dateInput.value) p2Tarikh.value = dateInput.value;
+  if (p2Hari && day) p2Hari.value = day;
+
+  const p3Tarikh = document.getElementById("page3-tarikh");
+  const p3Hari = document.getElementById("page3-hari");
+  if (p3Tarikh && dateInput.value) p3Tarikh.value = dateInput.value;
+  if (p3Hari && day) p3Hari.value = day;
+
   loadDailyScheduleForDate(dateInput.value);
+
+  // Jika sedang aktif di Page 2 atau Page 3, muat semula paparan secara terus
+  const p2El = document.getElementById("page2");
+  if (p2El && !p2El.classList.contains("page-hidden")) renderPage2();
+  const p3El = document.getElementById("page3");
+  if (p3El && !p3El.classList.contains("page-hidden")) renderPage3();
 }
 
 dateInput.addEventListener("change", updateDay);
@@ -1435,9 +1465,14 @@ function loadDailyScheduleForDate(dateStr) {
   const day = getDayFromDate(dateStr);
   dayInput.value = day;
 
+  const p2Tarikh = document.getElementById("page2-tarikh");
   const p2 = document.getElementById("page2-hari");
+  if (p2Tarikh && !p2Tarikh.value) p2Tarikh.value = dateStr;
   if (p2 && day && !p2.value) p2.value = day;
+
+  const p3Tarikh = document.getElementById("page3-tarikh");
   const p3 = document.getElementById("page3-hari");
+  if (p3Tarikh && !p3Tarikh.value) p3Tarikh.value = dateStr;
   if (p3 && day && !p3.value) p3.value = day;
 
   const allPresentBox = document.getElementById("all-present-schedule-box");
@@ -1559,51 +1594,97 @@ function loadDailyScheduleForDate(dateStr) {
 }
 
 // PAGE 2: Jadual Kelas
+const page2TarikhInput = document.getElementById("page2-tarikh");
 const page2HariSelect = document.getElementById("page2-hari");
+
+if (page2TarikhInput) {
+  page2TarikhInput.addEventListener("change", () => {
+    if (page2TarikhInput.value) {
+      const d = getDayFromDate(page2TarikhInput.value);
+      if (page2HariSelect) page2HariSelect.value = d;
+      // Penyelarasan dua hala ke Halaman Kemasukan (Page 1) dan Jadual Guru (Page 3)
+      if (dateInput && dateInput.value !== page2TarikhInput.value) {
+        dateInput.value = page2TarikhInput.value;
+        if (dayInput) dayInput.value = d;
+        loadDailyScheduleForDate(page2TarikhInput.value);
+      }
+      const p3T = document.getElementById("page3-tarikh");
+      const p3H = document.getElementById("page3-hari");
+      if (p3T && p3T.value !== page2TarikhInput.value) p3T.value = page2TarikhInput.value;
+      if (p3H && d) p3H.value = d;
+    }
+    renderPage2();
+  });
+}
+
 if (page2HariSelect) {
   page2HariSelect.addEventListener("change", renderPage2);
 }
 
 function renderPage2() {
   const container = document.getElementById("timetable-container");
+  if (!container) return;
   container.innerHTML = "";
 
+  const p2Tarikh = document.getElementById("page2-tarikh");
+  const selectedDate = (p2Tarikh && p2Tarikh.value) ? p2Tarikh.value : (dateInput ? dateInput.value : getLocalDateString());
+
   const page2Select = document.getElementById("page2-hari");
-  const selectedDay = (page2Select && page2Select.value) ? page2Select.value : (dayInput ? dayInput.value : "");
+  let selectedDay = (page2Select && page2Select.value) ? page2Select.value : "";
+  if (!selectedDay && selectedDate) {
+    selectedDay = getDayFromDate(selectedDate);
+    if (page2Select) page2Select.value = selectedDay;
+  }
 
   if (!selectedDay) {
     container.innerHTML = '<p class="text-slate-500 col-span-2 text-center py-10">Sila pilih hari atau tarikh terlebih dahulu.</p>';
     return;
   }
 
-  if (page2Select) {
-    page2Select.value = selectedDay;
-  }
-
   const hari = selectedDay;
 
-  const absTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
-    .map(r => r.querySelector(".teacher-select").value)
-    .filter(Boolean);
-
+  // Ekstrak data rekod gantian daripada storan/pangkalan data bagi tarikh berkenaan
+  const dateRecords = allRecords.filter(r => r && r.tarikh === selectedDate);
+  const absTeachersSet = new Set();
   const replacementsMap = {};
-  [...entryRows.querySelectorAll(".schedule-row")].forEach(row => {
-    const m = row.querySelector(".row-masa").value.trim();
-    const k = row.querySelector(".row-kelas").value.trim();
-    const g = row.querySelector(".row-ganti").value.trim();
-    if (m && k) {
-      const idx = STANDARD_SLOTS.indexOf(m);
-      if (idx >= 0) replacementsMap[`${k}|${idx}`] = g;
+
+  dateRecords.forEach(r => {
+    if (r.guruTidakHadir) absTeachersSet.add(r.guruTidakHadir);
+    if (r.masa && r.kelas && r.guruGanti) {
+      const idx = STANDARD_SLOTS.indexOf(r.masa);
+      if (idx >= 0) replacementsMap[`${r.kelas}|${idx}`] = r.guruGanti;
     }
   });
 
+  // Jika tarikh yang dipilih sepadan dengan tarikh draf aktif di KEMASUKAN, gabungkan juga input semasa
+  if (selectedDate === (dateInput ? dateInput.value : "")) {
+    [...teachersContainer.querySelectorAll(".teacher-row")].forEach(r => {
+      const g = r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value : "";
+      if (g) absTeachersSet.add(g);
+    });
+    [...entryRows.querySelectorAll(".schedule-row")].forEach(row => {
+      const m = row.querySelector(".row-masa") ? row.querySelector(".row-masa").value.trim() : "";
+      const k = row.querySelector(".row-kelas") ? row.querySelector(".row-kelas").value.trim() : "";
+      const g = row.querySelector(".row-ganti") ? row.querySelector(".row-ganti").value.trim() : "";
+      if (m && k && g) {
+        const idx = STANDARD_SLOTS.indexOf(m);
+        if (idx >= 0) replacementsMap[`${k}|${idx}`] = g;
+      }
+    });
+  }
+
+  const absTeachers = Array.from(absTeachersSet);
+
   const classes = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B", "Pra Dahlia", "Pra Anggerik"];
+  const formattedDate = selectedDate ? formatDateDisplay(selectedDate) : "";
+  const headerDateInfo = formattedDate ? ` — ${hari}, ${formattedDate}` : ` - ${hari}`;
+
   classes.forEach(kelas => {
     const card = document.createElement("div");
     card.className = "section-card overflow-hidden";
 
     let html = `<div class="tt-card-header">` +
-      `<span>Kelas ${kelas} - ${hari} (Sesi 2026)</span>` +
+      `<span>Kelas ${kelas}${headerDateInfo} (Sesi 2026)</span>` +
       `</div><div class="overflow-x-auto"><table class="tt-table"><thead><tr><th>Masa</th><th>Subjek</th><th>Guru</th><th>Status</th></tr></thead><tbody>`;
 
     let hasAnySlot = false;
@@ -1651,7 +1732,29 @@ function renderPage2() {
 }
 
 // PAGE 3: Jadual Guru
+const page3TarikhInput = document.getElementById("page3-tarikh");
 const page3HariSelect = document.getElementById("page3-hari");
+
+if (page3TarikhInput) {
+  page3TarikhInput.addEventListener("change", () => {
+    if (page3TarikhInput.value) {
+      const d = getDayFromDate(page3TarikhInput.value);
+      if (page3HariSelect) page3HariSelect.value = d;
+      // Penyelarasan dua hala ke Halaman Kemasukan (Page 1) dan Jadual Kelas (Page 2)
+      if (dateInput && dateInput.value !== page3TarikhInput.value) {
+        dateInput.value = page3TarikhInput.value;
+        if (dayInput) dayInput.value = d;
+        loadDailyScheduleForDate(page3TarikhInput.value);
+      }
+      const p2T = document.getElementById("page2-tarikh");
+      const p2H = document.getElementById("page2-hari");
+      if (p2T && p2T.value !== page3TarikhInput.value) p2T.value = page3TarikhInput.value;
+      if (p2H && d) p2H.value = d;
+    }
+    renderPage3();
+  });
+}
+
 if (page3HariSelect) {
   page3HariSelect.addEventListener("change", renderPage3);
 }
@@ -1661,36 +1764,71 @@ function renderPage3() {
   if (!container) return;
   container.innerHTML = "";
 
+  const p3Tarikh = document.getElementById("page3-tarikh");
+  const selectedDate = (p3Tarikh && p3Tarikh.value) ? p3Tarikh.value : (dateInput ? dateInput.value : getLocalDateString());
+
   const page3Select = document.getElementById("page3-hari");
-  const selectedDay = (page3Select && page3Select.value) ? page3Select.value : (dayInput ? dayInput.value : "");
+  let selectedDay = (page3Select && page3Select.value) ? page3Select.value : "";
+  if (!selectedDay && selectedDate) {
+    selectedDay = getDayFromDate(selectedDate);
+    if (page3Select) page3Select.value = selectedDay;
+  }
 
   if (!selectedDay) {
     container.innerHTML = '<p class="text-slate-500 col-span-full text-center py-10">Sila pilih hari atau tarikh terlebih dahulu.</p>';
     return;
   }
 
-  if (page3Select) {
-    page3Select.value = selectedDay;
-  }
-
-  const absentTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
-    .map(r => r.querySelector(".teacher-select").value)
-    .filter(Boolean);
-
+  // Ekstrak data rekod gantian daripada storan/pangkalan data bagi tarikh berkenaan
+  const dateRecords = allRecords.filter(r => r && r.tarikh === selectedDate);
+  const absTeachersSet = new Set();
   const reliefAssignments = {};
-  [...entryRows.querySelectorAll(".schedule-row")].forEach(row => {
-    const m = row.querySelector(".row-masa") ? row.querySelector(".row-masa").value.trim() : "";
-    const s = row.querySelector(".row-subjek") ? row.querySelector(".row-subjek").value.trim() : "";
-    const k = row.querySelector(".row-kelas") ? row.querySelector(".row-kelas").value.trim() : "";
-    const g = row.querySelector(".row-ganti") ? row.querySelector(".row-ganti").value.trim() : "";
-    const orig = row.dataset.guruTidakHadir || "";
-    if (g && m) {
-      if (!reliefAssignments[g]) reliefAssignments[g] = [];
-      reliefAssignments[g].push({ masa: m, subjek: s, kelas: k, guruAsal: orig });
+
+  dateRecords.forEach(r => {
+    if (r.guruTidakHadir) absTeachersSet.add(r.guruTidakHadir);
+    if (r.guruGanti && r.masa) {
+      if (!reliefAssignments[r.guruGanti]) reliefAssignments[r.guruGanti] = [];
+      const exists = reliefAssignments[r.guruGanti].some(item => item.masa === r.masa && item.kelas === r.kelas);
+      if (!exists) {
+        reliefAssignments[r.guruGanti].push({
+          masa: r.masa,
+          subjek: r.subjek || r.mata_pelajaran || "",
+          kelas: r.kelas || "",
+          guruAsal: r.guruTidakHadir || ""
+        });
+      }
     }
   });
 
-  const dutyGroup = kumpulanSelect.value;
+  // Jika tarikh yang dipilih sepadan dengan tarikh draf di Page 1, gabungkan input semasa
+  if (selectedDate === (dateInput ? dateInput.value : "")) {
+    [...teachersContainer.querySelectorAll(".teacher-row")].forEach(r => {
+      const g = r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value : "";
+      if (g) absTeachersSet.add(g);
+    });
+    [...entryRows.querySelectorAll(".schedule-row")].forEach(row => {
+      const m = row.querySelector(".row-masa") ? row.querySelector(".row-masa").value.trim() : "";
+      const s = row.querySelector(".row-subjek") ? row.querySelector(".row-subjek").value.trim() : "";
+      const k = row.querySelector(".row-kelas") ? row.querySelector(".row-kelas").value.trim() : "";
+      const g = row.querySelector(".row-ganti") ? row.querySelector(".row-ganti").value.trim() : "";
+      const orig = row.dataset.guruTidakHadir || "";
+      if (g && m) {
+        if (!reliefAssignments[g]) reliefAssignments[g] = [];
+        const exists = reliefAssignments[g].some(item => item.masa === m && item.kelas === k);
+        if (!exists) {
+          reliefAssignments[g].push({ masa: m, subjek: s, kelas: k, guruAsal: orig });
+        }
+      }
+    });
+  }
+
+  const absentTeachers = Array.from(absTeachersSet);
+
+  // Kumpulan Bertugas: utamakan rekod tersimpan bagi tarikh berkenaan, fallback ke pilihan dropdown
+  let dutyGroup = kumpulanSelect ? kumpulanSelect.value : "";
+  if (dateRecords.length > 0 && dateRecords[0].kumpulan) {
+    dutyGroup = dateRecords[0].kumpulan;
+  }
   const dutyList = dutyGroup && TEACHER_GROUPS[dutyGroup] ? TEACHER_GROUPS[dutyGroup] : [];
 
   const gb = [], gbl = [], gtb = [];
@@ -3711,6 +3849,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const today = new Date();
   const todayStr = getLocalDateString(today);
   dateInput.value = todayStr;
+
+  const todayDay = getDayFromDate(todayStr);
+  dayInput.value = todayDay;
+
+  // Inisialisasi slot tarikh & hari di JADUAL KELAS (Page 2) & JADUAL GURU (Page 3) secara automatik mengikut tarikh semasa
+  const p2Tarikh = document.getElementById("page2-tarikh");
+  const p2Hari = document.getElementById("page2-hari");
+  if (p2Tarikh) p2Tarikh.value = todayStr;
+  if (p2Hari) p2Hari.value = todayDay;
+
+  const p3Tarikh = document.getElementById("page3-tarikh");
+  const p3Hari = document.getElementById("page3-hari");
+  if (p3Tarikh) p3Tarikh.value = todayStr;
+  if (p3Hari) p3Hari.value = todayDay;
 
   const todayDisplay = document.getElementById("today-display");
   if (todayDisplay) {
