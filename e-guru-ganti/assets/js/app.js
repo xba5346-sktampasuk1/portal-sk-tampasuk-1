@@ -206,6 +206,7 @@ function setupAccessibilityControls() {
 function setupNavigation() {
   document.querySelectorAll(".nav-tab").forEach(btn => {
     btn.addEventListener("click", () => {
+      closeEnlargedScheduleModal();
       const pageId = btn.dataset.page;
       showPage(pageId);
 
@@ -1593,6 +1594,98 @@ function loadDailyScheduleForDate(dateStr) {
   if (window.lucide) window.lucide.createIcons();
 }
 
+// ==========================================================================
+// MODAL PAPARAN JADUAL TERPERINCI & DIBESARKAN (ENLARGED TIMETABLE POPUP)
+// ==========================================================================
+function openEnlargedScheduleModal(data) {
+  const modal = document.getElementById("modal-jadual-terperinci");
+  if (!modal) return;
+
+  const header = document.getElementById("schedule-modal-header");
+  const titleEl = document.getElementById("schedule-modal-title");
+  const subtitleEl = document.getElementById("schedule-modal-subtitle");
+  const tagEl = document.getElementById("schedule-modal-tag");
+  const iconBadge = document.getElementById("schedule-modal-badge-icon");
+  const bodyEl = document.getElementById("schedule-modal-body");
+
+  if (titleEl) titleEl.textContent = data.title || "Jadual Terperinci";
+  if (subtitleEl) subtitleEl.textContent = data.subtitle || "";
+  
+  if (tagEl) {
+    tagEl.textContent = data.tag || "";
+    tagEl.style.display = data.tag ? "inline-block" : "none";
+  }
+
+  // Buang sebarang lencana ekstra lama jika ada
+  if (header) {
+    const oldExtra = header.querySelector(".modal-extra-badge");
+    if (oldExtra) oldExtra.remove();
+    if (data.extraBadgeHtml) {
+      const span = document.createElement("span");
+      span.className = "modal-extra-badge";
+      span.innerHTML = data.extraBadgeHtml;
+      if (tagEl) tagEl.insertAdjacentElement("afterend", span);
+    }
+    header.style.background = data.headerBg || "#1b253b";
+  }
+
+  if (iconBadge) {
+    const iconName = data.icon === "user" ? "user-check" : "calendar";
+    iconBadge.innerHTML = `<i data-lucide="${iconName}" style="width:22px;height:22px;color:#ffffff;"></i>`;
+  }
+
+  if (bodyEl) {
+    bodyEl.innerHTML = `<div class="overflow-x-auto">${data.tableHtml || ""}</div>`;
+  }
+
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden"; // Kunci skrol latar belakang
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function closeEnlargedScheduleModal() {
+  const modal = document.getElementById("modal-jadual-terperinci");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = ""; // Pulihkan skrol latar belakang
+}
+
+function setupScheduleEnlargeModal() {
+  const modal = document.getElementById("modal-jadual-terperinci");
+  if (!modal) return;
+
+  const closeBtn = document.getElementById("schedule-modal-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeEnlargedScheduleModal);
+  }
+
+  // Klik di luar paparan jadual (pada latar modal) untuk menutup jadual
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeEnlargedScheduleModal();
+    }
+  });
+
+  const dialog = modal.querySelector(".schedule-modal-dialog");
+  if (dialog) {
+    dialog.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  }
+
+  // Tekan kekunci ESC untuk menutup jadual
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      if (!modal.classList.contains("hidden")) {
+        closeEnlargedScheduleModal();
+      }
+    }
+  });
+}
+
 // PAGE 2: Jadual Kelas
 const page2TarikhInput = document.getElementById("page2-tarikh");
 const page2HariSelect = document.getElementById("page2-hari");
@@ -1681,10 +1774,16 @@ function renderPage2() {
 
   classes.forEach(kelas => {
     const card = document.createElement("div");
-    card.className = "section-card overflow-hidden";
+    card.className = "section-card overflow-hidden tt-clickable-card";
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("title", `Klik untuk besarkan Jadual Kelas ${kelas}`);
 
-    let html = `<div class="tt-card-header">` +
+    let html = `<div class="tt-card-header" style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">` +
       `<span>Kelas ${kelas}${headerDateInfo} (Sesi 2026)</span>` +
+      `<button type="button" class="tt-expand-indicator" title="Besarkan Paparan Jadual" aria-label="Besarkan">` +
+      `<i data-lucide="maximize-2" style="width:13px;height:13px;"></i><span>Besarkan</span>` +
+      `</button>` +
       `</div><div class="overflow-x-auto"><table class="tt-table"><thead><tr><th>Masa</th><th>Subjek</th><th>Guru</th><th>Status</th></tr></thead><tbody>`;
 
     let hasAnySlot = false;
@@ -1727,8 +1826,33 @@ function renderPage2() {
 
     html += `</tbody></table></div>`;
     card.innerHTML = html;
+
+    // Klik mana-mana paparan jadual untuk timbul & dibesarkan di tengah skrin
+    card.addEventListener("click", () => {
+      const table = card.querySelector("table");
+      if (!table) return;
+      openEnlargedScheduleModal({
+        type: "kelas",
+        title: `JADUAL KELAS ${kelas}`,
+        subtitle: `Kelas ${kelas}${headerDateInfo} — Sesi Persekolahan 2026`,
+        tag: `Kelas ${kelas}`,
+        headerBg: "#1b253b",
+        icon: "calendar",
+        tableHtml: table.outerHTML
+      });
+    });
+
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        card.click();
+      }
+    });
+
     container.appendChild(card);
   });
+
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // PAGE 3: Jadual Guru
@@ -1778,6 +1902,8 @@ function renderPage3() {
     container.innerHTML = '<p class="text-slate-500 col-span-full text-center py-10">Sila pilih hari atau tarikh terlebih dahulu.</p>';
     return;
   }
+
+  const formattedDate = selectedDate ? formatDateDisplay(selectedDate) : "";
 
   // Ekstrak data rekod gantian daripada storan/pangkalan data bagi tarikh berkenaan
   const dateRecords = allRecords.filter(r => r && r.tarikh === selectedDate);
@@ -1869,16 +1995,24 @@ function renderPage3() {
     teachers.forEach(guru => {
       const col = getTeacherColor(guru);
       const card = document.createElement("div");
-      card.className = "guru-card";
+      card.className = "guru-card tt-clickable-card";
       card.style.border = `1.5px solid ${col.border}`;
+      card.setAttribute("role", "button");
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("title", `Klik untuk besarkan Jadual ${guru}`);
 
       const isAbs = absentTeachers.includes(guru);
       const headerExtra = isAbs ? ' <span style="font-size:11px; background:#ef4444; color:#ffffff; padding:2px 8px; border-radius:9999px; font-weight:700; margin-left:6px;">Tidak Hadir</span>' : '';
       const totalPeriods = countPeriods(guru, selectedDay);
 
-      let html = `<div class="guru-card-header" style="background:${col.primary}; color:#ffffff;">` +
+      let html = `<div class="guru-card-header" style="background:${col.primary}; color:#ffffff; display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">` +
         `<span style="font-weight:700; font-size:0.88rem;">${guru}${headerExtra}</span>` +
+        `<div style="display:flex; align-items:center; gap:0.45rem;">` +
         `<span style="font-size:11px; background:rgba(255,255,255,0.22); color:#ffffff; padding:3px 9px; border-radius:9999px; font-weight:700;">${totalPeriods} Waktu</span>` +
+        `<button type="button" class="tt-expand-indicator" title="Besarkan Paparan Jadual" aria-label="Besarkan">` +
+        `<i data-lucide="maximize-2" style="width:13px;height:13px;"></i>` +
+        `</button>` +
+        `</div>` +
         `</div><div style="overflow-x:auto;"><table class="tt-table"><thead><tr><th>Masa</th><th>Subjek</th><th>Kelas</th><th>Status</th></tr></thead><tbody>`;
 
       const teacherSlots = {};
@@ -1916,6 +2050,32 @@ function renderPage3() {
 
       html += `</tbody></table></div>`;
       card.innerHTML = html;
+
+      // Klik mana-mana kad guru untuk timbul & dibesarkan di tengah skrin
+      card.addEventListener("click", () => {
+        const table = card.querySelector("table");
+        if (!table) return;
+        const extraBadgeHtml = isAbs ? '<span style="font-size:11px; background:#ef4444; color:#ffffff; padding:3px 9px; border-radius:9999px; font-weight:700;">Tidak Hadir</span>' : '';
+        const dInfo = formattedDate ? `${selectedDay}, ${formattedDate}` : selectedDay;
+        openEnlargedScheduleModal({
+          type: "guru",
+          title: guru,
+          subtitle: `Jadual Persendirian Guru & Tugasan Pengganti (${dInfo})`,
+          tag: `${totalPeriods} Waktu Mengajar`,
+          extraBadgeHtml: extraBadgeHtml,
+          headerBg: col.primary,
+          icon: "user",
+          tableHtml: table.outerHTML
+        });
+      });
+
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          card.click();
+        }
+      });
+
       grid.appendChild(card);
     });
 
@@ -1926,6 +2086,8 @@ function renderPage3() {
   renderGroupSection("Guru Bertugas", gb, "text-blue-700 dark:text-blue-400");
   renderGroupSection("Guru Bertugas (Tidak Hadir)", gbl, "text-amber-700 dark:text-amber-400");
   renderGroupSection("Guru Tidak Bertugas", gtb, "text-slate-600 dark:text-slate-400");
+
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // PAGE 5: Statistik & Laporan
@@ -3844,6 +4006,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupNavigation();
   setupDeviceModeToggle();
   setupAccessibilityControls();
+  setupScheduleEnlargeModal();
 
   // Tetapkan tarikh tempatan tepat
   const today = new Date();

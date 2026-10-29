@@ -1128,6 +1128,46 @@
     </div>
   </div>
 
+  <!-- Modal Paparan Jadual Dibesarkan (Enlarged Centered Timetable Modal) -->
+  <div id="modal-jadual-terperinci" class="schedule-modal-backdrop hidden" aria-hidden="true">
+    <div class="schedule-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="schedule-modal-title">
+      <!-- Modal Header -->
+      <div id="schedule-modal-header" class="schedule-modal-header">
+        <div style="display:flex; align-items:center; gap:0.75rem; flex:1; min-width:0;">
+          <div id="schedule-modal-badge-icon" class="schedule-modal-badge-icon">
+            <i data-lucide="calendar" style="width:20px;height:20px;color:#ffffff;"></i>
+          </div>
+          <div style="min-width:0;">
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <h3 id="schedule-modal-title" class="schedule-modal-title">Jadual Terperinci</h3>
+              <span id="schedule-modal-tag" class="schedule-modal-tag"></span>
+            </div>
+            <p id="schedule-modal-subtitle" class="schedule-modal-subtitle">Paparan diperbesarkan untuk semakan terperinci.</p>
+          </div>
+        </div>
+        <button type="button" id="schedule-modal-close" class="schedule-modal-close-btn" aria-label="Tutup jadual" title="Tutup Paparan (Esc)">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Table) -->
+      <div id="schedule-modal-body" class="schedule-modal-body">
+        <!-- Jadual disuntik melalui JavaScript -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="schedule-modal-footer">
+        <div style="display:flex; align-items:center; gap:0.5rem; color:var(--text-secondary); font-size:0.8rem;">
+          <i data-lucide="mouse-pointer" style="width:14px;height:14px;color:#3b82f6;"></i>
+          <span>Hover tetikus pada baris jadual untuk melihat slot terangkat &amp; timbul.</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:auto;">
+          Tekan <strong>ESC</strong> atau klik luar untuk tutup
+        </span>
+      </div>
+    </div>
+  </div>
+
   <!-- Butang Terapung Kembali Ke Atas (Scroll Experience & Taste and Craft) -->
   <button id="btn-back-to-top" class="floating-back-to-top hidden" type="button" aria-label="Kembali ke atas" title="Kembali ke atas">
     <i data-lucide="arrow-up" style="width:20px;height:20px;"></i>
