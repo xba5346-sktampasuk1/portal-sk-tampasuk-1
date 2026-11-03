@@ -113,9 +113,10 @@ const StorageTool = {
   parseDateRange(val) {
     if (!val) return { start: "", end: "" };
     const str = String(val).trim();
-    const delimiterMatch = str.match(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
-    if (delimiterMatch) {
-      const parts = str.split(delimiterMatch[0]);
+    // Hanya pecahkan jika terdapat pemisah julat sebenar dengan jarak ruang (ruang di kiri/kanan tanda -) atau perkataan to/hingga
+    const rangeRegex = /\s+[-–—]\s+|\s*[–—]\s*|\s+(?:to|hingga)\s+/i;
+    if (rangeRegex.test(str)) {
+      const parts = str.split(rangeRegex);
       if (parts.length >= 2) {
         const s = this.normalizeDateToYMD(parts[0]);
         const e = this.normalizeDateToYMD(parts[1]);
@@ -131,9 +132,14 @@ const StorageTool = {
   normalizeDateToYMD(val) {
     if (!val) return "";
     const str = String(val).trim();
-    // Sekiranya mengandungi julat tarikh, ambil tarikh mula sahaja
-    if (str.includes(" - ") || str.includes(" – ") || str.includes(" to ") || str.includes(" hingga ")) {
-      const parts = str.split(/\s*(?:[-–—]|\bto\b|\bhingga\b)\s*/i);
+    // Jika sudah format YYYY-MM-DD yang sah, kembalikan serta-merta tanpa pemisahan lanjut
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      return str;
+    }
+    // Sekiranya mengandungi julat tarikh sebenar, ambil tarikh mula sahaja
+    const rangeRegex = /\s+[-–—]\s+|\s*[–—]\s*|\s+(?:to|hingga)\s+/i;
+    if (rangeRegex.test(str)) {
+      const parts = str.split(rangeRegex);
       return this.normalizeDateToYMD(parts[0]);
     }
     if (str.includes("T")) {
@@ -150,9 +156,6 @@ const StorageTool = {
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
       const [d, m, y] = str.split("/");
       return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-    }
-    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-      return str;
     }
     const spaceMatch = str.match(/^(\d{4}-\d{2}-\d{2})/);
     if (spaceMatch) return spaceMatch[1];
@@ -217,10 +220,34 @@ const StorageTool = {
     }
 
     const parsedDates = this.parseDateRange(data.tarikh);
-    const cleanTarikh = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
-    const cleanTarikhTamat = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
+    let cleanTarikh = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
+    let cleanTarikhTamat = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
+
+    // Pemulihan jika tarikh hanya tahun 4-digit disebabkan pepijat pemisahan lama
+    if (/^\d{4}$/.test(cleanTarikh)) {
+      const fallbackSource = data.createdAt || data.updatedAt || data.savedAt || data.timestamp || '';
+      const recovered = this.normalizeDateToYMD(fallbackSource);
+      if (recovered && /^\d{4}-\d{2}-\d{2}$/.test(recovered)) {
+        cleanTarikh = recovered;
+      }
+    }
+    // Jika tarikh tamat hanya 1-2 digit (bulan tersalah simpan dari pepijat lama), batalkan
+    if (cleanTarikhTamat && cleanTarikhTamat.length <= 2) {
+      cleanTarikhTamat = '';
+    }
+
     const cleanMasaMula = this.normalizeTimeToHHMM(data.masaMula);
     const cleanMasaTamat = this.normalizeTimeToHHMM(data.masaTamat);
+
+    // Tentukan hari jika kosong tetapi tarikh sah wujud
+    let hariVal = data.hari !== undefined && data.hari !== null ? String(data.hari).trim() : '';
+    if (!hariVal && cleanTarikh && /^\d{4}-\d{2}-\d{2}$/.test(cleanTarikh)) {
+      const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+      const d = new Date(cleanTarikh + "T12:00:00");
+      if (!isNaN(d.getTime())) {
+        hariVal = dayNames[d.getDay()];
+      }
+    }
 
     const fieldMap = {
       'anjuran': data.anjuran,
@@ -228,7 +255,6 @@ const StorageTool = {
       'program': data.program,
       'tarikh': cleanTarikh,
       'tarikh-tamat': cleanTarikhTamat,
-      'hari': data.hari,
       'masa-mula': cleanMasaMula,
       'masa-tamat': cleanMasaTamat,
       'tempat': data.tempat,
@@ -255,25 +281,39 @@ const StorageTool = {
       otherWrap.classList.toggle('hidden', data.anjuran !== 'Lain-lain');
     }
 
+    // Tetapkan pilihan Hari dengan padanan fleksibel
     const otherHariWrap = document.getElementById('other-hari-wrap');
     const hariEl = document.getElementById('hari');
+    const hariLainEl = document.getElementById('hari-lain');
+
     if (hariEl) {
-      const val = data.hari || '';
       let matched = false;
       for (const opt of hariEl.options) {
-        if (opt.value === val) {
-          hariEl.value = val;
+        if (!opt.value) continue;
+        if (opt.value === hariVal || 
+            opt.value.replace(/–/g, '-').trim() === hariVal.replace(/–/g, '-').trim() ||
+            opt.text.replace(/–/g, '-').trim() === hariVal.replace(/–/g, '-').trim()) {
+          hariEl.value = opt.value;
           matched = true;
           break;
         }
       }
-      if (!matched && val && val !== '-') {
+
+      if (matched) {
+        if (otherHariWrap) otherHariWrap.classList.add('hidden');
+        if (hariLainEl) hariLainEl.value = '';
+      } else if (hariVal && hariVal !== '-') {
         hariEl.value = 'Lain-lain';
         if (otherHariWrap) otherHariWrap.classList.remove('hidden');
-        const hl = document.getElementById('hari-lain');
-        if (hl) hl.value = val;
-      } else {
+        if (hariLainEl) hariLainEl.value = data.hariLain || hariVal;
+      } else if (hariVal === '-') {
+        hariEl.value = '-';
         if (otherHariWrap) otherHariWrap.classList.add('hidden');
+        if (hariLainEl) hariLainEl.value = '';
+      } else {
+        hariEl.selectedIndex = 0;
+        if (otherHariWrap) otherHariWrap.classList.add('hidden');
+        if (hariLainEl) hariLainEl.value = '';
       }
     }
 
@@ -346,15 +386,75 @@ const StorageTool = {
   },
 
   /**
-   * Dapatkan semua senarai rekod sejarah dari LocalStorage
+   * Dapatkan semua senarai rekod sejarah dari LocalStorage (dengan pemulihan automatik jika data terjejas)
    */
   getHistory() {
     try {
       const raw = localStorage.getItem(this.HISTORY_KEY);
       if (!raw) return [];
       const list = JSON.parse(raw);
-        const cleanList = list.filter(item => !!item && !!item.id);
-        return cleanList.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
+      if (!Array.isArray(list)) return [];
+      
+      let needsSave = false;
+      const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+
+      const cleanList = list.filter(item => !!item && !!item.id).map(item => {
+        // 1. Pemulihan tarikh 4-digit (cth: "2026") akibat pepijat pemisahan regex lama
+        if (/^\d{4}$/.test(item.tarikh)) {
+          const fallbackSource = item.createdAt || item.updatedAt || item.savedAt || item.timestamp || '';
+          const recovered = this.normalizeDateToYMD(fallbackSource);
+          if (recovered && /^\d{4}-\d{2}-\d{2}$/.test(recovered)) {
+            item.tarikh = recovered;
+            needsSave = true;
+          }
+        }
+
+        // 2. Bersihkan sisa bulan pada tarikh tamat (cth: "10") akibat pepijat pemisahan regex lama
+        if (item.tarikhTamat && String(item.tarikhTamat).trim().length <= 2) {
+          item.tarikhTamat = '';
+          needsSave = true;
+        }
+
+        // 3. Pecahkan julat tarikh jika disimpan sebagai satu rentetan dalam tarikh
+        if (item.tarikh && (item.tarikh.includes(' - ') || item.tarikh.includes(' – ') || item.tarikh.includes('/'))) {
+          const parsed = this.parseDateRange(item.tarikh);
+          if (parsed.start && parsed.start !== item.tarikh) {
+            item.tarikh = parsed.start;
+            if (!item.tarikhTamat && parsed.end) {
+              item.tarikhTamat = parsed.end;
+            }
+            needsSave = true;
+          }
+        }
+
+        // 4. Pastikan tarikh tamat dinormalkan
+        if (item.tarikhTamat) {
+          const normEnd = this.normalizeDateToYMD(item.tarikhTamat);
+          if (normEnd !== item.tarikhTamat) {
+            item.tarikhTamat = normEnd;
+            needsSave = true;
+          }
+        }
+
+        // 5. Pulihkan hari jika kosong tetapi tarikh mula sah wujud
+        if ((item.hari === undefined || item.hari === null || String(item.hari).trim() === '') && item.tarikh && /^\d{4}-\d{2}-\d{2}$/.test(item.tarikh)) {
+          const d = new Date(item.tarikh + "T12:00:00");
+          if (!isNaN(d.getTime())) {
+            item.hari = dayNames[d.getDay()];
+            needsSave = true;
+          }
+        }
+
+        return item;
+      });
+
+      if (needsSave) {
+        try {
+          localStorage.setItem(this.HISTORY_KEY, JSON.stringify(cleanList));
+        } catch (_) {}
+      }
+
+      return cleanList.sort((a, b) => new Date(b.updatedAt || b.savedAt || 0) - new Date(a.updatedAt || a.savedAt || 0));
     } catch (e) {
       console.warn('Ralat membaca arkib sejarah:', e);
     }
@@ -389,12 +489,25 @@ const StorageTool = {
     const startDate = parsedDates.start || this.normalizeDateToYMD(data.tarikh);
     const endDate = data.tarikhTamat ? this.normalizeDateToYMD(data.tarikhTamat) : parsedDates.end;
 
+    let cleanHari = (data.hari !== undefined && data.hari !== null) ? String(data.hari).trim() : '';
+    if (cleanHari === 'Lain-lain' && data.hariLain) {
+      cleanHari = data.hariLain.trim();
+    }
+    if (!cleanHari && startDate && /^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+      const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+      const d = new Date(startDate + "T12:00:00");
+      if (!isNaN(d.getTime())) {
+        cleanHari = dayNames[d.getDay()];
+      }
+    }
+
     const record = {
       ...data,
       id: currentId,
       category: category,
       tarikh: startDate,
       tarikhTamat: endDate,
+      hari: cleanHari,
       masaMula: this.normalizeTimeToHHMM(data.masaMula),
       masaTamat: this.normalizeTimeToHHMM(data.masaTamat),
       updatedAt: now,
@@ -546,6 +659,8 @@ const StorageTool = {
       if (json && json.status === 'success' && Array.isArray(json.records)) {
         const local = this.getHistory();
         const localMap = new Map();
+        const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+
         local.forEach(item => {
           if (item && item.id) {
             const parsedDates = this.parseDateRange(item.tarikh);
@@ -554,6 +669,16 @@ const StorageTool = {
               item.tarikhTamat = parsedDates.end;
             } else if (item.tarikhTamat) {
               item.tarikhTamat = this.normalizeDateToYMD(item.tarikhTamat);
+            }
+            if (/^\d{4}$/.test(item.tarikh)) {
+              const fallbackSource = item.createdAt || item.updatedAt || item.savedAt || item.timestamp || '';
+              const recovered = this.normalizeDateToYMD(fallbackSource);
+              if (recovered && /^\d{4}-\d{2}-\d{2}$/.test(recovered)) item.tarikh = recovered;
+            }
+            if (item.tarikhTamat && String(item.tarikhTamat).trim().length <= 2) item.tarikhTamat = '';
+            if ((!item.hari || String(item.hari).trim() === '') && item.tarikh && /^\d{4}-\d{2}-\d{2}$/.test(item.tarikh)) {
+              const d = new Date(item.tarikh + "T12:00:00");
+              if (!isNaN(d.getTime())) item.hari = dayNames[d.getDay()];
             }
             item.masaMula = this.normalizeTimeToHHMM(item.masaMula);
             item.masaTamat = this.normalizeTimeToHHMM(item.masaTamat);
@@ -569,6 +694,16 @@ const StorageTool = {
               cloudItem.tarikhTamat = parsedDates.end;
             } else if (cloudItem.tarikhTamat) {
               cloudItem.tarikhTamat = this.normalizeDateToYMD(cloudItem.tarikhTamat);
+            }
+            if (/^\d{4}$/.test(cloudItem.tarikh)) {
+              const fallbackSource = cloudItem.createdAt || cloudItem.updatedAt || cloudItem.savedAt || cloudItem.timestamp || '';
+              const recovered = this.normalizeDateToYMD(fallbackSource);
+              if (recovered && /^\d{4}-\d{2}-\d{2}$/.test(recovered)) cloudItem.tarikh = recovered;
+            }
+            if (cloudItem.tarikhTamat && String(cloudItem.tarikhTamat).trim().length <= 2) cloudItem.tarikhTamat = '';
+            if ((!cloudItem.hari || String(cloudItem.hari).trim() === '') && cloudItem.tarikh && /^\d{4}-\d{2}-\d{2}$/.test(cloudItem.tarikh)) {
+              const d = new Date(cloudItem.tarikh + "T12:00:00");
+              if (!isNaN(d.getTime())) cloudItem.hari = dayNames[d.getDay()];
             }
             cloudItem.masaMula = this.normalizeTimeToHHMM(cloudItem.masaMula);
             cloudItem.masaTamat = this.normalizeTimeToHHMM(cloudItem.masaTamat);

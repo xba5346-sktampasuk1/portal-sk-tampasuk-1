@@ -911,6 +911,8 @@ function printRecordFromHistory(recordId) {
 
   window.StorageTool.loadData(record);
   window.StorageTool.setCurrentEditingId(record.id);
+  updateDay();
+  updatePreview();
   switchView("generator");
   prepareForPrint();
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
@@ -1110,6 +1112,15 @@ function renderHistoryView() {
     const displayCategory = item.category || t.label;
     const programTitle = item.program || "PROGRAM TANPA TAJUK";
     const dateFormatted = formatDate(item.tarikh, item.tarikhTamat);
+    const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+    let dayFormatted = (item.hari !== undefined && item.hari !== null) ? String(item.hari).trim() : "";
+    if (!dayFormatted && item.tarikh && /^\d{4}-\d{2}-\d{2}$/.test(item.tarikh)) {
+      const d = new Date(item.tarikh + "T12:00:00");
+      if (!isNaN(d.getTime())) {
+        dayFormatted = dayNames[d.getDay()];
+      }
+    }
+    if (!dayFormatted) dayFormatted = "-";
     const timeFormatted = item.masaMula ? `${formatTime(item.masaMula)}${item.masaTamat ? ' – ' + formatTime(item.masaTamat) : ''}` : "Masa Tidak Dinyatakan";
     
     // Kira gambar aktiviti
@@ -1206,6 +1217,9 @@ function renderHistoryView() {
                 <strong class="text-slate-900">Tarikh:</strong> ${dateFormatted}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
+                <strong class="text-slate-900">Hari:</strong> ${dayFormatted}
+              </div>
+              <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
                 <strong class="text-slate-900">Masa:</strong> ${timeFormatted}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
@@ -1213,6 +1227,9 @@ function renderHistoryView() {
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
                 <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.sasaran || "-"}</span>
+              </div>
+              <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
+                <strong class="text-slate-900">Anjuran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.anjuran === 'Lain-lain' && item.anjuranLain ? item.anjuranLain : (item.anjuran || item.category || "-")}</span>
               </div>
             </div>
 
