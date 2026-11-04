@@ -29,6 +29,37 @@ function getDayFromDate(dateStr) {
   return MALAY_DAYS[date.getDay()];
 }
 
+// Senarai Pilihan Status Khas (Program Sekolah / Tiada Penggantian PdP)
+const SPECIAL_GANTI_OPTIONS = [
+  {
+    value: "PROGRAM SEKOLAH (TIADA GANTIAN)",
+    label: "PROGRAM SEKOLAH (TIADA GANTIAN)",
+    icon: "🏛️",
+    desc: "PdP ditangguhkan kerana program rasmi sekolah / tiada penggantian"
+  },
+  {
+    value: "PEPERIKSAAN / UJIAN (TIADA GANTIAN)",
+    label: "PEPERIKSAAN / UJIAN (TIADA GANTIAN)",
+    icon: "📝",
+    desc: "Pengawasan peperiksaan / ujian / tiada penggantian kelas"
+  },
+  {
+    value: "AKTIVITI LUAR KELAS (TIADA GANTIAN)",
+    label: "AKTIVITI LUAR KELAS (TIADA GANTIAN)",
+    icon: "🏃",
+    desc: "Aktiviti sukan / merentas desa / kem / kokurikulum"
+  }
+];
+
+function isSpecialProgramRelief(val) {
+  if (!val) return false;
+  const str = String(val).trim().toUpperCase();
+  return SPECIAL_GANTI_OPTIONS.some(o => o.value === str) ||
+         str.includes("PROGRAM SEKOLAH") ||
+         str.includes("PEPERIKSAAN") ||
+         str.includes("AKTIVITI LUAR");
+}
+
 // Elemen DOM Utama
 const dayInput = document.getElementById("hari");
 const dateInput = document.getElementById("tarikh");
@@ -369,11 +400,12 @@ function updateTeacherRowColor(row) {
   }
 }
 
-function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, isEmergency = false) {
+function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, isEmergency = false, isProgramExempt = false) {
   const tpl = document.getElementById("teacher-row-template");
   const row = tpl.content.cloneNode(true).firstElementChild;
   const ts = row.querySelector(".teacher-select");
   const rs = row.querySelector(".reason-select");
+  const progCheckbox = row.querySelector(".teacher-program-checkbox");
 
   row.dataset.isSaved = isSaved ? "true" : "false";
   row.dataset.isEmergency = isEmergency ? "true" : "false";
@@ -384,6 +416,19 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
 
   ts.value = defaultName;
   rs.value = defaultReason;
+
+  if (progCheckbox) {
+    progCheckbox.checked = !!isProgramExempt;
+    progCheckbox.addEventListener("change", () => {
+      const teacherName = ts.value;
+      if (!teacherName) {
+        showToast("Sila pilih nama guru tidak hadir terlebih dahulu.", "info");
+        progCheckbox.checked = false;
+        return;
+      }
+      handleTeacherProgramExemptToggle(teacherName, progCheckbox.checked, rs.value);
+    });
+  }
 
   if (isEmergency) {
     row.style.border = "1.5px solid #3b82f6";
@@ -401,7 +446,11 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
 
   ts.addEventListener("change", () => {
     updateTeacherRowColor(row);
-    autoFillSchedule();
+    if (progCheckbox && progCheckbox.checked && ts.value) {
+      handleTeacherProgramExemptToggle(ts.value, true, rs.value);
+    } else {
+      autoFillSchedule();
+    }
   });
   rs.addEventListener("change", () => {
     const teacherName = ts.value;
@@ -485,6 +534,69 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
   if (window.lucide) window.lucide.createIcons();
 }
 
+// Pengendali Togol Pengecualian Guru Ganti (Cadangan 2: Program Sekolah / Tiada PdP)
+function handleTeacherProgramExemptToggle(teacherName, isChecked, reason) {
+  if (!teacherName) return;
+  const teacherRows = [...entryRows.querySelectorAll(".schedule-row")]
+    .filter(r => r.dataset.guruTidakHadir === teacherName);
+
+  if (isChecked) {
+    if (teacherRows.length > 0) {
+      teacherRows.forEach(r => {
+        const selectEl = r.querySelector(".row-ganti");
+        const triggerLabel = r.querySelector(".custom-ganti-label");
+        if (selectEl) selectEl.value = "PROGRAM SEKOLAH (TIADA GANTIAN)";
+        if (triggerLabel) {
+          triggerLabel.innerHTML = `<span>🏛️ PROGRAM SEKOLAH (TIADA GANTIAN)</span>`;
+        }
+        r.classList.add("row-is-program");
+        if (r.dataset.saved === "true") {
+          r.dataset.modified = "true";
+          r.classList.add("row-is-modified");
+        }
+      });
+      showToast(`Semua waktu PdP ${teacherName} ditandakan sebagai Program Sekolah (Tiada Gantian).`, "success");
+    } else {
+      // Jika guru tiada slot waktu PdP pada hari ini (cth. jadual kosong),
+      // tambah satu rekod kehadiran khusus supaya data tersimpan dan tally di Page 6!
+      addRow({
+        masa: "Waktu Persekolahan",
+        subjek: "Program Sekolah",
+        kelas: "Semua Kelas",
+        guru_tidak_hadir: teacherName,
+        sebab: reason || "Program Rasmi Sekolah",
+        ganti: "PROGRAM SEKOLAH (TIADA GANTIAN)",
+        saved: false
+      });
+      showToast(`Rekod kehadiran Program Sekolah ditambah bagi ${teacherName}.`, "info");
+    }
+  } else {
+    // Nyah-tanda: Pulihkan slot
+    teacherRows.forEach(r => {
+      const masaVal = r.querySelector(".row-masa").value;
+      const subjekVal = r.querySelector(".row-subjek").value;
+      if (masaVal === "Waktu Persekolahan" && subjekVal === "Program Sekolah" && r.dataset.saved !== "true") {
+        r.remove();
+        return;
+      }
+      const selectEl = r.querySelector(".row-ganti");
+      const triggerLabel = r.querySelector(".custom-ganti-label");
+      if (selectEl && isSpecialProgramRelief(selectEl.value)) {
+        selectEl.value = "";
+        if (triggerLabel) triggerLabel.textContent = "Pilih guru ganti";
+        r.classList.remove("row-is-program");
+        if (r.dataset.saved === "true") {
+          r.dataset.modified = "true";
+          r.classList.add("row-is-modified");
+        }
+      }
+    });
+    showToast(`Pengecualian guru ganti untuk ${teacherName} telah dibatalkan.`, "info");
+  }
+
+  kemasKiniSemuaCadanganGuruGanti();
+}
+
 // Kemas Kini Hari & Jadual Automatik (Memuatkan jadual tersimpan jika ada)
 function updateDay() {
   const day = dateInput.value ? getDayFromDate(dateInput.value) : "";
@@ -535,11 +647,27 @@ function addRow(data = {}) {
   row.dataset.saved = data.saved ? "true" : "false";
   row.dataset.isEmergency = data.isEmergency ? "true" : "false";
 
+  if (data.ganti) {
+    gantiSelect.value = data.ganti;
+    row.dataset.initialGanti = data.ganti;
+    if (customLabel) {
+      if (isSpecialProgramRelief(data.ganti)) {
+        customLabel.innerHTML = `<span>🏛️ ${data.ganti}</span>`;
+        row.classList.add("row-is-program");
+      } else {
+        customLabel.textContent = data.ganti;
+      }
+    }
+  }
+
   // Visual cues
   if (data.saved) {
     row.classList.add("row-is-saved");
   } else if (data.isEmergency) {
     row.classList.add("row-is-new");
+  }
+  if (data.ganti && isSpecialProgramRelief(data.ganti)) {
+    row.classList.add("row-is-program");
   }
 
   // Kemas kini badge maklumat guru asal & status
@@ -547,6 +675,9 @@ function addRow(data = {}) {
     let badgeHtml = "";
     if (data.guru_tidak_hadir) {
       badgeHtml += `<span style="color:#0369a1; background:#e0f2fe; padding:1px 6px; border-radius:4px; font-size:10.5px;">Ganti: ${data.guru_tidak_hadir}</span>`;
+    }
+    if (data.ganti && isSpecialProgramRelief(data.ganti)) {
+      badgeHtml += `<span class="badge-tag-program">🏛️ Program</span>`;
     }
     if (data.saved) {
       badgeHtml += `<span class="badge-tag-saved">● Tersimpan</span>`;
@@ -912,7 +1043,8 @@ function autoFillSchedule(options = {}) {
     .map(r => ({
       name: r.querySelector(".teacher-select").value,
       reason: r.querySelector(".reason-select").value,
-      isEmergency: r.dataset.isEmergency === "true"
+      isEmergency: r.dataset.isEmergency === "true",
+      isProgram: r.querySelector(".teacher-program-checkbox") ? r.querySelector(".teacher-program-checkbox").checked : false
     }))
     .filter(t => t.name);
 
@@ -970,6 +1102,23 @@ function autoFillSchedule(options = {}) {
     }
 
     const lessons = (TIMETABLE[t.name] && TIMETABLE[t.name][day]) || [];
+
+    // Jika guru ini tiada slot PdP pada hari ini tetapi ditandakan Program Sekolah, sediakan 1 rekod kehadiran khas
+    if (lessons.length === 0 && t.isProgram) {
+      addRow({
+        masa: "Waktu Persekolahan",
+        subjek: "Program Sekolah",
+        kelas: "Semua Kelas",
+        guru_tidak_hadir: t.name,
+        sebab: t.reason || "Program Rasmi Sekolah",
+        ganti: "PROGRAM SEKOLAH (TIADA GANTIAN)",
+        saved: false,
+        isEmergency: t.isEmergency
+      });
+      newlyAddedSlots++;
+      return;
+    }
+
     lessons.forEach(([masa, subjek, kelas]) => {
       // Perkara A (Pilihan 1): Kelas Prasekolah tidak memerlukan guru ganti kerana sentiasa diawasi Guru Pra & PPM
       const isPraClass = kelas && (
@@ -981,13 +1130,14 @@ function autoFillSchedule(options = {}) {
 
       splitTimeSlot(masa).forEach(slotTime => {
         const partnerInfo = getConcurrentPartnerInfo(kelas, day, slotTime, subjek, absentTeacherNames);
+        const assignedGanti = t.isProgram ? "PROGRAM SEKOLAH (TIADA GANTIAN)" : (partnerInfo ? partnerInfo.nama : "");
         addRow({
           masa: slotTime,
           subjek,
           kelas,
           guru_tidak_hadir: t.name,
           sebab: t.reason,
-          ganti: partnerInfo ? partnerInfo.nama : "",
+          ganti: assignedGanti,
           saved: false,
           isEmergency: t.isEmergency
         });
@@ -1103,6 +1253,7 @@ function kemasKiniSemuaCadanganGuruGanti() {
       clearItem.addEventListener("click", () => {
         row.dataset.clearedByUser = "true";
         selectEl.value = "";
+        row.classList.remove("row-is-program");
         if (triggerLabel) triggerLabel.textContent = "Pilih guru ganti";
         menuEl.classList.add("hidden");
         const trigger = row.querySelector(".custom-ganti-trigger");
@@ -1111,7 +1262,53 @@ function kemasKiniSemuaCadanganGuruGanti() {
         kemasKiniSemuaCadanganGuruGanti();
       });
       menuEl.appendChild(clearItem);
+
+      // Pilihan Status Khas (Cadangan 1: Program Sekolah / Peperiksaan / Aktiviti Luar)
+      const specialHeader = document.createElement("div");
+      specialHeader.className = "custom-ganti-group-header special-header";
+      specialHeader.innerHTML = `<span>🏛️ Status Khas (Tiada Penggantian PdP)</span>`;
+      menuEl.appendChild(specialHeader);
+
+      SPECIAL_GANTI_OPTIONS.forEach(opt => {
+        const item = document.createElement("div");
+        const isSelected = (currentVal === opt.value);
+        item.className = "custom-ganti-item special-item" + (isSelected ? " selected" : "");
+        item.innerHTML = `
+          <div class="custom-ganti-item-name">
+            <span style="font-size:13px; line-height:1;">${opt.icon}</span>
+            <span style="font-weight:700; color:#4f46e5;" class="dark:text-indigo-300">${opt.label}</span>
+          </div>
+          <div class="custom-ganti-item-meta" style="font-size:10px; color:#6366f1;">${opt.desc}</div>
+        `;
+        item.addEventListener("click", () => {
+          delete row.dataset.clearedByUser;
+          selectEl.value = opt.value;
+          if (triggerLabel) triggerLabel.innerHTML = `<span>${opt.icon} ${opt.label}</span>`;
+          row.classList.add("row-is-program");
+          if (row.dataset.saved === "true") {
+            row.dataset.modified = "true";
+            row.classList.add("row-is-modified");
+          }
+          menuEl.classList.add("hidden");
+          const trigger = row.querySelector(".custom-ganti-trigger");
+          if (trigger) trigger.setAttribute("aria-expanded", "false");
+          hideTeacherHoverPopover();
+          kemasKiniSemuaCadanganGuruGanti();
+        });
+        menuEl.appendChild(item);
+      });
     }
+
+    // Pilihan Status Khas dalam <select> asli (fallback & form submit)
+    const ogSpecial = document.createElement("optgroup");
+    ogSpecial.label = "Status Khas (Tiada Penggantian PdP)";
+    SPECIAL_GANTI_OPTIONS.forEach(opt => {
+      const o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = `${opt.icon} ${opt.label}`;
+      ogSpecial.appendChild(o);
+    });
+    selectEl.appendChild(ogSpecial);
 
     const addCustomGroup = (title, candidates, isHeaderAlert = false) => {
       if (!menuEl || !candidates.length) return;
@@ -1291,7 +1488,13 @@ function kemasKiniSemuaCadanganGuruGanti() {
       selectEl.value = "";
     }
     if (triggerLabel) {
-      triggerLabel.textContent = selectEl.value || "Pilih guru ganti";
+      if (isSpecialProgramRelief(selectEl.value)) {
+        triggerLabel.innerHTML = `<span>🏛️ ${selectEl.value}</span>`;
+        row.classList.add("row-is-program");
+      } else {
+        triggerLabel.textContent = selectEl.value || "Pilih guru ganti";
+        row.classList.remove("row-is-program");
+      }
     }
   });
 
@@ -1491,18 +1694,27 @@ function loadDailyScheduleForDate(dateStr) {
       updateGroupMembers();
     }
 
-    // Ekstrak guru tidak hadir unik
+    // Ekstrak guru tidak hadir unik & kenal pasti jika ditandakan status Program Sekolah
     const absentMap = {};
+    const absentProgramMap = {};
     savedRecords.forEach(r => {
-      const g = r.guru_tidak_hadir;
-      if (g && !absentMap[g]) {
-        absentMap[g] = r.sebab || "Urusan Rasmi";
+      const g = r.guru_tidak_hadir || r.guruTidakHadir;
+      const ganti = r.guru_ganti || r.guruGanti;
+      if (g) {
+        if (!absentMap[g]) {
+          absentMap[g] = r.sebab || "Urusan Rasmi";
+          absentProgramMap[g] = true;
+        }
+        if (!isSpecialProgramRelief(ganti)) {
+          absentProgramMap[g] = false;
+        }
       }
     });
 
     teachersContainer.innerHTML = "";
     Object.keys(absentMap).forEach(name => {
-      addTeacherRow(name, absentMap[name], true, false);
+      const isProgExempt = !!absentProgramMap[name];
+      addTeacherRow(name, absentMap[name], true, false, isProgExempt);
     });
 
     // Muat semula entryRows dengan rekod tersimpan
@@ -1742,10 +1954,12 @@ function renderPage2() {
   const replacementsMap = {};
 
   dateRecords.forEach(r => {
-    if (r.guruTidakHadir) absTeachersSet.add(r.guruTidakHadir);
-    if (r.masa && r.kelas && r.guruGanti) {
+    const absName = r.guru_tidak_hadir || r.guruTidakHadir;
+    const gantiName = r.guru_ganti || r.guruGanti;
+    if (absName) absTeachersSet.add(absName);
+    if (r.masa && r.kelas && gantiName) {
       const idx = STANDARD_SLOTS.indexOf(r.masa);
-      if (idx >= 0) replacementsMap[`${r.kelas}|${idx}`] = r.guruGanti;
+      if (idx >= 0) replacementsMap[`${r.kelas}|${idx}`] = gantiName;
     }
   });
 
@@ -1805,8 +2019,13 @@ function renderPage2() {
       let status = "Hadir";
 
       if (isAbsent && repl) {
-        cls = "tt-cell-replaced";
-        status = `Diganti: ${repl}`;
+        if (isSpecialProgramRelief(repl)) {
+          cls = "tt-cell-program";
+          status = "Program Sekolah (Tiada Ganti)";
+        } else {
+          cls = "tt-cell-replaced";
+          status = `Diganti: ${repl}`;
+        }
       } else if (isAbsent) {
         cls = "tt-cell-absent";
         status = "Tidak Hadir";
@@ -1911,16 +2130,18 @@ function renderPage3() {
   const reliefAssignments = {};
 
   dateRecords.forEach(r => {
-    if (r.guruTidakHadir) absTeachersSet.add(r.guruTidakHadir);
-    if (r.guruGanti && r.masa) {
-      if (!reliefAssignments[r.guruGanti]) reliefAssignments[r.guruGanti] = [];
-      const exists = reliefAssignments[r.guruGanti].some(item => item.masa === r.masa && item.kelas === r.kelas);
+    const absName = r.guru_tidak_hadir || r.guruTidakHadir;
+    const gantiName = r.guru_ganti || r.guruGanti;
+    if (absName) absTeachersSet.add(absName);
+    if (gantiName && r.masa && !isSpecialProgramRelief(gantiName)) {
+      if (!reliefAssignments[gantiName]) reliefAssignments[gantiName] = [];
+      const exists = reliefAssignments[gantiName].some(item => item.masa === r.masa && item.kelas === r.kelas);
       if (!exists) {
-        reliefAssignments[r.guruGanti].push({
+        reliefAssignments[gantiName].push({
           masa: r.masa,
           subjek: r.subjek || r.mata_pelajaran || "",
           kelas: r.kelas || "",
-          guruAsal: r.guruTidakHadir || ""
+          guruAsal: absName || ""
         });
       }
     }
@@ -1938,7 +2159,7 @@ function renderPage3() {
       const k = row.querySelector(".row-kelas") ? row.querySelector(".row-kelas").value.trim() : "";
       const g = row.querySelector(".row-ganti") ? row.querySelector(".row-ganti").value.trim() : "";
       const orig = row.dataset.guruTidakHadir || "";
-      if (g && m) {
+      if (g && m && !isSpecialProgramRelief(g)) {
         if (!reliefAssignments[g]) reliefAssignments[g] = [];
         const exists = reliefAssignments[g].some(item => item.masa === m && item.kelas === k);
         if (!exists) {
@@ -2163,11 +2384,11 @@ function updateStatCards() {
   document.getElementById("stat-total-records").textContent = filtered.length;
   const uniqueAbsent = new Set(filtered.map(r => r.guru_tidak_hadir).filter(Boolean));
   document.getElementById("stat-total-absent").textContent = uniqueAbsent.size;
-  document.getElementById("stat-total-replaced").textContent = filtered.filter(r => r.guru_ganti).length;
+  document.getElementById("stat-total-replaced").textContent = filtered.filter(r => r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)).length;
 
   const countMap = {};
   filtered.forEach(r => {
-    if (r.guru_ganti) countMap[r.guru_ganti] = (countMap[r.guru_ganti] || 0) + 1;
+    if (r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)) countMap[r.guru_ganti] = (countMap[r.guru_ganti] || 0) + 1;
   });
   const top = Object.entries(countMap).sort((a, b) => b[1] - a[1])[0];
   document.getElementById("stat-top-guru").textContent = top ? `${top[0]} (${top[1]})` : "—";
@@ -2258,7 +2479,7 @@ function renderWeeklyReport() {
 
     recs.forEach(r => {
       if (r.guru_tidak_hadir) absentTeachersInWeek.add(r.guru_tidak_hadir);
-      if (r.guru_ganti) {
+      if (r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)) {
         if (!teacherLoad[r.guru_ganti]) {
           teacherLoad[r.guru_ganti] = {
             count: 0,
@@ -2533,7 +2754,7 @@ function renderDailyAttendance(dateStr) {
       }
       absentMap[r.guru_tidak_hadir].records.push(r);
     }
-    if (r.guru_ganti) {
+    if (r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)) {
       if (!reliefMap[r.guru_ganti]) reliefMap[r.guru_ganti] = [];
       reliefMap[r.guru_ganti].push(r);
     }
@@ -2542,7 +2763,7 @@ function renderDailyAttendance(dateStr) {
   const totalTeachers = MASTER_TEACHERS.length; // 27
   const absentCount = Object.keys(absentMap).length;
   const presentCount = totalTeachers - absentCount;
-  const reliefPeriodCount = dayRecords.length;
+  const reliefPeriodCount = dayRecords.filter(r => r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)).length;
 
   const presentPct = totalTeachers > 0 ? Math.round((presentCount / totalTeachers) * 100) : 100;
   const absentPct = totalTeachers > 0 ? Math.round((absentCount / totalTeachers) * 100) : 0;
@@ -2668,11 +2889,16 @@ function renderDailyAttendance(dateStr) {
       `;
 
       if (t.absentInfo.records.length > 0) {
+        const isAllProg = t.absentInfo.records.every(r => isSpecialProgramRelief(r.guru_ganti));
+        const headerTitle = isAllProg
+          ? `Status PdP Guru: Program Sekolah (${t.absentInfo.records.length} Waktu)`
+          : `Waktu Kelas Diganti (${t.absentInfo.records.length} Waktu)`;
+
         affectedSlotsHtml = `
           <div class="att-relief-box">
             <div style="display:flex; justify-content:space-between; font-weight:800; font-size:10.5px; color:var(--text-secondary); margin-bottom:5px; text-transform:uppercase;">
-              <span>Waktu Kelas Diganti (${t.absentInfo.records.length} Waktu)</span>
-              <span>Guru Pengganti</span>
+              <span>${headerTitle}</span>
+              <span>Status / Guru Pengganti</span>
             </div>
             ${t.absentInfo.records.map(r => `
               <div class="att-relief-slot-item">
@@ -2681,8 +2907,12 @@ function renderDailyAttendance(dateStr) {
                   <span style="font-weight:700; margin-left:4px;">${r.mata_pelajaran}</span>
                   <span style="color:var(--text-secondary); font-size:10.5px;">(${r.kelas})</span>
                 </div>
-                <div style="font-weight:800; color:#1d4ed8; font-size:11px;" class="dark:text-blue-400">
-                  ${r.guru_ganti ? `<i data-lucide="refresh-cw" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:2px;"></i> ${r.guru_ganti}` : '<span style="color:#ef4444;">Belum Ditugaskan</span>'}
+                <div style="font-weight:800; font-size:11px;" class="dark:text-blue-400">
+                  ${r.guru_ganti ? (
+                    isSpecialProgramRelief(r.guru_ganti)
+                      ? `<span class="badge-tag-program">🏛️ ${r.guru_ganti}</span>`
+                      : `<span style="color:#1d4ed8;"><i data-lucide="refresh-cw" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:2px;"></i> ${r.guru_ganti}</span>`
+                  ) : '<span style="color:#ef4444;">Belum Ditugaskan</span>'}
                 </div>
               </div>
             `).join("")}
@@ -2897,7 +3127,7 @@ function printDailyAttendanceReport() {
       if (!absentMap[r.guru_tidak_hadir]) absentMap[r.guru_tidak_hadir] = { sebab: r.sebab, records: [] };
       absentMap[r.guru_tidak_hadir].records.push(r);
     }
-    if (r.guru_ganti) {
+    if (r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)) {
       if (!reliefMap[r.guru_ganti]) reliefMap[r.guru_ganti] = [];
       reliefMap[r.guru_ganti].push(r);
     }
@@ -2906,7 +3136,7 @@ function printDailyAttendanceReport() {
   const totalTeachers = MASTER_TEACHERS.length;
   const absentCount = Object.keys(absentMap).length;
   const presentCount = totalTeachers - absentCount;
-  const totalRelief = dayRecords.length;
+  const totalRelief = dayRecords.filter(r => r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)).length;
 
   const win = window.open("", "_blank");
   if (!win) {
@@ -2989,7 +3219,12 @@ function printDailyAttendanceReport() {
                   <td><strong>${nama}</strong></td>
                   <td><span class="badge badge-absent">${d.sebab}</span></td>
                   <td>${d.records.map(r => `<span style="font-family:monospace; font-weight:bold;">${r.masa}</span> ${r.mata_pelajaran} (${r.kelas})`).join('<br>')}</td>
-                  <td>${d.records.map(r => `<strong>${r.guru_ganti || '—'}</strong>`).join('<br>')}</td>
+                  <td>${d.records.map(r => {
+                    if (isSpecialProgramRelief(r.guru_ganti)) {
+                      return `<span style="color:#4338ca; font-weight:bold;">🏛️ ${r.guru_ganti}</span>`;
+                    }
+                    return `<strong>${r.guru_ganti || '—'}</strong>`;
+                  }).join('<br>')}</td>
                 </tr>
               `).join("")}
             </tbody>
@@ -3011,8 +3246,14 @@ function printDailyAttendanceReport() {
             const isAb = !!absentMap[nama];
             const isRel = !!reliefMap[nama];
             let cat = "Mengajar jadual waktu asal.";
-            if (isAb) cat = `Tidak hadir: ${absentMap[nama].sebab} (${absentMap[nama].records.length} waktu diganti)`;
-            else if (isRel) cat = `Bertugas ganti: +${reliefMap[nama].length} waktu (${reliefMap[nama].map(r => r.mata_pelajaran + ' ' + r.kelas).join(', ')})`;
+            if (isAb) {
+              const allProg = absentMap[nama].records.every(r => isSpecialProgramRelief(r.guru_ganti));
+              cat = allProg
+                ? `Tidak hadir: ${absentMap[nama].sebab} (Program Sekolah - Tiada Gantian PdP)`
+                : `Tidak hadir: ${absentMap[nama].sebab} (${absentMap[nama].records.length} waktu diganti)`;
+            } else if (isRel) {
+              cat = `Bertugas ganti: +${reliefMap[nama].length} waktu (${reliefMap[nama].map(r => r.mata_pelajaran + ' ' + r.kelas).join(', ')})`;
+            }
             
             return `<tr>
               <td style="text-align:center;">${idx + 1}</td>
@@ -3358,18 +3599,29 @@ function renderMasterTimetable(dateStr) {
       const slotInfo = getClassTimetableSlot(kelas, hari, si);
 
       if (repl) {
-        // GURU GANTI MENGAJAR -> MERAH LEMBUT
+        // GURU GANTI MENGAJAR -> MERAH LEMBUT ATAU UNGU (PROGRAM SEKOLAH)
         const subjekDisplay = repl.subjek || (slotInfo ? slotInfo.subjek : "—");
         const guruGantiDisplay = repl.guruGanti || "Guru Ganti";
         const guruAsalDisplay = repl.guruAsal || (slotInfo ? slotInfo.guru : "");
+        const isProg = isSpecialProgramRelief(guruGantiDisplay);
 
-        html += `
-          <td class="cell-guru-ganti">
-            <div style="font-weight:800; font-size:12px; color:#991b1b;" class="dark:text-red-300">${subjekDisplay}</div>
-            <div style="font-weight:800; font-size:11px; color:#7f1d1d; margin-top:2px;" class="dark:text-red-200">🔄 ${guruGantiDisplay}</div>
-            <div style="font-size:9.5px; color:#b91c1c; opacity:0.9;" class="dark:text-red-400">Asal: ${guruAsalDisplay}</div>
-          </td>
-        `;
+        if (isProg) {
+          html += `
+            <td class="cell-guru-ganti" style="background:#ede9fe!important; border-color:#c7d2fe!important;">
+              <div style="font-weight:800; font-size:12px; color:#3730a3;" class="dark:text-indigo-300">${subjekDisplay}</div>
+              <div style="font-weight:800; font-size:10.5px; color:#4338ca; margin-top:2px;" class="dark:text-indigo-200">🏛️ ${guruGantiDisplay}</div>
+              <div style="font-size:9.5px; color:#6366f1;" class="dark:text-indigo-400">Asal: ${guruAsalDisplay}</div>
+            </td>
+          `;
+        } else {
+          html += `
+            <td class="cell-guru-ganti">
+              <div style="font-weight:800; font-size:12px; color:#991b1b;" class="dark:text-red-300">${subjekDisplay}</div>
+              <div style="font-weight:800; font-size:11px; color:#7f1d1d; margin-top:2px;" class="dark:text-red-200">🔄 ${guruGantiDisplay}</div>
+              <div style="font-size:9.5px; color:#b91c1c; opacity:0.9;" class="dark:text-red-400">Asal: ${guruAsalDisplay}</div>
+            </td>
+          `;
+        }
       } else if (slotInfo) {
         // GURU ASAL MENGAJAR -> HIJAU
         html += `
@@ -3444,7 +3696,8 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
     .map(r => {
       const n = r.querySelector(".teacher-select").value;
       const re = r.querySelector(".reason-select").value;
-      return n ? `• ${n} (${re})` : null;
+      const isProg = r.querySelector(".teacher-program-checkbox") && r.querySelector(".teacher-program-checkbox").checked;
+      return n ? `• ${n} (${re})${isProg ? ' — [Program Sekolah / Tiada Ganti PdP]' : ''}` : null;
     })
     .filter(Boolean);
 
@@ -3459,12 +3712,15 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
       const kelas = r.querySelector(".row-kelas").value.trim() || "—";
       const guruGanti = r.querySelector(".row-ganti").value.trim() || "—";
       const guruAsal = r.dataset.guruTidakHadir || "—";
+      const gantiDisplay = isSpecialProgramRelief(guruGanti)
+        ? `<span style="color:#4f46e5; font-weight:bold;">🏛️ ${guruGanti}</span>`
+        : `<span style="font-weight:bold; color:#1e3a8a;">${guruGanti}</span>`;
 
       tableHtml += `<tr style="border-bottom:1px solid #cbd5e1">` +
         `<td style="padding:8px 10px;font-family:monospace;font-weight:bold">${masa}</td>` +
         `<td style="padding:8px 10px">${subjek}</td>` +
         `<td style="padding:8px 10px">${kelas}</td>` +
-        `<td style="padding:8px 10px;font-weight:bold;color:#1e3a8a">${guruGanti}</td>` +
+        `<td style="padding:8px 10px">${gantiDisplay}</td>` +
         `<td style="padding:8px 10px;font-size:11px;color:#475569">${guruAsal}</td>` +
         `</tr>`;
     });
@@ -3887,7 +4143,7 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
   for (const r of allDomRows) {
     const masa = r.querySelector(".row-masa").value.trim();
     const ganti = r.querySelector(".row-ganti").value.trim();
-    if (ganti && ganti !== "Guru UBK") {
+    if (ganti && ganti !== "Guru UBK" && !isSpecialProgramRelief(ganti)) {
       const key = `${masa}__${ganti}`;
       if (slotAssignments[key]) {
         clashWarning = { masa, ganti };
@@ -3940,7 +4196,7 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
       mata_pelajaran: r.querySelector(".row-subjek").value.trim(),
       kelas: r.querySelector(".row-kelas").value.trim(),
       guru_ganti: r.querySelector(".row-ganti").value.trim(),
-      catatan: `Ganti ${rg}`
+      catatan: isSpecialProgramRelief(r.querySelector(".row-ganti").value.trim()) ? `Program Sekolah - Tiada Gantian (${rg})` : `Ganti ${rg}`
     };
 
     if (!isSaved) {
@@ -4229,7 +4485,7 @@ function collectReliefAssignments() {
 
   [...entryRows.querySelectorAll(".schedule-row")].forEach(row => {
     const ganti = row.querySelector(".row-ganti") ? row.querySelector(".row-ganti").value.trim() : "";
-    if (!ganti || ganti === "Pilih guru ganti") return;
+    if (!ganti || ganti === "Pilih guru ganti" || isSpecialProgramRelief(ganti)) return;
 
     const masa = row.querySelector(".row-masa") ? row.querySelector(".row-masa").value.trim() : "";
     const subjek = row.querySelector(".row-subjek") ? row.querySelector(".row-subjek").value.trim() : "";
@@ -4263,6 +4519,13 @@ function openWhatsAppModal() {
   const grouped = collectReliefAssignments();
   const teachers = Object.keys(grouped);
 
+  const activeAbsentTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
+    .map(r => ({
+      name: r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value.trim() : "",
+      reason: r.querySelector(".reason-select") ? r.querySelector(".reason-select").value.trim() : ""
+    }))
+    .filter(t => t.name);
+
   const countBadge = document.getElementById("wa-modal-count-badge");
   if (countBadge) {
     countBadge.textContent = `${teachers.length} Guru Pengganti`;
@@ -4273,6 +4536,62 @@ function openWhatsAppModal() {
   bodyEl.innerHTML = "";
 
   if (teachers.length === 0) {
+    if (activeAbsentTeachers.length > 0) {
+      // Ada guru tidak hadir tetapi semuanya Program Sekolah (tiada guru pengganti diperlukan)
+      const absentLines = activeAbsentTeachers.map(t => `• *${t.name}* (${t.reason})`).join("\n");
+      const waProgramText = `*MAKLUMAN KEHADIRAN & STATUS PdP GURU*\n` +
+        `*SK TAMPASUK 1 KOTA BELUD*\n\n` +
+        `📅 *Tarikh:* ${formatDateDisplay(dateStr) || dateStr} (${dayStr})\n` +
+        `🗓️ *Minggu:* ${mingguSelect.value || "—"} | 👥 *Kumpulan:* ${kumpulanSelect.value || "—"}\n\n` +
+        `📋 *GURU TIDAK HADIR / DIKECUALIKAN (${activeAbsentTeachers.length} Orang):*\n` +
+        `${absentLines}\n\n` +
+        `🏛️ *STATUS PENGGANTIAN: PROGRAM SEKOLAH (TIADA GANTIAN)*\n` +
+        `Semua waktu pengajaran dan pembelajaran (PdP) yang terlibat ditangguhkan atau diselaraskan di bawah Program Rasmi Sekolah / Peperiksaan. Tiada jadual guru ganti yang dikeluarkan.\n\n` +
+        `_Portal e-Guru Ganti SK Tampasuk 1_`;
+
+      bodyEl.innerHTML = `
+        <div style="padding:1.5rem 1rem; text-align:center;">
+          <div style="width:58px; height:58px; background:#ede9fe; border:2px solid #c7d2fe; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+            <i data-lucide="calendar-check" style="width:32px;height:32px; color:#4f46e5;"></i>
+          </div>
+          <div style="display:inline-block; padding:3px 12px; background:#e0e7ff; color:#3730a3; font-size:11px; font-weight:800; border-radius:9999px; margin-bottom:8px;">
+            PROGRAM SEKOLAH (TIADA GANTIAN)
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:800; color:#312e81; margin:0 0 6px;">
+            STATUS PdP: DIKECUALIKAN GURU GANTI
+          </h3>
+          <p style="font-size:0.88rem; color:#4338ca; max-width:500px; margin:0 auto 16px; line-height:1.5;">
+            Terdapat <strong>${activeAbsentTeachers.length} orang guru tidak hadir</strong> tetapi waktu PdP terlibat diselaraskan di bawah program sekolah/peperiksaan tanpa penggantian guru lain.
+          </p>
+
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; max-width:520px; margin:0 auto 16px; text-align:left; font-family:monospace; font-size:12px; white-space:pre-wrap; color:#334155; line-height:1.5;">${waProgramText}</div>
+
+          <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+            <button type="button" id="btn-copy-wa-program" class="action-btn btn-secondary" style="font-weight:700;">
+              <i data-lucide="copy" style="width:16px;height:16px;"></i> Salin Makluman
+            </button>
+            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(waProgramText)}" target="_blank" class="action-btn btn-whatsapp-action" style="font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+              <i data-lucide="send" style="width:16px;height:16px;"></i> Hantar ke WhatsApp Group
+            </a>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("btn-copy-wa-program")?.addEventListener("click", () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(waProgramText).then(() => {
+            showToast("Makluman Program Sekolah berjaya disalin untuk WhatsApp!", "success");
+          }).catch(() => fallbackCopyText(waProgramText));
+        } else {
+          fallbackCopyText(waProgramText);
+        }
+      });
+
+      if (window.lucide) window.lucide.createIcons();
+      modal.classList.remove("hidden");
+      return;
+    }
+
     const waAllPresentText = `*MAKLUMAN KEHADIRAN GURU SK TAMPASUK 1*\n` +
       `Tarikh: ${formatDateDisplay(dateStr) || dateStr} (${dayStr})\n` +
       `Minggu: ${mingguSelect.value || "—"} | Kumpulan: ${kumpulanSelect.value || "—"}\n\n` +
@@ -4639,7 +4958,11 @@ function generateDailyFullWhatsAppSummary() {
 
   text += `📌 *PENUGASAN GURU GANTI (${reliefTeachers.length} Guru):*\n`;
   if (reliefTeachers.length === 0) {
-    text += `_Tiada penugasan guru ganti ditetapkan._\n`;
+    if (absentList.length > 0) {
+      text += `_Tiada penugasan guru ganti (Semua kelas terlibat diselaraskan di bawah Program Rasmi Sekolah / Dikecualikan Gantian)._\n`;
+    } else {
+      text += `_Tiada penugasan guru ganti ditetapkan (Semua guru hadir)._\n`;
+    }
   } else {
     reliefTeachers.forEach((tName, i) => {
       const slots = grouped[tName];
