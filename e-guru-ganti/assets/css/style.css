@@ -4723,32 +4723,6 @@ html {
   border-left: 4px solid #818cf8 !important;
 }
 
-/* Menu Pilihan Status Khas Guru Ganti */
-.custom-ganti-group-header.special-header {
-  background: #e0e7ff !important;
-  color: #3730a3 !important;
-  font-weight: 800 !important;
-  border-bottom: 1px solid #c7d2fe !important;
-}
-
-.dark .custom-ganti-group-header.special-header {
-  background: #312e81 !important;
-  color: #e0e7ff !important;
-  border-bottom-color: #4338ca !important;
-}
-
-.custom-ganti-item.special-item {
-  border-left: 3px solid #6366f1 !important;
-}
-
-.custom-ganti-item.special-item:hover {
-  background: #ede9fe !important;
-}
-
-.dark .custom-ganti-item.special-item:hover {
-  background: #3730a3 !important;
-}
-
 /* Lencana Tag Program Sekolah */
 .badge-tag-program {
   display: inline-flex;

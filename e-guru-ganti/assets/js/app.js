@@ -29,35 +29,12 @@ function getDayFromDate(dateStr) {
   return MALAY_DAYS[date.getDay()];
 }
 
-// Senarai Pilihan Status Khas (Program Sekolah / Tiada Penggantian PdP)
-const SPECIAL_GANTI_OPTIONS = [
-  {
-    value: "PROGRAM SEKOLAH (TIADA GANTIAN)",
-    label: "PROGRAM SEKOLAH (TIADA GANTIAN)",
-    icon: "🏛️",
-    desc: "PdP ditangguhkan kerana program rasmi sekolah / tiada penggantian"
-  },
-  {
-    value: "PEPERIKSAAN / UJIAN (TIADA GANTIAN)",
-    label: "PEPERIKSAAN / UJIAN (TIADA GANTIAN)",
-    icon: "📝",
-    desc: "Pengawasan peperiksaan / ujian / tiada penggantian kelas"
-  },
-  {
-    value: "AKTIVITI LUAR KELAS (TIADA GANTIAN)",
-    label: "AKTIVITI LUAR KELAS (TIADA GANTIAN)",
-    icon: "🏃",
-    desc: "Aktiviti sukan / merentas desa / kem / kokurikulum"
-  }
-];
+// Status Pengecualian Guru Ganti (Cadangan 2: Program Sekolah)
+const PROGRAM_SEKOLAH_VAL = "PROGRAM SEKOLAH (TIADA GANTIAN)";
 
 function isSpecialProgramRelief(val) {
   if (!val) return false;
-  const str = String(val).trim().toUpperCase();
-  return SPECIAL_GANTI_OPTIONS.some(o => o.value === str) ||
-         str.includes("PROGRAM SEKOLAH") ||
-         str.includes("PEPERIKSAAN") ||
-         str.includes("AKTIVITI LUAR");
+  return String(val).trim().toUpperCase().includes("PROGRAM SEKOLAH");
 }
 
 // Elemen DOM Utama
@@ -543,11 +520,21 @@ function handleTeacherProgramExemptToggle(teacherName, isChecked, reason) {
   if (isChecked) {
     if (teacherRows.length > 0) {
       teacherRows.forEach(r => {
+        r.dataset.initialGanti = PROGRAM_SEKOLAH_VAL;
         const selectEl = r.querySelector(".row-ganti");
         const triggerLabel = r.querySelector(".custom-ganti-label");
-        if (selectEl) selectEl.value = "PROGRAM SEKOLAH (TIADA GANTIAN)";
+        if (selectEl) {
+          let opt = [...selectEl.options].find(o => o.value === PROGRAM_SEKOLAH_VAL);
+          if (!opt) {
+            opt = document.createElement("option");
+            opt.value = PROGRAM_SEKOLAH_VAL;
+            opt.textContent = `🏛️ ${PROGRAM_SEKOLAH_VAL}`;
+            selectEl.appendChild(opt);
+          }
+          selectEl.value = PROGRAM_SEKOLAH_VAL;
+        }
         if (triggerLabel) {
-          triggerLabel.innerHTML = `<span>🏛️ PROGRAM SEKOLAH (TIADA GANTIAN)</span>`;
+          triggerLabel.innerHTML = `<span>🏛️ ${PROGRAM_SEKOLAH_VAL}</span>`;
         }
         r.classList.add("row-is-program");
         if (r.dataset.saved === "true") {
@@ -565,7 +552,7 @@ function handleTeacherProgramExemptToggle(teacherName, isChecked, reason) {
         kelas: "Semua Kelas",
         guru_tidak_hadir: teacherName,
         sebab: reason || "Program Rasmi Sekolah",
-        ganti: "PROGRAM SEKOLAH (TIADA GANTIAN)",
+        ganti: PROGRAM_SEKOLAH_VAL,
         saved: false
       });
       showToast(`Rekod kehadiran Program Sekolah ditambah bagi ${teacherName}.`, "info");
@@ -573,6 +560,7 @@ function handleTeacherProgramExemptToggle(teacherName, isChecked, reason) {
   } else {
     // Nyah-tanda: Pulihkan slot
     teacherRows.forEach(r => {
+      delete r.dataset.initialGanti;
       const masaVal = r.querySelector(".row-masa").value;
       const subjekVal = r.querySelector(".row-subjek").value;
       if (masaVal === "Waktu Persekolahan" && subjekVal === "Program Sekolah" && r.dataset.saved !== "true") {
@@ -648,6 +636,15 @@ function addRow(data = {}) {
   row.dataset.isEmergency = data.isEmergency ? "true" : "false";
 
   if (data.ganti) {
+    if (isSpecialProgramRelief(data.ganti)) {
+      let opt = [...gantiSelect.options].find(o => o.value === data.ganti);
+      if (!opt) {
+        opt = document.createElement("option");
+        opt.value = data.ganti;
+        opt.textContent = `🏛️ ${data.ganti}`;
+        gantiSelect.appendChild(opt);
+      }
+    }
     gantiSelect.value = data.ganti;
     row.dataset.initialGanti = data.ganti;
     if (customLabel) {
@@ -1262,53 +1259,15 @@ function kemasKiniSemuaCadanganGuruGanti() {
         kemasKiniSemuaCadanganGuruGanti();
       });
       menuEl.appendChild(clearItem);
-
-      // Pilihan Status Khas (Cadangan 1: Program Sekolah / Peperiksaan / Aktiviti Luar)
-      const specialHeader = document.createElement("div");
-      specialHeader.className = "custom-ganti-group-header special-header";
-      specialHeader.innerHTML = `<span>🏛️ Status Khas (Tiada Penggantian PdP)</span>`;
-      menuEl.appendChild(specialHeader);
-
-      SPECIAL_GANTI_OPTIONS.forEach(opt => {
-        const item = document.createElement("div");
-        const isSelected = (currentVal === opt.value);
-        item.className = "custom-ganti-item special-item" + (isSelected ? " selected" : "");
-        item.innerHTML = `
-          <div class="custom-ganti-item-name">
-            <span style="font-size:13px; line-height:1;">${opt.icon}</span>
-            <span style="font-weight:700; color:#4f46e5;" class="dark:text-indigo-300">${opt.label}</span>
-          </div>
-          <div class="custom-ganti-item-meta" style="font-size:10px; color:#6366f1;">${opt.desc}</div>
-        `;
-        item.addEventListener("click", () => {
-          delete row.dataset.clearedByUser;
-          selectEl.value = opt.value;
-          if (triggerLabel) triggerLabel.innerHTML = `<span>${opt.icon} ${opt.label}</span>`;
-          row.classList.add("row-is-program");
-          if (row.dataset.saved === "true") {
-            row.dataset.modified = "true";
-            row.classList.add("row-is-modified");
-          }
-          menuEl.classList.add("hidden");
-          const trigger = row.querySelector(".custom-ganti-trigger");
-          if (trigger) trigger.setAttribute("aria-expanded", "false");
-          hideTeacherHoverPopover();
-          kemasKiniSemuaCadanganGuruGanti();
-        });
-        menuEl.appendChild(item);
-      });
     }
 
-    // Pilihan Status Khas dalam <select> asli (fallback & form submit)
-    const ogSpecial = document.createElement("optgroup");
-    ogSpecial.label = "Status Khas (Tiada Penggantian PdP)";
-    SPECIAL_GANTI_OPTIONS.forEach(opt => {
-      const o = document.createElement("option");
-      o.value = opt.value;
-      o.textContent = `${opt.icon} ${opt.label}`;
-      ogSpecial.appendChild(o);
-    });
-    selectEl.appendChild(ogSpecial);
+    // Jika slot ini ditetapkan status Program Sekolah melalui togol guru (Cadangan 2), masukkan opsyen dalam select
+    if (isSpecialProgramRelief(currentVal)) {
+      const optProg = document.createElement("option");
+      optProg.value = PROGRAM_SEKOLAH_VAL;
+      optProg.textContent = `🏛️ ${PROGRAM_SEKOLAH_VAL}`;
+      selectEl.appendChild(optProg);
+    }
 
     const addCustomGroup = (title, candidates, isHeaderAlert = false) => {
       if (!menuEl || !candidates.length) return;
@@ -4546,7 +4505,7 @@ function openWhatsAppModal() {
         `📋 *GURU TIDAK HADIR / DIKECUALIKAN (${activeAbsentTeachers.length} Orang):*\n` +
         `${absentLines}\n\n` +
         `🏛️ *STATUS PENGGANTIAN: PROGRAM SEKOLAH (TIADA GANTIAN)*\n` +
-        `Semua waktu pengajaran dan pembelajaran (PdP) yang terlibat ditangguhkan atau diselaraskan di bawah Program Rasmi Sekolah / Peperiksaan. Tiada jadual guru ganti yang dikeluarkan.\n\n` +
+        `Semua waktu pengajaran dan pembelajaran (PdP) yang terlibat ditangguhkan atau diselaraskan di bawah Program Rasmi Sekolah. Tiada jadual guru ganti yang dikeluarkan.\n\n` +
         `_Portal e-Guru Ganti SK Tampasuk 1_`;
 
       bodyEl.innerHTML = `
@@ -4561,7 +4520,7 @@ function openWhatsAppModal() {
             STATUS PdP: DIKECUALIKAN GURU GANTI
           </h3>
           <p style="font-size:0.88rem; color:#4338ca; max-width:500px; margin:0 auto 16px; line-height:1.5;">
-            Terdapat <strong>${activeAbsentTeachers.length} orang guru tidak hadir</strong> tetapi waktu PdP terlibat diselaraskan di bawah program sekolah/peperiksaan tanpa penggantian guru lain.
+            Terdapat <strong>${activeAbsentTeachers.length} orang guru tidak hadir</strong> tetapi waktu PdP terlibat diselaraskan di bawah Program Rasmi Sekolah tanpa penggantian guru lain.
           </p>
 
           <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; max-width:520px; margin:0 auto 16px; text-align:left; font-family:monospace; font-size:12px; white-space:pre-wrap; color:#334155; line-height:1.5;">${waProgramText}</div>
