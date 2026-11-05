@@ -1047,6 +1047,12 @@ function autoFillSchedule(options = {}) {
     });
   }
 
+  // Jika options.forceRegenerate diminta:
+  // Kosongkan entryRows sepenuhnya supaya jadual dijana semula dari awal tanpa sebarang duplikasi
+  if (options.forceRegenerate) {
+    entryRows.innerHTML = "";
+  }
+
   // Kenal pasti guru yang sudah mempunyai baris dalam entryRows
   const existingDomRows = [...entryRows.querySelectorAll(".schedule-row")];
   const existingTeachersWithRows = new Set(existingDomRows.map(r => r.dataset.guruTidakHadir).filter(Boolean));
@@ -1505,16 +1511,9 @@ document.getElementById("reset-teachers")?.addEventListener("click", () => {
 });
 
 document.getElementById("reset-rows")?.addEventListener("click", () => {
-  const curSaved = allRecords.filter(r => r && r.tarikh === dateInput.value);
-  if (curSaved.length > 0) {
-    if (!confirm(`Perhatian: Terdapat rekod tersimpan bagi tarikh ini.\n\nAdakah anda pasti mahu memuatkan semula jadual asal daripada pangkalan data?`)) {
-      return;
-    }
-    loadDailyScheduleForDate(dateInput.value);
-    return;
-  }
+  entryRows.innerHTML = "";
   autoFillSchedule({ forceRegenerate: true });
-  showToast("Jadual gantian telah dijana semula.", "neutral");
+  showToast("Jadual automatik telah di-reset kepada asal.", "neutral");
 });
 
 // Paparan Banner Status Harian (Saved vs All Present vs Draft)
