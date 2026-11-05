@@ -942,10 +942,10 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
     rowsHtml += `
       <tr class="${rowClass}">
-        <td style="white-space:nowrap; font-family:monospace; font-size:10px;">${slotTime}${activeIndicator}</td>
-        <td>${subjek}</td>
-        <td>${kelas}</td>
-        <td style="font-size:10px;">${statusText}</td>
+        <td style="white-space:nowrap; font-family:monospace; font-size:10px; text-align:center;">${slotTime}${activeIndicator}</td>
+        <td style="text-align:center;">${subjek}</td>
+        <td style="text-align:center;">${kelas}</td>
+        <td style="font-size:10px; text-align:center;">${statusText}</td>
       </tr>
     `;
   }
@@ -968,10 +968,10 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
       <table class="popover-tt-table">
         <thead>
           <tr>
-            <th style="width:30%;">Masa</th>
-            <th style="width:22%;">Subjek</th>
-            <th style="width:18%;">Kelas</th>
-            <th>Status</th>
+            <th style="width:28%; text-align:center;">Masa</th>
+            <th style="width:24%; text-align:center;">Subjek</th>
+            <th style="width:20%; text-align:center;">Kelas</th>
+            <th style="text-align:center;">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -983,41 +983,11 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
   if (window.lucide) window.lucide.createIcons();
 
-  // Tunjukkan popover terlebih dahulu (halimunan sementara) untuk mengukur dimensi tepat
+  // Paparan Mini Jadual Guru Berada Tepat di Tengah-Tengah Skrin (Center of Viewport)
+  popover.style.top = "50%";
+  popover.style.left = "50%";
+  popover.style.transform = "translate(-50%, -50%) scale(1)";
   popover.classList.remove("hidden");
-  popover.style.opacity = "0";
-
-  // Posisi Pintar Terapung
-  const wrapper = targetElement.closest(".custom-ganti-wrapper") || targetElement;
-  const wrapperRect = wrapper.getBoundingClientRect();
-  const actualHeight = popover.offsetHeight || 270;
-  const actualWidth = popover.offsetWidth || 295;
-
-  // 1. Kedudukan Menegak (Top):
-  // Anchor selaras dengan bahagian atas wrapper baris jadual ini
-  let top = wrapperRect.top - 6;
-
-  // Jika baris berada di bahagian paling bawah skrin (termasuk bila user hover baris bawah):
-  // Naikkan popover ke atas supaya keseluruhan jadual popover muat sepenuhnya dalam viewport
-  if (top + actualHeight > window.innerHeight - 20) {
-    top = window.innerHeight - actualHeight - 20;
-  }
-  if (top < 15) top = 15;
-
-  // 2. Kedudukan Mendatar (Left):
-  // Popover mestilah TIDAK berada di dalam column (iaitu jangan menutupi column Masa, Subjek, Kelas di sebelah kiri)
-  // Letak di sebelah kanan dropdown
-  let left = wrapperRect.right + 12;
-
-  // Jika ruang kanan melepasi tepi tingkap skrin:
-  if (left + actualWidth > window.innerWidth - 15) {
-    // Sandarkan ke tepi kanan skrin supaya tidak menindih ruangan column Masa & Kelas di sebelah kiri
-    left = window.innerWidth - actualWidth - 15;
-  }
-  if (left < 10) left = 10;
-
-  popover.style.left = `${left}px`;
-  popover.style.top = `${top}px`;
   popover.style.opacity = "1";
 }
 
@@ -1026,6 +996,7 @@ function hideTeacherHoverPopover() {
   if (popover) {
     popover.classList.add("hidden");
     popover.style.opacity = "0";
+    popover.style.transform = "translate(-50%, -50%) scale(0.95)";
   }
 }
 
