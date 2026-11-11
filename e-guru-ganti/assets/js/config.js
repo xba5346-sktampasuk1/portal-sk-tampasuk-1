@@ -1,9 +1,9 @@
 /**
- * e-Guru Ganti V2 - Konfigurasi Sistem
+ * e-GGs (e-Guru Ganti Sekolah) V2 - Konfigurasi Sistem
  * SK Tampasuk 1 Kota Belud, Sabah
  */
 const APP_CONFIG = {
-  appName: "E-Guru Ganti",
+  appName: "e-GGs (e-Guru Ganti Sekolah)",
   version: "2.5.0",
   schoolName: "SK TAMPASUK 1",
   schoolAddress: "W.D.T 158, 89150, KOTA BELUD, SABAH",
