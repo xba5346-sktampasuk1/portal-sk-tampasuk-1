@@ -1,12 +1,21 @@
 /**
- * e-GGs (e-Guru Ganti Sekolah) V2 - Konfigurasi Sistem
+ * ============================================================================
+ * e-GGs (e-Guru Ganti Sekolah) V2.6 - Konfigurasi Sistem
  * SK Tampasuk 1 Kota Belud, Sabah
+ * Hak Cipta Inovasi: byCikguJayResources
+ * ============================================================================
  */
+
+// URL Web App Google Apps Script SK Tampasuk 1 (Hardcoded supaya semua guru terus dapat data)
+const HARDCODED_GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz8LwxiqK30XvJoS-kk4mNEKwBeXFPrlHuAg5RKM1hkVaP2sPhahVC0FVE32bInhKp2/exec";
+
 const APP_CONFIG = {
   appName: "e-GGs (e-Guru Ganti Sekolah)",
-  version: "2.5.0",
+  version: "2.6.0",
   schoolName: "SK TAMPASUK 1",
+  schoolCode: "xba5346",
   schoolAddress: "W.D.T 158, 89150, KOTA BELUD, SABAH",
+  schoolPPD: "Pejabat Pendidikan Daerah Kota Belud • Jabatan Pendidikan Negeri Sabah • Kementerian Pendidikan Malaysia",
   schoolMotto: "SEKATA MELAKAR KECEMERLANGAN",
   schoolSubMotto: "ILMU CAHAYA HIDUP",
   schoolDomain: "guruganti.sktampasuk1.edu.my",
@@ -15,10 +24,9 @@ const APP_CONFIG = {
   
   /**
    * URL Google Apps Script Web App
-   * Masukkan URL Web App anda selepas Deploy di Google Apps Script.
-   * Jika dibiarkan kosong (""), sistem akan menggunakan storan tempatan (localStorage).
+   * Mengutamakan HARDCODED_GOOGLE_SHEET_URL jika ditetapkan, atau URL yang disimpan melalui Tetapan Web.
    */
-  googleAppsScriptUrl: "https://script.google.com/macros/s/AKfycbz8LwxiqK30XvJoS-kk4mNEKwBeXFPrlHuAg5RKM1hkVaP2sPhahVC0FVE32bInhKp2/exec",
+  googleAppsScriptUrl: HARDCODED_GOOGLE_SHEET_URL || localStorage.getItem("eguru_custom_gas_url") || "",
   
   // Had amaran beban guru ganti (waktu dalam sehari)
   overloadThresholdDaily: 8,
@@ -33,10 +41,13 @@ const APP_CONFIG = {
     customSlots: "eguru-custom-teacher-slots",
     removedSlots: "eguru-removed-teacher-slots",
     customTimetable: "eguru-custom-timetable-v2",
-    customTeachers: "eguru-custom-teachers-v2"
+    customTeachers: "eguru-custom-teachers-v2",
+    schoolDataCache: "eguru-school-data-cache-v2",
+    customGasUrl: "eguru_custom_gas_url",
+    customSchoolProfile: "eguru_custom_school_profile_v2"
   },
 
-  // Tetapan Pengesahan & Log Masuk
+  // Tetapan Pengesahan & Log Masuk (Boleh juga dikawal di tab 'Tetapan_Sekolah' Google Sheet)
   auth: {
     enabled: true,
     defaultUser: "xba5346",

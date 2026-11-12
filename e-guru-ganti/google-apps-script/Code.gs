@@ -1,40 +1,94 @@
 /**
- * =========================================================================
- * e-Guru Ganti V2 - Google Apps Script (Backend)
- * SK Tampasuk 1 Kota Belud, Sabah
- * =========================================================================
- * 
- * FUNGSI UTAMA:
- * 1. Menerima rekod guru ganti dari laman web GitHub Pages / Domain Sekolah.
- * 2. Menyimpan rekod secara automatik ke Google Sheets "Rekod_Guru_Ganti".
- * 3. Menghantar Slip Guru Ganti (HTML Email) terus ke emel rasmi DELIMa guru ganti.
- * 4. Membekalkan data sejarah dan statistik kembali kepada laman web.
+ * ============================================================================
+ * e-GGs (e-Guru Ganti Sekolah) V2.6 - Google Apps Script (Backend Dinamik)
+ * Sistem Pangkalan Data 5-Tab Automatik + Penjana Kod Warna Guru Automatik
+ * Hak Cipta Inovasi: byCikguJayResources
+ * ============================================================================
+ *
+ * PANDUAN PEMASANGAN PANTAS:
+ * 1. Buka Google Sheet sekolah anda -> klik Extensions > Apps Script.
+ * 2. Padam kod asal dan tampal keseluruhan kod daripada fail Code.gs ini.
+ * 3. Tekan Save (Ctrl+S), pilih fungsi "setupSheet" di bar atas, dan klik "Run".
+ *    (5 tab pangkalan data sekolah akan dibina secara automatik!)
+ * 4. Klik "Deploy" > "New deployment" > pilih jenis "Web app":
+ *    - Execute as: Me
+ *    - Who has access: Anyone
+ * 5. Salin URL Web App yang dijana dan tampal ke dalam fail assets/js/config.js
+ *    (pada pembolehubah HARDCODED_GOOGLE_SHEET_URL) atau melalui tetapan web.
+ * ============================================================================
  */
 
-const SHEET_REKOD = "Rekod_Guru_Ganti";
-const SHEET_GURU = "Senarai_Guru";
+const SHEET_TETAPAN = "Tetapan_Sekolah";
+const SHEET_SLOT    = "Waktu_Slot";
+const SHEET_GURU    = "Senarai_Guru";
+const SHEET_JADUAL  = "Jadual_Waktu";
+const SHEET_REKOD   = "Rekod_Guru_Ganti";
+
+// 32 Kod Warna Unik Automatik untuk Guru (Digunakan secara automatik apabila nama guru baharu dimasukkan)
+const MASTER_TEACHER_HEX_COLORS = [
+  "#1d4ed8", "#0d9488", "#ea580c", "#7c3aed", "#059669", "#e11d48", "#d97706", "#0284c7",
+  "#4f46e5", "#c026d3", "#16a34a", "#dc2626", "#65a30d", "#475569", "#0891b2", "#f43f5e",
+  "#2563eb", "#4d7c0f", "#9333ea", "#c2410c", "#06b6d4", "#db2777", "#15803d", "#ca8a04",
+  "#a21caf", "#0369a1", "#8b5cf6", "#0f766e", "#b91c1c", "#b45309", "#1e40af", "#047857"
+];
 
 /**
- * Endpoint POST: Menyimpan rekod dan menghantar emel
+ * ============================================================================
+ * ENDPOINT GET (Membekalkan Data Sekolah & Rekod ke Laman Web)
+ * ============================================================================
+ */
+function doGet(e) {
+  try {
+    const action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "getSchoolData";
+
+    if (action === "getSchoolData") {
+      const schoolData = getSchoolDataPayload();
+      return ContentService.createTextOutput(JSON.stringify(schoolData))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === "getRecords") {
+      const recordsData = getRecordsPayload();
+      return ContentService.createTextOutput(JSON.stringify(recordsData))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "Tindakan GET tidak sah: " + action
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * ============================================================================
+ * ENDPOINT POST (Menyimpan, Mengemas Kini & Memadam Rekod Penggantian)
+ * ============================================================================
  */
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Simpan Rekod Baharu
     if (data.action === "saveRecords" && Array.isArray(data.records)) {
-      const ss = SpreadsheetApp.getActiveSpreadsheet();
       let sheetRekod = ss.getSheetByName(SHEET_REKOD);
       if (!sheetRekod) {
         setupSheet();
         sheetRekod = ss.getSheetByName(SHEET_REKOD);
       }
-      
-      // Ambil pemetaan emel guru dari tab Senarai_Guru
+
+      const settings = getSchoolSettings();
       const emailMap = getTeacherEmailMap();
       let emailSentCount = 0;
-      
+
       data.records.forEach(r => {
-        // 1. Simpan baris rekod ke Sheet
         sheetRekod.appendRow([
           r.tarikh || "",
           r.hari || "",
@@ -49,39 +103,40 @@ function doPost(e) {
           r.catatan || "",
           new Date()
         ]);
-        
-        // 2. Hantar emel slip gantian jika emel guru wujud
+
         const teacherEmail = emailMap[r.guru_ganti];
         if (teacherEmail && teacherEmail.includes("@")) {
           try {
-            sendReliefSlipEmail(teacherEmail, r);
+            sendReliefSlipEmail(teacherEmail, r, settings);
             emailSentCount++;
           } catch (errEmail) {
             Logger.log("Gagal menghantar emel kepada " + teacherEmail + ": " + errEmail);
           }
         }
       });
-      
+
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
         savedCount: data.records.length,
         emailSentCount: emailSentCount
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
-    // Tindakan Padam / Batal Tugasan
+
+    // 2. Padam / Batal Tugasan
     if (data.action === "deleteRecord") {
-      const ss = SpreadsheetApp.getActiveSpreadsheet();
       let sheetRekod = ss.getSheetByName(SHEET_REKOD);
       if (sheetRekod) {
         const rows = sheetRekod.getDataRange().getValues();
+        const hasKumpulan = rows[0] && rows[0].length >= 12 && String(rows[0][3]).toLowerCase().includes("kumpulan");
+        const off = hasKumpulan ? 1 : 0;
+
         for (let i = rows.length - 1; i >= 1; i--) {
           const row = rows[i];
           const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
-          if (rTarikh === data.tarikh && 
-              String(row[6]).trim() === String(data.masa || "").trim() && 
-              String(row[8]).trim() === String(data.kelas || "").trim() &&
-              String(row[4]).trim() === String(data.guru_tidak_hadir || "").trim()) {
+          if (rTarikh === data.tarikh &&
+              String(row[5 + off]).trim() === String(data.masa || "").trim() &&
+              String(row[7 + off]).trim() === String(data.kelas || "").trim() &&
+              String(row[3 + off]).trim() === String(data.guru_tidak_hadir || "").trim()) {
             sheetRekod.deleteRow(i + 1);
             break;
           }
@@ -93,24 +148,26 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // Tindakan Kemas Kini Tugasan
+    // 3. Kemas Kini Tugasan Sedia Ada
     if (data.action === "updateRecord" && data.record) {
       const r = data.record;
-      const ss = SpreadsheetApp.getActiveSpreadsheet();
       let sheetRekod = ss.getSheetByName(SHEET_REKOD);
       if (sheetRekod) {
         const rows = sheetRekod.getDataRange().getValues();
+        const hasKumpulan = rows[0] && rows[0].length >= 12 && String(rows[0][3]).toLowerCase().includes("kumpulan");
+        const off = hasKumpulan ? 1 : 0;
+
         for (let i = rows.length - 1; i >= 1; i--) {
           const row = rows[i];
           const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
-          if (rTarikh === r.tarikh && 
-              String(row[6]).trim() === String(r.masa || "").trim() && 
-              String(row[8]).trim() === String(r.kelas || "").trim() &&
-              String(row[4]).trim() === String(r.guru_tidak_hadir || "").trim()) {
-            if (r.guru_ganti) sheetRekod.getRange(i + 1, 10).setValue(r.guru_ganti);
-            if (r.mata_pelajaran) sheetRekod.getRange(i + 1, 8).setValue(r.mata_pelajaran);
-            if (r.sebab) sheetRekod.getRange(i + 1, 6).setValue(r.sebab);
-            sheetRekod.getRange(i + 1, 12).setValue(new Date()); // Kemas kini cap masa
+          if (rTarikh === r.tarikh &&
+              String(row[5 + off]).trim() === String(r.masa || "").trim() &&
+              String(row[7 + off]).trim() === String(r.kelas || "").trim() &&
+              String(row[3 + off]).trim() === String(r.guru_tidak_hadir || "").trim()) {
+            if (r.guru_ganti) sheetRekod.getRange(i + 1, 9 + off).setValue(r.guru_ganti);
+            if (r.mata_pelajaran) sheetRekod.getRange(i + 1, 7 + off).setValue(r.mata_pelajaran);
+            if (r.sebab) sheetRekod.getRange(i + 1, 5 + off).setValue(r.sebab);
+            sheetRekod.getRange(i + 1, 11 + off).setValue(new Date());
             break;
           }
         }
@@ -120,12 +177,12 @@ function doPost(e) {
         message: "Rekod berjaya dikemas kini di Google Sheet"
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
-      message: "Tindakan tidak sah"
+      message: "Tindakan POST tidak sah"
     })).setMimeType(ContentService.MimeType.JSON);
-    
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
@@ -135,74 +192,349 @@ function doPost(e) {
 }
 
 /**
- * Endpoint GET: Memulangkan semua rekod dalam format JSON
+ * ============================================================================
+ * FUNGSI: MEMBACA PROFIL SEKOLAH (Tetapan_Sekolah)
+ * ============================================================================
  */
-function doGet(e) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_REKOD);
-    
-    if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        data: []
-      })).setMimeType(ContentService.MimeType.JSON);
+function getSchoolSettings() {
+  const settings = {
+    schoolName: "",
+    schoolCode: "",
+    schoolAddress: "",
+    schoolPPD: "",
+    schoolMotto: "",
+    schoolSubMotto: "",
+    schoolLogo: "",
+    adminPass: "",
+    defaultUser: "",
+    defaultPass: "",
+    overloadDaily: 8,
+    overloadWeekly: 8,
+    overloadThresholdDaily: 8,
+    overloadThresholdWeekly: 8,
+    hasAfternoonSession: false
+  };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_TETAPAN);
+  if (!sheet) return settings;
+
+  const rows = sheet.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    const key = String(rows[i][0] || "").trim().toLowerCase();
+    const val = String(rows[i][1] || "").trim();
+    if (!val) continue;
+
+    if (key.includes("nama sekolah") && val !== "NAMA SEKOLAH ANDA") {
+      settings.schoolName = val;
+    } else if (key.includes("kod sekolah")) {
+      settings.schoolCode = val;
+      settings.defaultUser = val;
+    } else if (key.includes("alamat") && val !== "ALAMAT SURAT-MENYURAT SEKOLAH ANDA") {
+      settings.schoolAddress = val;
+    } else if (key.includes("ppd") || key.includes("jpn") || key.includes("jabatan")) {
+      settings.schoolPPD = val;
+    } else if (key.includes("sub-moto") || key.includes("sub motto") || key.includes("slogan")) {
+      settings.schoolSubMotto = val;
+    } else if (key.includes("moto") || key.includes("motto")) {
+      settings.schoolMotto = val;
+    } else if (key.includes("logo")) {
+      settings.schoolLogo = val;
+    } else if (key.includes("kata laluan") || key.includes("password")) {
+      settings.adminPass = val;
+      settings.defaultPass = val;
+    } else if (key.includes("beban harian")) {
+      const d = parseInt(val, 10) || 8;
+      settings.overloadDaily = d;
+      settings.overloadThresholdDaily = d;
+    } else if (key.includes("beban mingguan")) {
+      const w = parseInt(val, 10) || 8;
+      settings.overloadWeekly = w;
+      settings.overloadThresholdWeekly = w;
+    } else if (key.includes("sesi")) {
+      settings.hasAfternoonSession = val.toLowerCase().includes("petang") || val.toLowerCase().includes("dua");
     }
-    
-    const rows = sheet.getDataRange().getValues();
-    if (rows.length <= 1) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        data: []
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    // Baris pertama adalah Header
-    const records = [];
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      records.push({
-        tarikh: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "",
-        hari: row[1],
-        minggu: row[2],
-        kumpulan: row[3],
-        guru_tidak_hadir: row[4],
-        sebab: row[5],
-        masa: row[6],
-        mata_pelajaran: row[7],
-        kelas: row[8],
-        guru_ganti: row[9],
-        catatan: row[10],
-        timestamp: row[11]
-      });
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "success",
-      data: records.reverse() // Rekod terkini di atas
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: err.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
   }
+
+  return settings;
 }
 
 /**
- * Membina peta (Map) Nama Guru -> Emel DELIMa
+ * ============================================================================
+ * FUNGSI: MEMBINA PAYLOAD DATA LENGKAP SEKOLAH (5 TAB)
+ * ============================================================================
+ */
+function getSchoolDataPayload() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const settings = getSchoolSettings();
+
+  // 1. Ambil Konfigurasi Waktu Slot (Tab Waktu_Slot)
+  const slotsPagi = [];
+  const slotsPetang = [];
+  const allSlotLabels = [];
+  const slotMap = {};
+  const standardSlots = ["7.00-7.10"]; // Indeks 0: Perhimpunan / Pengurusan Kelas
+  const rehatIndices = [];
+
+  const sheetSlot = ss.getSheetByName(SHEET_SLOT);
+  if (sheetSlot) {
+    const rowsSlot = sheetSlot.getDataRange().getValues();
+    for (let i = 1; i < rowsSlot.length; i++) {
+      const slotNum = parseInt(rowsSlot[i][0], 10) || i;
+      const mula = String(rowsSlot[i][1] || "").trim();
+      const tamat = String(rowsSlot[i][2] || "").trim();
+      let label = String(rowsSlot[i][3] || "").trim();
+      if (!label && mula && tamat) label = `${mula}-${tamat}`;
+      const sesi = String(rowsSlot[i][4] || "Pagi").trim().toLowerCase();
+      const jenis = String(rowsSlot[i][5] || "Pengajaran").trim();
+
+      const item = {
+        slot: slotNum,
+        mula: mula,
+        tamat: tamat,
+        label: label,
+        sesi: sesi.includes("petang") ? "Petang" : "Pagi",
+        jenis: jenis
+      };
+
+      if (item.sesi === "Petang") {
+        slotsPetang.push(item);
+        slotMap[`Petang_${slotNum}`] = label;
+      } else {
+        slotsPagi.push(item);
+        slotMap[`Pagi_${slotNum}`] = label;
+        standardSlots[slotNum] = label;
+        if (jenis.toLowerCase().includes("rehat")) {
+          rehatIndices.push(slotNum);
+        }
+      }
+      if (label && !allSlotLabels.includes(label)) {
+        allSlotLabels.push(label);
+      }
+    }
+  }
+  if (rehatIndices.length === 0) rehatIndices.push(6);
+
+  // 2. Ambil Senarai Guru, Kumpulan Bertugas, No Telefon, Emel & Kod Warna Automatik (Tab Senarai_Guru)
+  const teachers = [];
+  const teacherPhones = {};
+  const teacherEmails = {};
+  const teacherColors = {};
+  const teacherGroups = {
+    "Kumpulan 1": [],
+    "Kumpulan 2": [],
+    "Kumpulan 3": [],
+    "Kumpulan 4": []
+  };
+  const teacherSessions = {};
+
+  const sheetGuru = ss.getSheetByName(SHEET_GURU);
+  if (sheetGuru) {
+    const rowsGuru = sheetGuru.getDataRange().getValues();
+    const header = rowsGuru[0] ? rowsGuru[0].map(h => String(h || "").toLowerCase()) : [];
+    const hasGroupCol = header.some(h => h.includes("kumpulan"));
+
+    // Pastikan tajuk lajur ke-6 (Kod Warna Automatik) wujud jika jadual menggunakan format penuh
+    if (hasGroupCol && rowsGuru[0] && rowsGuru[0].length < 6) {
+      try {
+        sheetGuru.getRange(1, 6).setValue("Kod Warna (Automatik)").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
+      } catch (e) {}
+    }
+
+    for (let i = 1; i < rowsGuru.length; i++) {
+      const name = String(rowsGuru[i][0] || "").trim();
+      if (!name) continue;
+
+      let group = "";
+      let phone = "";
+      let email = "";
+      let sesi = "Pagi";
+      let colorHex = "";
+
+      if (hasGroupCol) {
+        // Format: [Nama Guru, Kumpulan Bertugas, No Telefon WhatsApp, Emel Rasmi, Sesi, Kod Warna]
+        group    = String(rowsGuru[i][1] || "").trim();
+        phone    = String(rowsGuru[i][2] || "").trim();
+        email    = String(rowsGuru[i][3] || "").trim();
+        sesi     = String(rowsGuru[i][4] || "Pagi").trim();
+        colorHex = String(rowsGuru[i][5] || "").trim();
+      } else {
+        // Format Sokongan Ringkas: [Nama Guru, No Telefon WhatsApp, Sesi]
+        phone = String(rowsGuru[i][1] || "").trim();
+        sesi  = String(rowsGuru[i][2] || "Pagi").trim();
+      }
+
+      if (!teachers.includes(name)) teachers.push(name);
+      const tIdx = teachers.indexOf(name);
+
+      // AUTO-ASSIGN KOD WARNA GURU: Jika belum ada kod warna dalam Google Sheet, berikan secara automatik!
+      if (!colorHex || !colorHex.startsWith("#")) {
+        colorHex = MASTER_TEACHER_HEX_COLORS[tIdx % MASTER_TEACHER_HEX_COLORS.length];
+        if (hasGroupCol) {
+          try {
+            sheetGuru.getRange(i + 1, 6).setValue(colorHex);
+          } catch (e) {}
+        }
+      }
+      teacherColors[name] = colorHex;
+
+      if (phone) teacherPhones[name] = phone;
+      if (email) teacherEmails[name] = email;
+      teacherSessions[name] = sesi;
+
+      if (group) {
+        let normGroup = group;
+        if (/^[1-9]$/.test(group)) normGroup = "Kumpulan " + group;
+        if (!teacherGroups[normGroup]) teacherGroups[normGroup] = [];
+        if (!teacherGroups[normGroup].includes(name)) {
+          teacherGroups[normGroup].push(name);
+        }
+      }
+    }
+  }
+
+  // 3. Ambil Jadual Waktu Penuh & Auto-Detect Kelas (Tab Jadual_Waktu)
+  const timetableByTeacher = {};
+  const detectedClassesSet = {};
+
+  const sheetJadual = ss.getSheetByName(SHEET_JADUAL);
+  if (sheetJadual) {
+    const rowsJadual = sheetJadual.getDataRange().getValues();
+    for (let i = 1; i < rowsJadual.length; i++) {
+      const guru = String(rowsJadual[i][0] || "").trim();
+      let hari = String(rowsJadual[i][1] || "").trim();
+      const rawSlot = String(rowsJadual[i][2] || "").trim();
+      const subjek = String(rowsJadual[i][3] || "").trim();
+      const kelas = String(rowsJadual[i][4] || "").trim();
+
+      if (!guru || !hari || !rawSlot || !subjek || !kelas) continue;
+
+      if (hari.toLowerCase().includes("isn")) hari = "Isnin";
+      else if (hari.toLowerCase().includes("sel")) hari = "Selasa";
+      else if (hari.toLowerCase().includes("rab")) hari = "Rabu";
+      else if (hari.toLowerCase().includes("kha")) hari = "Khamis";
+      else if (hari.toLowerCase().includes("jum")) hari = "Jumaat";
+
+      if (!teachers.includes(guru)) {
+        teachers.push(guru);
+        const newIdx = teachers.indexOf(guru);
+        teacherColors[guru] = MASTER_TEACHER_HEX_COLORS[newIdx % MASTER_TEACHER_HEX_COLORS.length];
+      }
+
+      if (kelas) {
+        detectedClassesSet[kelas] = true;
+      }
+
+      // Tentukan masa slot & nombor slot
+      let slotNum = parseInt(rawSlot, 10);
+      let slotTime = "";
+      if (!isNaN(slotNum) && slotNum >= 1 && !rawSlot.includes("-") && !rawSlot.includes(".")) {
+        slotTime = standardSlots[slotNum] || slotMap[`Pagi_${slotNum}`] || `Slot ${slotNum}`;
+      } else {
+        slotTime = rawSlot;
+        const foundIdx = standardSlots.findIndex(s => s && s.replace(/\s+/g, "") === rawSlot.replace(/\s+/g, ""));
+        slotNum = foundIdx >= 1 ? foundIdx : 0;
+      }
+
+      if (!timetableByTeacher[guru]) timetableByTeacher[guru] = {};
+      if (!timetableByTeacher[guru][hari]) timetableByTeacher[guru][hari] = [];
+      timetableByTeacher[guru][hari].push([slotTime, subjek, kelas, slotNum || undefined]);
+    }
+  }
+
+  const detectedClasses = Object.keys(detectedClassesSet).sort((a, b) => {
+    return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+  });
+
+  return {
+    status: "success",
+    profile: settings,
+    settings: settings,
+    slots: standardSlots.length > 1 ? standardSlots : null,
+    rehatIndices: rehatIndices,
+    slotsDetail: {
+      pagi: slotsPagi,
+      petang: slotsPetang,
+      allLabels: allSlotLabels,
+      slotMap: slotMap
+    },
+    classes: detectedClasses,
+    teachers: teachers,
+    phones: teacherPhones,
+    teacherPhones: teacherPhones,
+    teacherEmails: teacherEmails,
+    groups: teacherGroups,
+    teacherGroups: teacherGroups,
+    colors: teacherColors,
+    teacherColors: teacherColors,
+    teacherSessions: teacherSessions,
+    timetable: timetableByTeacher,
+    timetableByTeacher: timetableByTeacher
+  };
+}
+
+/**
+ * ============================================================================
+ * FUNGSI: MEMBACA REKOD SEJARAH (Rekod_Guru_Ganti)
+ * ============================================================================
+ */
+function getRecordsPayload() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_REKOD);
+
+  if (!sheet) {
+    return { status: "success", data: [] };
+  }
+
+  const rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) {
+    return { status: "success", data: [] };
+  }
+
+  const hasKumpulanCol = rows[0] && rows[0].length >= 12 && String(rows[0][3]).toLowerCase().includes("kumpulan");
+  const records = [];
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const offset = hasKumpulanCol ? 1 : 0;
+    records.push({
+      tarikh: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "",
+      hari: row[1],
+      minggu: row[2],
+      kumpulan: hasKumpulanCol ? row[3] : "",
+      guru_tidak_hadir: row[3 + offset],
+      sebab: row[4 + offset],
+      masa: row[5 + offset],
+      mata_pelajaran: row[6 + offset],
+      kelas: row[7 + offset],
+      guru_ganti: row[8 + offset],
+      catatan: row[9 + offset],
+      timestamp: row[10 + offset]
+    });
+  }
+
+  return {
+    status: "success",
+    data: records.reverse()
+  };
+}
+
+/**
+ * ============================================================================
+ * FUNGSI: PEMETAAN EMEL GURU (UNTUK NOTIFIKASI SLIP AUTOMATIK PILIHAN)
+ * ============================================================================
  */
 function getTeacherEmailMap() {
   const map = {};
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_GURU);
   if (!sheet) return map;
-  
+
   const values = sheet.getDataRange().getValues();
   for (let i = 1; i < values.length; i++) {
     const name = String(values[i][0] || "").trim();
-    const email = String(values[i][1] || "").trim();
+    const col2 = String(values[i][2] || "").trim();
+    const col3 = String(values[i][3] || "").trim();
+    const email = col3.includes("@") ? col3 : (col2.includes("@") ? col2 : "");
     if (name && email) {
       map[name] = email;
     }
@@ -211,61 +543,53 @@ function getTeacherEmailMap() {
 }
 
 /**
- * Menghantar Slip Guru Ganti (HTML Email Kemas & Rasmi)
+ * ============================================================================
+ * FUNGSI: MENGHANTAR SLIP GURU GANTI MELALUI EMEL RASMI
+ * ============================================================================
  */
-function sendReliefSlipEmail(recipientEmail, r) {
-  const subject = `[e-Guru Ganti] Slip Penggantian Kelas: ${r.tarikh} (Kelas ${r.kelas} - ${r.mata_pelajaran})`;
-  
+function sendReliefSlipEmail(recipientEmail, r, settings) {
+  const schoolName = (settings && settings.schoolName) ? settings.schoolName : "SEKOLAH ANDA";
+  const subject = `[e-GGs] Slip Guru Ganti: ${r.tarikh} (Kelas ${r.kelas} - ${r.mata_pelajaran})`;
+
   const htmlBody = `
-    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 580px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 580px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; padding: 24px; text-align: center; border-bottom: 4px solid #eab308;">
-        <h2 style="margin: 0; font-size: 20px; letter-spacing: 0.05em;">SK TAMPASUK 1 KOTA BELUD</h2>
-        <p style="margin: 6px 0 0; font-size: 13px; color: #93c5fd; font-weight: bold; text-transform: uppercase;">Slip Jadual Guru Ganti</p>
+        <h2 style="margin: 0; font-size: 20px;">${schoolName}</h2>
+        <p style="margin: 6px 0 0; font-size: 13px; color: #93c5fd; font-weight: bold; text-transform: uppercase;">Slip Rasmi e-GGs (e-Guru Ganti Sekolah)</p>
       </div>
-      
       <div style="padding: 24px; background-color: #ffffff; color: #1e293b; font-size: 13.5px; line-height: 1.6;">
-        <p style="margin-top: 0;">Salam sejahtera <strong>Cikgu ${r.guru_ganti}</strong>,</p>
-        <p>Anda telah ditugaskan untuk menggantikan kelas berikut pada ketetapan rasmi sekolah:</p>
-        
+        <p style="margin-top: 0;">Salam sejahtera <strong>${r.guru_ganti}</strong>,</p>
+        <p>Anda telah ditugaskan untuk menggantikan kelas berikut:</p>
         <table style="width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 13px;">
           <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 9px 12px; font-weight: bold; color: #475569; width: 40%;">Tarikh & Hari:</td>
+            <td style="padding: 9px 12px; font-weight: bold; width: 40%;">Tarikh & Hari:</td>
             <td style="padding: 9px 12px; font-weight: bold; color: #1e3a8a;">${r.tarikh} (${r.hari})</td>
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 9px 12px; font-weight: bold; color: #475569;">Minggu Persekolahan:</td>
-            <td style="padding: 9px 12px;">${r.minggu} (${r.kumpulan})</td>
+            <td style="padding: 9px 12px; font-weight: bold;">Minggu / Kumpulan:</td>
+            <td style="padding: 9px 12px;">${r.minggu || "—"} ${r.kumpulan ? "(" + r.kumpulan + ")" : ""}</td>
           </tr>
           <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 9px 12px; font-weight: bold; color: #475569;">Waktu / Masa:</td>
+            <td style="padding: 9px 12px; font-weight: bold;">Waktu / Masa:</td>
             <td style="padding: 9px 12px; font-family: monospace; font-weight: bold; color: #2563eb;">${r.masa}</td>
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 9px 12px; font-weight: bold; color: #475569;">Kelas & Subjek:</td>
+            <td style="padding: 9px 12px; font-weight: bold;">Kelas & Subjek:</td>
             <td style="padding: 9px 12px; font-weight: bold;">Kelas ${r.kelas} — ${r.mata_pelajaran}</td>
           </tr>
           <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 9px 12px; font-weight: bold; color: #475569;">Guru Asal:</td>
+            <td style="padding: 9px 12px; font-weight: bold;">Guru Asal:</td>
             <td style="padding: 9px 12px; color: #dc2626; font-weight: 600;">${r.guru_tidak_hadir} (${r.sebab})</td>
           </tr>
         </table>
-        
-        <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 14px; border-radius: 6px; font-size: 12px; color: #1e40af; margin-top: 15px;">
-          📌 <strong>Peringatan Penting:</strong> Sila laksanakan tugasan modul / MMI di kelas berkenaan dan tandatangani buku rekod guru ganti di pejabat.
-        </div>
-        
         <p style="margin-top: 20px; font-size: 12px; color: #64748b;">
-          Terima kasih atas kerjasama dan komitmen anda dalam menjamin kelangsungan pembelajaran murid.<br>
-          <em>— Jawatankuasa Jadual Waktu & Guru Ganti SK Tampasuk 1</em>
+          Terima kasih atas kerjasama dan komitmen anda dalam menjamin kelangsungan pembelajaran murid (MMI).<br>
+          <em>— Pentadbiran ${schoolName}</em>
         </p>
-      </div>
-      
-      <div style="background-color: #f1f5f9; padding: 12px 20px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0;">
-        E-Guru Ganti V2 • SK Tampasuk 1 Kota Belud, Sabah • Sistem Automasi Rasmi
       </div>
     </div>
   `;
-  
+
   MailApp.sendEmail({
     to: recipientEmail,
     subject: subject,
@@ -274,16 +598,123 @@ function sendReliefSlipEmail(recipientEmail, r) {
 }
 
 /**
- * Fungsi Penyiapan Permulaan (Run Once):
- * Cipta Sheet dan masukkan senarai nama 26 guru rasmi
+ * ============================================================================
+ * FUNGSI: PENYEDIAAN 5 TAB GOOGLE SHEET SECARA AUTOMATIK (RUN ONCE)
+ * ============================================================================
  */
 function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // 1. Tab Rekod_Guru_Ganti
+
+  // -------------------------------------------------------------------------
+  // TAB 1: Tetapan_Sekolah
+  // -------------------------------------------------------------------------
+  let sheetTetapan = ss.getSheetByName(SHEET_TETAPAN);
+  if (!sheetTetapan) {
+    sheetTetapan = ss.insertSheet(SHEET_TETAPAN, 0);
+    sheetTetapan.appendRow(["Parameter", "Nilai (Sila Isi Di Sini)", "Keterangan & Panduan"]);
+    sheetTetapan.getRange("A1:C1").setFontWeight("bold").setBackground("#1e293b").setFontColor("#ffffff");
+    sheetTetapan.setFrozenRows(1);
+    sheetTetapan.setColumnWidth(1, 220);
+    sheetTetapan.setColumnWidth(2, 340);
+    sheetTetapan.setColumnWidth(3, 420);
+
+    const tetapanData = [
+      ["Nama Sekolah", "NAMA SEKOLAH ANDA", "Masukkan nama rasmi sekolah anda (cth: SK SERI MELATI)"],
+      ["Kod Sekolah", "admin", "Masukkan kod sekolah KPM (digunakan sebagai ID Pengguna log masuk)"],
+      ["Alamat Sekolah", "ALAMAT SURAT-MENYURAT SEKOLAH ANDA", "Masukkan alamat penuh sekolah (poskod, daerah, negeri)"],
+      ["PPD / JPN", "Pejabat Pendidikan Daerah • Jabatan Pendidikan Negeri", "Maklumat PPD & JPN untuk paparan rasmi di bahagian bawah (Footer)"],
+      ["Moto Sekolah", "BERILMU BERBAKTI", "Moto rasmi sekolah anda"],
+      ["Sub-Moto Sekolah", "DISIPLIN ASAS KECEMERLANGAN", "Slogan atau sub-moto sekolah anda"],
+      ["URL Logo Sekolah", "", "Pautan terus imej logo sekolah (biarkan kosong jika guna fail logo-sekolah.svg)"],
+      ["Kata Laluan Admin", "admin123", "Kata laluan pentadbir untuk log masuk ke sistem e-GGs"],
+      ["Sesi Persekolahan", "Pagi Sahaja", "Pilihan: 'Pagi Sahaja' atau 'Dua Sesi (Pagi & Petang)'"],
+      ["Had Beban Harian", "8", "Had amaran maksimum waktu ganti seorang guru dalam sehari"],
+      ["Had Beban Mingguan", "8", "Had amaran beban guru ganti dalam seminggu"]
+    ];
+    tetapanData.forEach(row => sheetTetapan.appendRow(row));
+  }
+
+  // -------------------------------------------------------------------------
+  // TAB 2: Waktu_Slot
+  // -------------------------------------------------------------------------
+  let sheetSlot = ss.getSheetByName(SHEET_SLOT);
+  if (!sheetSlot) {
+    sheetSlot = ss.insertSheet(SHEET_SLOT, 1);
+    sheetSlot.appendRow(["Slot", "Masa Mula", "Masa Tamat", "Label Masa", "Sesi", "Jenis (Pengajaran / Rehat)"]);
+    sheetSlot.getRange("A1:F1").setFontWeight("bold").setBackground("#4338ca").setFontColor("#ffffff");
+    sheetSlot.setFrozenRows(1);
+    sheetSlot.setColumnWidth(1, 70);
+    sheetSlot.setColumnWidth(2, 110);
+    sheetSlot.setColumnWidth(3, 110);
+    sheetSlot.setColumnWidth(4, 150);
+    sheetSlot.setColumnWidth(5, 90);
+    sheetSlot.setColumnWidth(6, 190);
+
+    const defaultSlots = [
+      [1, "7.10", "7.40", "7.10-7.40", "Pagi", "Pengajaran"],
+      [2, "7.40", "8.10", "7.40-8.10", "Pagi", "Pengajaran"],
+      [3, "8.10", "8.40", "8.10-8.40", "Pagi", "Pengajaran"],
+      [4, "8.40", "9.10", "8.40-9.10", "Pagi", "Pengajaran"],
+      [5, "9.10", "9.40", "9.10-9.40", "Pagi", "Pengajaran"],
+      [6, "9.40", "10.10", "9.40-10.10", "Pagi", "Rehat"],
+      [7, "10.10", "10.40", "10.10-10.40", "Pagi", "Pengajaran"],
+      [8, "10.40", "11.10", "10.40-11.10", "Pagi", "Pengajaran"],
+      [9, "11.10", "11.40", "11.10-11.40", "Pagi", "Pengajaran"],
+      [10, "11.40", "12.10", "11.40-12.10", "Pagi", "Pengajaran"],
+      [11, "12.10", "12.40", "12.10-12.40", "Pagi", "Pengajaran"],
+      [12, "12.40", "1.10", "12.40-1.10", "Pagi", "Pengajaran"],
+      [13, "1.10", "1.40", "1.10-1.40", "Pagi", "Pengajaran"]
+    ];
+    defaultSlots.forEach(row => sheetSlot.appendRow(row));
+  }
+
+  // -------------------------------------------------------------------------
+  // TAB 3: Senarai_Guru (Kosong untuk diisi oleh sekolah; Kod Warna dijana automatik!)
+  // -------------------------------------------------------------------------
+  let sheetGuru = ss.getSheetByName(SHEET_GURU);
+  if (!sheetGuru) {
+    sheetGuru = ss.insertSheet(SHEET_GURU, 2);
+    sheetGuru.appendRow([
+      "Nama Guru",
+      "Kumpulan Bertugas (Kumpulan 1 - 4)",
+      "No Telefon WhatsApp (cth: 60123456789)",
+      "Emel Rasmi (Pilihan)",
+      "Sesi",
+      "Kod Warna (Automatik)"
+    ]);
+    sheetGuru.getRange("A1:F1").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
+    sheetGuru.setFrozenRows(1);
+    sheetGuru.setColumnWidth(1, 260);
+    sheetGuru.setColumnWidth(2, 230);
+    sheetGuru.setColumnWidth(3, 240);
+    sheetGuru.setColumnWidth(4, 220);
+    sheetGuru.setColumnWidth(5, 100);
+    sheetGuru.setColumnWidth(6, 170);
+  }
+
+  // -------------------------------------------------------------------------
+  // TAB 4: Jadual_Waktu (Kosong untuk diisi oleh sekolah)
+  // -------------------------------------------------------------------------
+  let sheetJadual = ss.getSheetByName(SHEET_JADUAL);
+  if (!sheetJadual) {
+    sheetJadual = ss.insertSheet(SHEET_JADUAL, 3);
+    sheetJadual.appendRow(["Nama Guru", "Hari (Isnin-Jumaat)", "Slot (Nombor Slot 1-13)", "Mata Pelajaran", "Kelas", "Sesi"]);
+    sheetJadual.getRange("A1:F1").setFontWeight("bold").setBackground("#0369a1").setFontColor("#ffffff");
+    sheetJadual.setFrozenRows(1);
+    sheetJadual.setColumnWidth(1, 260);
+    sheetJadual.setColumnWidth(2, 140);
+    sheetJadual.setColumnWidth(3, 150);
+    sheetJadual.setColumnWidth(4, 140);
+    sheetJadual.setColumnWidth(5, 130);
+    sheetJadual.setColumnWidth(6, 100);
+  }
+
+  // -------------------------------------------------------------------------
+  // TAB 5: Rekod_Guru_Ganti (Disimpan secara automatik oleh sistem)
+  // -------------------------------------------------------------------------
   let sheetRekod = ss.getSheetByName(SHEET_REKOD);
   if (!sheetRekod) {
-    sheetRekod = ss.insertSheet(SHEET_REKOD);
+    sheetRekod = ss.insertSheet(SHEET_REKOD, 4);
     sheetRekod.appendRow([
       "Tarikh", "Hari", "Minggu", "Kumpulan",
       "Guru Tidak Hadir", "Sebab", "Masa", "Mata Pelajaran",
@@ -291,52 +722,5 @@ function setupSheet() {
     ]);
     sheetRekod.getRange("A1:L1").setFontWeight("bold").setBackground("#1e3a8a").setFontColor("#ffffff");
     sheetRekod.setFrozenRows(1);
-  }
-  
-  // 2. Tab Senarai_Guru
-  let sheetGuru = ss.getSheetByName(SHEET_GURU);
-  if (!sheetGuru) {
-    sheetGuru = ss.insertSheet(SHEET_GURU);
-    sheetGuru.appendRow(["Nama Guru", "Emel Rasmi (DELIMa / Gmail)"]);
-    sheetGuru.getRange("A1:B1").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
-    sheetGuru.setFrozenRows(1);
-    
-    // Senarai 26 orang guru rasmi untuk diisi emel oleh pentadbir
-    const teachers = [
-      "En. Mudah Hj. Admaim",
-      "Datin Razana Hj. Abd. Wahid",
-      "Pn. Hamisah Janah",
-      "Pn. Jennet Gindawa",
-      "En. Amriee Abdullah",
-      "Pn. Anidah Samad",
-      "Pn. Anna Octavia Ninteh",
-      "En. Duin Lasig",
-      "Pn. Fatimah Daud",
-      "En. George Simun",
-      "Pn. Jamlinah Maliasan",
-      "Pn. Kasmalah Ismail",
-      "En. L Asmara Luandim",
-      "Pn. Mastikahjunaidah Shahrom",
-      "Pn. Milnah Namih",
-      "En. Mohd. Hafiz Qayyum Ahmad",
-      "Pn. Muhayan Diman",
-      "En. Muhd. Huzaifah Arman",
-      "En. Rejos Baking",
-      "Pn. Rohanah Mohd. Soud",
-      "Cik Rozeline Francis",
-      "Cik Rozie Sumil",
-      "Pn. Salhah Awang Tengah",
-      "Pn. Yunizah Esun",
-      "Pn. Zuraidah Hj. Marjin",
-      "Pn. Zurinah Jubidi",
-      "Cik Anizah Anis Dalinsip",
-      "Cik Syahfirah Arjaman",
-      "Pn. Cecilia Mouintin",
-      "Guru UBK"
-    ];
-    
-    teachers.forEach(t => {
-      sheetGuru.appendRow([t, ""]);
-    });
   }
 }

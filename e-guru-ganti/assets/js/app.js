@@ -1,6 +1,7 @@
 /**
- * e-Guru Ganti V2 - Logik Aplikasi Utama
- * SK Tampasuk 1 Kota Belud, Sabah
+ * e-GGs (e-Guru Ganti Sekolah) — Edisi Komersial (White-Label)
+ * Logik Aplikasi Utama (Sedia Digunakan Oleh Semua Sekolah)
+ * © byCikguJayResources
  */
 
 // Keadaan Aplikasi (Application State)
@@ -387,7 +388,7 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
   row.dataset.isSaved = isSaved ? "true" : "false";
   row.dataset.isEmergency = isEmergency ? "true" : "false";
 
-  // Isi senarai pilihan guru rasmi 28 orang
+  // Isi senarai pilihan guru sekolah
   ts.innerHTML = '<option value="">PILIH NAMA GURU</option>' +
     MASTER_TEACHERS.map(g => `<option value="${g}">${g}</option>`).join("");
 
@@ -1698,7 +1699,7 @@ function loadDailyScheduleForDate(dateStr) {
               SEMUA GURU HADIR / TIADA PENGGANTIAN
             </h3>
             <p style="margin:0 auto 16px; font-size:0.92rem; color:#047857; max-width:620px; line-height:1.6;">
-              Bagi tarikh <strong>${formatDateDisplay(dateStr) || dateStr} (${day})</strong>, tiada penugasan guru ganti diperlukan kerana semua guru SK Tampasuk 1 dilaporkan hadir bertugas. Semua kelas beroperasi sepenuhnya mengikut Jadual Waktu Induk.
+              Bagi tarikh <strong>${formatDateDisplay(dateStr) || dateStr} (${day})</strong>, tiada penugasan guru ganti diperlukan kerana semua guru ${APP_CONFIG.schoolName} dilaporkan hadir bertugas. Semua kelas beroperasi sepenuhnya mengikut Jadual Waktu Induk.
             </p>
             <div class="all-present-stats">
               <div class="stat-pill"><i data-lucide="check-circle-2" style="width:16px;height:16px;color:#10b981;"></i> 100% Kehadiran Guru</div>
@@ -1911,9 +1912,33 @@ function renderPage2() {
 
   const absTeachers = Array.from(absTeachersSet);
 
-  const classes = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B", "Pra Dahlia", "Pra Anggerik"];
+  if (typeof rebuildClassTimetablesFromMaster === "function" && (!ALL_MASTER_CLASSES || ALL_MASTER_CLASSES.length === 0)) {
+    rebuildClassTimetablesFromMaster();
+  }
+  const classes = (Array.isArray(ALL_MASTER_CLASSES) && ALL_MASTER_CLASSES.length > 0) ? ALL_MASTER_CLASSES : [];
   const formattedDate = selectedDate ? formatDateDisplay(selectedDate) : "";
   const headerDateInfo = formattedDate ? ` — ${hari}, ${formattedDate}` : ` - ${hari}`;
+
+  if (classes.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full empty-state-cheerful" style="margin:1rem 0;">
+        <div class="empty-state-icon-wrap">
+          <i data-lucide="calendar-plus" style="width:28px;height:28px;"></i>
+        </div>
+        <h4 style="font-weight:800; font-size:1.1rem; color:var(--text-primary); margin-bottom:0.4rem;">
+          Belum Ada Data Jadual Kelas Didaftarkan
+        </h4>
+        <p style="font-size:0.875rem; color:var(--text-secondary); max-width:540px; margin:0 auto 1.25rem; line-height:1.6;">
+          Sila sambungkan sistem ini dengan <strong>Google Sheet Sekolah</strong> atau muat naik fail CSV/JSON jadual waktu di halaman <strong>Urus &amp; Import Jadual</strong> untuk memaparkan jadual kelas secara automatik.
+        </p>
+        <button type="button" class="action-btn btn-primary" onclick="document.querySelector('[data-page=page-import]').click()" style="margin:0 auto; display:inline-flex;">
+          <i data-lucide="database" style="width:16px;height:16px"></i> Pergi ke Urus &amp; Import Jadual
+        </button>
+      </div>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
 
   classes.forEach(kelas => {
     const card = document.createElement("div");
@@ -1930,8 +1955,8 @@ function renderPage2() {
       `</div><div class="overflow-x-auto"><table class="tt-table"><thead><tr><th>Masa</th><th>Subjek</th><th>Guru</th><th>Status</th></tr></thead><tbody>`;
 
     let hasAnySlot = false;
-    for (let si = 1; si <= 13; si++) {
-      if (si === 6) continue; // Rehat
+    for (let si = 1; si < STANDARD_SLOTS.length; si++) {
+      if (Array.isArray(REHAT_SLOT_INDICES) && REHAT_SLOT_INDICES.includes(si)) continue; // Rehat
       const slotTime = STANDARD_SLOTS[si];
       const slotInfo = getClassTimetableSlot(kelas, hari, si);
       if (!slotInfo) continue;
@@ -2106,6 +2131,27 @@ function renderPage3() {
     dutyGroup = dateRecords[0].kumpulan;
   }
   const dutyList = dutyGroup && TEACHER_GROUPS[dutyGroup] ? TEACHER_GROUPS[dutyGroup] : [];
+
+  if (!MASTER_TEACHERS || MASTER_TEACHERS.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full empty-state-cheerful" style="margin:1rem 0;">
+        <div class="empty-state-icon-wrap">
+          <i data-lucide="users" style="width:28px;height:28px;"></i>
+        </div>
+        <h4 style="font-weight:800; font-size:1.1rem; color:var(--text-primary); margin-bottom:0.4rem;">
+          Belum Ada Senarai Guru &amp; Jadual Guru Didaftarkan
+        </h4>
+        <p style="font-size:0.875rem; color:var(--text-secondary); max-width:540px; margin:0 auto 1.25rem; line-height:1.6;">
+          Sila isi tab <strong>Senarai_Guru</strong> dan <strong>Jadual_Waktu</strong> di dalam Google Sheet sekolah anda atau import fail CSV di halaman <strong>Urus &amp; Import Jadual</strong>.
+        </p>
+        <button type="button" class="action-btn btn-primary" onclick="document.querySelector('[data-page=page-import]').click()" style="margin:0 auto; display:inline-flex;">
+          <i data-lucide="database" style="width:16px;height:16px"></i> Pergi ke Urus &amp; Import Jadual
+        </button>
+      </div>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
 
   const gb = [], gbl = [], gtb = [];
   MASTER_TEACHERS.forEach(g => {
@@ -2689,7 +2735,7 @@ function renderDailyAttendance(dateStr) {
     }
   });
 
-  const totalTeachers = MASTER_TEACHERS.length; // 27
+  const totalTeachers = MASTER_TEACHERS.length;
   const absentCount = Object.keys(absentMap).length;
   const presentCount = totalTeachers - absentCount;
   const reliefPeriodCount = dayRecords.filter(r => r.guru_ganti && !isSpecialProgramRelief(r.guru_ganti)).length;
@@ -3112,7 +3158,7 @@ function printDailyAttendanceReport() {
       <button class="btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF Penyata Kehadiran</button>
       <div class="header">
         <div style="display:flex; align-items:center; justify-content:center; gap:16px;">
-          <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana SK Tampasuk 1" style="width:68px; height:68px; object-fit:contain;">
+          <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana Rasmi Sekolah" style="width:68px; height:68px; object-fit:contain;">
           <div>
             <div class="school">${APP_CONFIG.schoolName}</div>
             <div class="address">${APP_CONFIG.schoolAddress}</div>
@@ -3123,14 +3169,14 @@ function printDailyAttendanceReport() {
 
       <div class="kpi-grid">
         <div class="kpi-box"><div class="kpi-val">${totalTeachers}</div><div class="kpi-lbl">Jumlah Guru</div></div>
-        <div class="kpi-box"><div class="kpi-val" style="color:#059669;">${presentCount}</div><div class="kpi-lbl">Guru Hadir (${Math.round((presentCount/totalTeachers)*100)}%)</div></div>
-        <div class="kpi-box"><div class="kpi-val" style="color:#dc2626;">${absentCount}</div><div class="kpi-lbl">Guru Tidak Hadir (${Math.round((absentCount/totalTeachers)*100)}%)</div></div>
+        <div class="kpi-box"><div class="kpi-val" style="color:#059669;">${presentCount}</div><div class="kpi-lbl">Guru Hadir (${totalTeachers > 0 ? Math.round((presentCount/totalTeachers)*100) : 100}%)</div></div>
+        <div class="kpi-box"><div class="kpi-val" style="color:#dc2626;">${absentCount}</div><div class="kpi-lbl">Guru Tidak Hadir (${totalTeachers > 0 ? Math.round((absentCount/totalTeachers)*100) : 0}%)</div></div>
         <div class="kpi-box"><div class="kpi-val" style="color:#7c3aed;">${totalRelief}</div><div class="kpi-lbl">Waktu Diganti</div></div>
       </div>
 
       <div class="section-title">1. Senarai Guru Tidak Hadir & Perincian Gantian</div>
       ${absentCount === 0 
-        ? `<p style="font-size:11.5px; color:#059669; font-weight:700; padding:10px 0;">Alhamdulillah, kesemua 27 orang guru SK Tampasuk 1 hadir bertugas pada hari ini.</p>`
+        ? `<p style="font-size:11.5px; color:#059669; font-weight:700; padding:10px 0;">Alhamdulillah, kesemua ${totalTeachers} orang guru ${APP_CONFIG.schoolName} hadir bertugas pada hari ini.</p>`
         : `<table class="table">
             <thead>
               <tr>
@@ -3198,12 +3244,12 @@ function printDailyAttendanceReport() {
         <div class="sign-box">
           <p style="margin-bottom:45px;">Disediakan Oleh:</p>
           <p><strong>GURU BERTUGAS MINGGUAN</strong></p>
-          <p>SK Tampasuk 1 Kota Belud</p>
+          <p>${APP_CONFIG.schoolName}</p>
         </div>
         <div class="sign-box">
           <p style="margin-bottom:45px;">Disahkan Oleh:</p>
           <p><strong>GURU BESAR / PK PENTADBIRAN</strong></p>
-          <p>SK Tampasuk 1 Kota Belud</p>
+          <p>${APP_CONFIG.schoolName}</p>
         </div>
       </div>
     </body>
@@ -3293,45 +3339,29 @@ function setupAttendanceEventListenersOnce() {
 // PAGE 7: Kalendar & Jadual Keseluruhan Sekolah Harian
 let selectedCalDate = null;
 
-const ALL_MASTER_CLASSES = [
-  "1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B",
-  "Pra Dahlia", "Pra Anggerik"
-];
-const MASTER_CLASS_LABELS = {
-  "1A": "1 Arif",
-  "1B": "1 Bestari",
-  "2A": "2 Arif",
-  "2B": "2 Bestari",
-  "3A": "3 Arif",
-  "3B": "3 Bestari",
-  "4A": "4 Arif",
-  "4B": "4 Bestari",
-  "5A": "5 Arif",
-  "5B": "5 Bestari",
-  "6A": "6 Arif",
-  "6B": "6 Bestari",
-  "Pra Dahlia": "Pra Dahlia",
-  "Pra Anggerik": "Pra Anggerik"
-};
-
 function normalizeClassKey(k) {
   if (!k) return "";
-  const clean = k.toString().trim().toUpperCase();
-  if (clean.includes("1") && clean.includes("A")) return "1A";
-  if (clean.includes("1") && clean.includes("B")) return "1B";
-  if (clean.includes("2") && clean.includes("A")) return "2A";
-  if (clean.includes("2") && clean.includes("B")) return "2B";
-  if (clean.includes("3") && clean.includes("A")) return "3A";
-  if (clean.includes("3") && clean.includes("B")) return "3B";
-  if (clean.includes("4") && clean.includes("A")) return "4A";
-  if (clean.includes("4") && clean.includes("B")) return "4B";
-  if (clean.includes("5") && clean.includes("A")) return "5A";
-  if (clean.includes("5") && clean.includes("B")) return "5B";
-  if (clean.includes("6") && clean.includes("A")) return "6A";
-  if (clean.includes("6") && clean.includes("B")) return "6B";
-  if (clean.includes("DAHLIA")) return "Pra Dahlia";
-  if (clean.includes("ANGGERIK")) return "Pra Anggerik";
-  return clean;
+  const raw = k.toString().trim();
+  if (Array.isArray(ALL_MASTER_CLASSES) && ALL_MASTER_CLASSES.length > 0) {
+    const exact = ALL_MASTER_CLASSES.find(c => c.toLowerCase() === raw.toLowerCase());
+    if (exact) return exact;
+  }
+  return raw;
+}
+
+function populateCalendarClassFilter() {
+  const filterSelect = document.getElementById("cal-class-filter");
+  if (!filterSelect) return;
+  const currentVal = filterSelect.value;
+  if (typeof rebuildClassTimetablesFromMaster === "function" && (!ALL_MASTER_CLASSES || ALL_MASTER_CLASSES.length === 0)) {
+    rebuildClassTimetablesFromMaster();
+  }
+  const classes = Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : [];
+  filterSelect.innerHTML = '<option value="">Semua Kelas (' + classes.length + ' Kelas)</option>' +
+    classes.map(c => `<option value="${c}">${MASTER_CLASS_LABELS[c] || c}</option>`).join("");
+  if (currentVal && classes.includes(currentVal)) {
+    filterSelect.value = currentVal;
+  }
 }
 
 function renderCalendar() {
@@ -3428,9 +3458,9 @@ function showCalDetail(dateStr, dayNum) {
     if (hari === "Sabtu" || hari === "Ahad") {
       sub.textContent = `Hari Hujung Minggu (${hari}) — Tiada sesi persekolahan berjadual.`;
     } else if (recs.length > 0) {
-      sub.textContent = `Status pengajaran 12 kelas mengikut waktu dari 7:10 pagi hingga 1:40 petang. Sebanyak ${recs.length} waktu guru ganti aktif (berwarna merah lembut).`;
+      sub.textContent = `Status pengajaran ${ALL_MASTER_CLASSES.length || 0} kelas mengikut jadual waktu sekolah. Sebanyak ${recs.length} waktu guru ganti aktif (berwarna merah lembut).`;
     } else {
-      sub.textContent = `Status pengajaran 12 kelas mengikut waktu dari 7:10 pagi hingga 1:40 petang. Semua kelas diajar oleh guru asal mengikut jadual rasmi (berwarna hijau).`;
+      sub.textContent = `Status pengajaran ${ALL_MASTER_CLASSES.length || 0} kelas mengikut jadual waktu sekolah. Semua kelas diajar oleh guru asal mengikut jadual rasmi (berwarna hijau).`;
     }
   }
 
@@ -3480,10 +3510,27 @@ function renderMasterTimetable(dateStr) {
     });
   });
 
+  populateCalendarClassFilter();
   // Tapis kelas jika dropdown filter dipilih
   const filterSelect = document.getElementById("cal-class-filter");
   const selectedClass = filterSelect ? filterSelect.value : "";
-  const classesToRender = selectedClass ? [selectedClass] : ALL_MASTER_CLASSES;
+  const classesToRender = selectedClass ? [selectedClass] : (Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : []);
+
+  if (classesToRender.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state-cheerful" style="margin:1rem 0;">
+        <div class="empty-state-icon-wrap">
+          <i data-lucide="calendar" style="width:28px;height:28px;"></i>
+        </div>
+        <h3 style="font-weight:800; font-size:1.05rem; color:var(--text-primary); margin-bottom:4px;">Tiada Jadual Kelas Didaftarkan</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); max-width:480px; margin:0 auto;">
+          Sila muat naik jadual waktu atau segerakkan dengan Google Sheet Sekolah di halaman Urus &amp; Import Jadual.
+        </p>
+      </div>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
 
   let html = `
     <div class="master-tt-container">
@@ -3493,9 +3540,9 @@ function renderMasterTimetable(dateStr) {
             <th class="th-class-col">KELAS</th>
   `;
 
-  for (let si = 1; si <= 13; si++) {
-    if (si === 6) {
-      html += `<th style="background:#e2e8f0; color:#475569; min-width:80px;" class="dark:bg-slate-800 dark:text-slate-300">REHAT<br><span style="font-size:9.5px; font-weight:600;">9.40-10.10</span></th>`;
+  for (let si = 1; si < STANDARD_SLOTS.length; si++) {
+    if (Array.isArray(REHAT_SLOT_INDICES) && REHAT_SLOT_INDICES.includes(si)) {
+      html += `<th style="background:#e2e8f0; color:#475569; min-width:80px;" class="dark:bg-slate-800 dark:text-slate-300">REHAT<br><span style="font-size:9.5px; font-weight:600;">${STANDARD_SLOTS[si]}</span></th>`;
     } else {
       html += `<th>W${si}<br><span style="font-size:9.5px; font-weight:600; opacity:0.85;">${STANDARD_SLOTS[si]}</span></th>`;
     }
@@ -3517,8 +3564,8 @@ function renderMasterTimetable(dateStr) {
         </td>
     `;
 
-    for (let si = 1; si <= 13; si++) {
-      if (si === 6) {
+    for (let si = 1; si < STANDARD_SLOTS.length; si++) {
+      if (Array.isArray(REHAT_SLOT_INDICES) && REHAT_SLOT_INDICES.includes(si)) {
         // Rehat Sekolah
         html += `<td class="cell-rehat"><span style="font-size:10.5px; font-weight:800; letter-spacing:0.04em;">REHAT</span></td>`;
         continue;
@@ -3669,7 +3716,7 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
             <span style="font-size:16px; font-weight:800; color:#065f46;">SEMUA GURU HADIR / TIADA PENGGANTIAN</span>
           </div>
           <p style="margin:0; font-size:12.5px; color:#047857; line-height:1.6;">
-            <strong>PENGESAHAN RASMI PENTADBIRAN:</strong> Tiada sebarang rekod ketidakhadiran guru dicatatkan bagi tarikh <strong>${tarikhStr} (${hariStr})</strong>. Semua guru SK Tampasuk 1 dilaporkan hadir bertugas. Semua sesi Pengajaran dan Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.
+            <strong>PENGESAHAN RASMI PENTADBIRAN:</strong> Tiada sebarang rekod ketidakhadiran guru dicatatkan bagi tarikh <strong>${tarikhStr} (${hariStr})</strong>. Semua guru ${APP_CONFIG.schoolName} dilaporkan hadir bertugas. Semua sesi Pengajaran dan Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.
           </p>
           <div style="margin-top:14px; font-size:11.5px; color:#065f46; font-weight:700; display:flex; gap:18px; flex-wrap:wrap;">
             <span>✓ 100% Kehadiran Guru Dilaporkan</span>
@@ -3688,7 +3735,7 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
           <div>
             <p>Disahkan oleh:</p>
             <div style="margin-top:55px; border-top:1px solid #94a3b8; width:200px; padding-top:4px;">
-              <strong>Guru Besar / PK Pentadbiran</strong><br>SK Tampasuk 1
+              <strong>Guru Besar / PK Pentadbiran</strong><br>${APP_CONFIG.schoolName}
             </div>
           </div>
         </div>
@@ -3739,7 +3786,7 @@ document.getElementById("print-pdf-btn").addEventListener("click", () => {
       <div class="report-page">
         <header class="report-header">
           <div class="header-container">
-            <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana Rasmi SK Tampasuk 1" class="header-logo">
+            <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana Rasmi Sekolah" class="header-logo">
             <div class="header-titles">
               <div class="school-name">${APP_CONFIG.schoolName}</div>
               <div class="school-sub">${APP_CONFIG.schoolAddress}</div>
@@ -3784,6 +3831,10 @@ async function triggerCloudSync(isManual = false) {
   let statusMsg = "";
 
   try {
+    const schoolRes = await DatabaseAPI.getSchoolData();
+    if (schoolRes && schoolRes.success && schoolRes.data) {
+      applySchoolData(schoolRes.data);
+    }
     const res = await DatabaseAPI.syncFromCloud();
     if (res && res.success) {
       allRecords = res.data || [];
@@ -3930,7 +3981,7 @@ document.getElementById("monthly-pdf-btn").addEventListener("click", () => {
       <button class="btn-print" onclick="window.print()">🖨️ Cetak / Simpan Laporan PDF (${bulanNama})</button>
       <div class="header">
         <div style="display:flex; align-items:center; justify-content:center; gap:16px;">
-          <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana SK Tampasuk 1" style="width:70px; height:70px; object-fit:contain; flex-shrink:0;">
+          <img src="${APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo}" alt="Lencana Rasmi Sekolah" style="width:70px; height:70px; object-fit:contain; flex-shrink:0;">
           <div style="text-align:center;">
             <div class="school">${APP_CONFIG.schoolName}</div>
             <div class="address">${APP_CONFIG.schoolAddress}</div>
@@ -4027,12 +4078,12 @@ document.getElementById("monthly-pdf-btn").addEventListener("click", () => {
         <div class="sign-box">
           <p style="margin-bottom:45px;">Disediakan Oleh:</p>
           <p><strong>GURU BERTUGAS MINGGUAN</strong></p>
-          <p>SK Tampasuk 1 Kota Belud</p>
+          <p>${APP_CONFIG.schoolName}</p>
         </div>
         <div class="sign-box">
           <p style="margin-bottom:45px;">Disahkan Oleh:</p>
           <p><strong>GURU BESAR / PK PENTADBIRAN</strong></p>
-          <p>SK Tampasuk 1 Kota Belud</p>
+          <p>${APP_CONFIG.schoolName}</p>
         </div>
       </div>
     </body>
@@ -4270,8 +4321,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Permulaan Cetakan Slip Mini A4
   setupMiniSlipsPrint();
 
-  // Permulaan Modul Import Jadual Waktu
+  // Permulaan Modul Import Jadual Waktu, Google Sheets & Profil Sekolah
   setupImportPageEvents();
+  setupGoogleSheetsUI();
+  setupSchoolProfileForm();
 
   // Inisialisasi Pengalaman Skrol Pantas & Butang Kembali Ke Atas (Scroll Experience)
   setupScrollExperience();
@@ -4340,9 +4393,9 @@ function getTeacherPhone(teacherName) {
     }
   }
 
-  // 3. Fallback Guru UBK (Lalai: Cik Syahfirah Arjaman)
-  if (teacherName.toLowerCase().includes("ubk")) {
-    return "+60146708832";
+  // 3. Semakan Pegawai UBK (Jika didaftarkan)
+  if (teacherName.toLowerCase().includes("ubk") && Array.isArray(UBK_TEACHER_OFFICERS) && UBK_TEACHER_OFFICERS.length > 0) {
+    return UBK_TEACHER_OFFICERS[0].phone || "";
   }
 
   return "";
@@ -4381,7 +4434,7 @@ function cleanPhoneNumber(phone) {
 function generateTeacherWhatsAppText(teacherName, slots, dateStr, dayStr) {
   const dDisplay = formatDateDisplay(dateStr) || dateStr;
   let text = `*MAKLUMAN JADUAL GURU GANTI (MMI)*\n`;
-  text += `*SK TAMPASUK 1 KOTA BELUD*\n\n`;
+  text += `*${APP_CONFIG.schoolName.toUpperCase()}*\n\n`;
   text += `📅 *Tarikh:* ${dDisplay} (${dayStr})\n`;
   text += `👤 *Guru Pengganti:* *${teacherName}*\n\n`;
   text += `Assalamualaikum / Salam Sejahtera Cikgu,\n`;
@@ -4400,7 +4453,7 @@ function generateTeacherWhatsAppText(teacherName, slots, dateStr, dayStr) {
   text += `📊 *Jumlah Waktu Ganti:* ${slots.length} Waktu\n\n`;
   text += `_Kerjasama dan komitmen cikgu amat dihargai._\n`;
   text += `_Terima kasih._\n\n`;
-  text += `*Sekata Melakar Kecemerlangan*`;
+  text += `*${APP_CONFIG.schoolMotto || "Berilmu Berbakti"}*`;
 
   return text;
 }
@@ -4469,14 +4522,14 @@ function openWhatsAppModal() {
       // Ada guru tidak hadir tetapi semuanya Program Sekolah (tiada guru pengganti diperlukan)
       const absentLines = activeAbsentTeachers.map(t => `• *${t.name}* (${t.reason})`).join("\n");
       const waProgramText = `*MAKLUMAN KEHADIRAN & STATUS PdP GURU*\n` +
-        `*SK TAMPASUK 1 KOTA BELUD*\n\n` +
+        `*${APP_CONFIG.schoolName.toUpperCase()}*\n\n` +
         `📅 *Tarikh:* ${formatDateDisplay(dateStr) || dateStr} (${dayStr})\n` +
         `🗓️ *Minggu:* ${mingguSelect.value || "—"} | 👥 *Kumpulan:* ${kumpulanSelect.value || "—"}\n\n` +
         `📋 *GURU TIDAK HADIR / DIKECUALIKAN (${activeAbsentTeachers.length} Orang):*\n` +
         `${absentLines}\n\n` +
         `🏛️ *STATUS PENGGANTIAN: PROGRAM SEKOLAH (TIADA GANTIAN)*\n` +
         `Semua waktu pengajaran dan pembelajaran (PdP) yang terlibat ditangguhkan atau diselaraskan di bawah Program Rasmi Sekolah. Tiada jadual guru ganti yang dikeluarkan.\n\n` +
-        `_Portal e-Guru Ganti SK Tampasuk 1_`;
+        `_Portal e-GGs ${APP_CONFIG.schoolName}_`;
 
       bodyEl.innerHTML = `
         <div style="padding:1.5rem 1rem; text-align:center;">
@@ -4521,13 +4574,13 @@ function openWhatsAppModal() {
       return;
     }
 
-    const waAllPresentText = `*MAKLUMAN KEHADIRAN GURU SK TAMPASUK 1*\n` +
+    const waAllPresentText = `*MAKLUMAN KEHADIRAN GURU ${APP_CONFIG.schoolName.toUpperCase()}*\n` +
       `Tarikh: ${formatDateDisplay(dateStr) || dateStr} (${dayStr})\n` +
       `Minggu: ${mingguSelect.value || "—"} | Kumpulan: ${kumpulanSelect.value || "—"}\n\n` +
       `*STATUS: SEMUA GURU HADIR / TIADA PENGGANTIAN*\n` +
-      `Alhamdulillah, semua guru SK Tampasuk 1 dilaporkan hadir bertugas pada hari ini. Semua sesi Pengajaran & Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.\n\n` +
+      `Alhamdulillah, semua guru ${APP_CONFIG.schoolName} dilaporkan hadir bertugas pada hari ini. Semua sesi Pengajaran & Pembelajaran (PdP) berjalan sepenuhnya mengikut Jadual Waktu Induk asal tanpa sebarang penggantian.\n\n` +
       `Terima kasih atas komitmen dan dedikasi semua warga pendidik.\n` +
-      `_Portal e-Guru Ganti SK Tampasuk 1_`;
+      `_Portal e-GGs ${APP_CONFIG.schoolName}_`;
 
     bodyEl.innerHTML = `
       <div style="padding:1.5rem 1rem; text-align:center;">
@@ -4575,11 +4628,12 @@ function openWhatsAppModal() {
   teachers.forEach(teacherName => {
     const slots = grouped[teacherName];
     const isUBK = teacherName === "Guru UBK" || teacherName.toLowerCase().includes("ubk");
-    let currentTeacherRecipient = isUBK ? "Cik Syahfirah Arjaman (Guru UBK)" : teacherName;
+    const hasUbkOfficers = Array.isArray(UBK_TEACHER_OFFICERS) && UBK_TEACHER_OFFICERS.length > 0;
+    let currentTeacherRecipient = (isUBK && hasUbkOfficers) ? `${UBK_TEACHER_OFFICERS[0].nama} (Guru UBK)` : teacherName;
     let phone = getTeacherPhone(teacherName);
 
-    if (isUBK && !phone) {
-      phone = "+60146708832";
+    if (isUBK && !phone && hasUbkOfficers) {
+      phone = UBK_TEACHER_OFFICERS[0].phone || "";
     }
 
     const col = typeof getTeacherColor === "function" ? getTeacherColor(teacherName) : { primary: "#16a34a" };
@@ -4611,12 +4665,11 @@ function openWhatsAppModal() {
     const previewId = "wa-preview-" + teacherName.replace(/[^a-zA-Z0-9]/g, '_');
 
     let ubkToggleHtml = "";
-    if (isUBK) {
+    if (isUBK && hasUbkOfficers) {
       ubkToggleHtml = `
         <div class="wa-ubk-toggle">
           <span style="font-size:11px; font-weight:700; color:var(--text-secondary);"><i data-lucide="users" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:2px;"></i> Pegawai UBK:</span>
-          <button type="button" class="wa-ubk-btn active" data-officer="Cik Syahfirah Arjaman" data-phone="+60146708832">Cik Syahfirah (+60146708832)</button>
-          <button type="button" class="wa-ubk-btn" data-officer="Pn. Cecilia Mouintin" data-phone="+60166794345">Pn. Cecilia (+60166794345)</button>
+          ${UBK_TEACHER_OFFICERS.map((off, idx) => `<button type="button" class="wa-ubk-btn ${idx === 0 ? 'active' : ''}" data-officer="${off.nama}" data-phone="${off.phone || ''}">${off.nama} (${off.phone || '—'})</button>`).join("")}
         </div>
       `;
     }
@@ -5028,23 +5081,242 @@ function setupMiniSlipsPrint() {
 }
 
 /* ========================================================
-   MODUL URUS & IMPORT JADUAL WAKTU (CSV / JSON)
+   MODUL URUS & IMPORT JADUAL WAKTU, TETAPAN SEKOLAH & GOOGLE SHEETS
    ======================================================== */
 let parsedImportData = null;
+
+function updateSchoolBrandingDOM() {
+  const logoSrc = APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo || "assets/images/logo-sekolah.svg";
+  const nameStr = APP_CONFIG.schoolName || "NAMA SEKOLAH ANDA";
+  const addrStr = APP_CONFIG.schoolAddress || "ALAMAT SURAT-MENYURAT SEKOLAH ANDA";
+  const ppdStr = APP_CONFIG.schoolPPD || "Pejabat Pendidikan Daerah / Jabatan Pendidikan Negeri";
+
+  const headerLogo = document.getElementById("header-school-logo");
+  const headerName = document.getElementById("header-school-name");
+  const headerAddr = document.getElementById("header-school-address");
+  if (headerLogo) headerLogo.src = logoSrc;
+  if (headerName) headerName.textContent = nameStr.toUpperCase();
+  if (headerAddr) headerAddr.textContent = addrStr.toUpperCase();
+
+  const loginLogo = document.getElementById("login-school-logo");
+  const loginName = document.getElementById("login-school-name");
+  if (loginLogo) loginLogo.src = logoSrc;
+  if (loginName) loginName.textContent = nameStr.toUpperCase();
+
+  const footerLogo = document.getElementById("footer-school-logo");
+  const footerName = document.getElementById("footer-school-name");
+  const footerPpd = document.getElementById("footer-school-ppd");
+  const footerCopy = document.getElementById("footer-school-copyright-name");
+  if (footerLogo) footerLogo.src = logoSrc;
+  if (footerName) footerName.textContent = nameStr.toUpperCase();
+  if (footerPpd) footerPpd.textContent = ppdStr;
+  if (footerCopy) footerCopy.textContent = nameStr;
+
+  document.title = `e-GGs (e-Guru Ganti Sekolah) — ${nameStr}`;
+}
+
+function refreshAllTeacherDropdowns() {
+  const teacherSelects = document.querySelectorAll(".teacher-select");
+  teacherSelects.forEach(s => {
+    const val = s.value;
+    s.innerHTML = `<option value="">PILIH NAMA GURU</option>` +
+      MASTER_TEACHERS.map(t => `<option value="${t}">${t}</option>`).join("");
+    if (val && MASTER_TEACHERS.includes(val)) s.value = val;
+  });
+  updateGroupMembers();
+}
+
+function applySchoolData(schoolData, saveToStorage = true) {
+  if (!schoolData || typeof schoolData !== "object") return;
+
+  // 1. Profil Sekolah (Menyokong kedua-dua kunci 'profile' dan 'settings')
+  const p = schoolData.profile || schoolData.settings;
+  if (p && typeof p === "object") {
+    if (p.schoolName && p.schoolName !== "NAMA SEKOLAH ANDA") APP_CONFIG.schoolName = p.schoolName;
+    if (p.schoolCode && p.schoolCode !== "KOD SEKOLAH") APP_CONFIG.schoolCode = p.schoolCode;
+    if (p.schoolAddress && p.schoolAddress !== "ALAMAT SURAT-MENYURAT SEKOLAH ANDA") APP_CONFIG.schoolAddress = p.schoolAddress;
+    if (p.schoolMotto) APP_CONFIG.schoolMotto = p.schoolMotto;
+    if (p.schoolSubMotto) APP_CONFIG.schoolSubMotto = p.schoolSubMotto;
+    if (p.schoolPPD) APP_CONFIG.schoolPPD = p.schoolPPD;
+    if (p.schoolLogo && String(p.schoolLogo).trim() !== "") {
+      if (p.schoolLogo.startsWith("data:image")) {
+        APP_CONFIG.schoolLogoBase64 = p.schoolLogo;
+      } else if (p.schoolLogo !== "assets/images/logo-sekolah.svg" || !APP_CONFIG.schoolLogoBase64) {
+        APP_CONFIG.schoolLogo = p.schoolLogo;
+        APP_CONFIG.schoolLogoBase64 = "";
+      }
+    }
+    if (p.defaultUser && APP_CONFIG.auth) APP_CONFIG.auth.defaultUser = p.defaultUser;
+    if (p.defaultPass && APP_CONFIG.auth) APP_CONFIG.auth.defaultPass = p.defaultPass;
+    if (p.overloadThresholdDaily) APP_CONFIG.overloadThresholdDaily = Number(p.overloadThresholdDaily) || 8;
+    if (p.overloadThresholdWeekly) APP_CONFIG.overloadThresholdWeekly = Number(p.overloadThresholdWeekly) || 8;
+  }
+
+  // 2. Waktu Slot
+  if (Array.isArray(schoolData.slots) && schoolData.slots.length > 1) {
+    STANDARD_SLOTS = schoolData.slots;
+  } else if (schoolData.slots && typeof schoolData.slots === "object" && !Array.isArray(schoolData.slots)) {
+    const slotArr = [""];
+    const rIndices = [];
+    Object.keys(schoolData.slots).sort((a, b) => Number(a) - Number(b)).forEach(k => {
+      const idx = Number(k);
+      const item = schoolData.slots[k];
+      if (idx > 0 && item && item.masa) {
+        slotArr[idx] = item.masa;
+        if (item.isRehat) rIndices.push(idx);
+      }
+    });
+    if (slotArr.length > 1) STANDARD_SLOTS = slotArr;
+    if (rIndices.length > 0) REHAT_SLOT_INDICES = rIndices;
+  }
+  if (Array.isArray(schoolData.rehatIndices) && schoolData.rehatIndices.length > 0) {
+    REHAT_SLOT_INDICES = schoolData.rehatIndices;
+  }
+
+  // 3. Senarai Guru, Kumpulan Bertugas, No WhatsApp & Kod Warna Automatik Guru
+  if (Array.isArray(schoolData.teachers) && schoolData.teachers.length > 0) {
+    MASTER_TEACHERS = schoolData.teachers;
+  }
+  const groupsObj = schoolData.groups || schoolData.teacherGroups;
+  if (groupsObj && typeof groupsObj === "object") {
+    TEACHER_GROUPS = groupsObj;
+  }
+  const phonesObj = schoolData.phones || schoolData.teacherPhones;
+  if (phonesObj && typeof phonesObj === "object") {
+    Object.assign(DEFAULT_TEACHER_PHONES, phonesObj);
+  }
+  const colorsObj = schoolData.colors || schoolData.teacherColors;
+  if (colorsObj && typeof colorsObj === "object" && typeof TEACHER_CUSTOM_COLORS === "object") {
+    Object.entries(colorsObj).forEach(([guru, hex]) => {
+      if (guru && hex && typeof hexToTeacherPalette === "function") {
+        const pal = hexToTeacherPalette(hex);
+        if (pal) TEACHER_CUSTOM_COLORS[guru] = pal;
+      }
+    });
+  }
+
+  // 4. Jadual Waktu Guru & Kelas (Menyokong format [guru][hari] dan [hari][guru])
+  const rawTT = schoolData.timetableByTeacher || schoolData.timetable;
+  if (rawTT && typeof rawTT === "object") {
+    Object.keys(TIMETABLE).forEach(k => delete TIMETABLE[k]);
+    const dayKeys = ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat"];
+    const topKeys = Object.keys(rawTT);
+    const isKeyedByDay = topKeys.length > 0 && topKeys.every(k => dayKeys.includes(k));
+    if (isKeyedByDay) {
+      topKeys.forEach(hari => {
+        const dayMap = rawTT[hari] || {};
+        Object.entries(dayMap).forEach(([guru, slots]) => {
+          if (!TIMETABLE[guru]) TIMETABLE[guru] = {};
+          TIMETABLE[guru][hari] = slots;
+        });
+      });
+    } else {
+      Object.assign(TIMETABLE, rawTT);
+    }
+  }
+
+  if (typeof rebuildClassTimetablesFromMaster === "function") {
+    rebuildClassTimetablesFromMaster(Array.isArray(schoolData.classes) ? schoolData.classes : []);
+  }
+
+  if (saveToStorage) {
+    try {
+      const savedColorsHex = {};
+      if (typeof TEACHER_CUSTOM_COLORS === "object") {
+        Object.entries(TEACHER_CUSTOM_COLORS).forEach(([g, pal]) => {
+          if (pal && pal.hex) savedColorsHex[g] = pal.hex;
+        });
+      }
+      localStorage.setItem(APP_CONFIG.storageKeys.schoolDataCache, JSON.stringify({
+        profile: {
+          schoolName: APP_CONFIG.schoolName,
+          schoolCode: APP_CONFIG.schoolCode,
+          schoolAddress: APP_CONFIG.schoolAddress,
+          schoolMotto: APP_CONFIG.schoolMotto,
+          schoolSubMotto: APP_CONFIG.schoolSubMotto,
+          schoolPPD: APP_CONFIG.schoolPPD,
+          schoolLogo: APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo,
+          defaultUser: APP_CONFIG.auth ? APP_CONFIG.auth.defaultUser : "admin",
+          defaultPass: APP_CONFIG.auth ? APP_CONFIG.auth.defaultPass : "admin123"
+        },
+        slots: STANDARD_SLOTS,
+        rehatIndices: REHAT_SLOT_INDICES,
+        teachers: MASTER_TEACHERS,
+        groups: TEACHER_GROUPS,
+        phones: DEFAULT_TEACHER_PHONES,
+        colors: savedColorsHex,
+        classes: ALL_CLASSES,
+        timetable: TIMETABLE
+      }));
+    } catch (e) {
+      console.warn("Gagal menyimpan schoolData ke localStorage:", e);
+    }
+  }
+
+  updateSchoolBrandingDOM();
+  refreshAllTeacherDropdowns();
+  populateCalendarClassFilter();
+  renderImportPage();
+
+  // Segar semula paparan halaman yang sedang aktif
+  const p2 = document.getElementById("page2");
+  if (p2 && !p2.classList.contains("page-hidden") && typeof renderPage2 === "function") renderPage2();
+  const p3 = document.getElementById("page3");
+  if (p3 && !p3.classList.contains("page-hidden") && typeof renderPage3 === "function") renderPage3();
+  const p6 = document.getElementById("page6");
+  if (p6 && !p6.classList.contains("page-hidden") && typeof renderPage6 === "function") renderPage6();
+  const p7 = document.getElementById("page7");
+  if (p7 && !p7.classList.contains("page-hidden") && typeof renderCalendar === "function") renderCalendar();
+}
 
 function renderImportPage() {
   const sourceEl = document.getElementById("import-status-source");
   const teachersCountEl = document.getElementById("import-status-teachers-count");
   const slotsCountEl = document.getElementById("import-status-slots-count");
+  const gsStatusBadge = document.getElementById("gas-status-badge");
+  const displayGasUrl = document.getElementById("display-current-gas-url");
 
+  const activeGasUrl = DatabaseAPI.getScriptUrl ? DatabaseAPI.getScriptUrl() : (APP_CONFIG.googleAppsScriptUrl || "");
+  const hasGasUrl = !!activeGasUrl;
   const hasCustom = !!localStorage.getItem(APP_CONFIG.storageKeys.customTimetable);
+
+  if (displayGasUrl) {
+    if (hasGasUrl) {
+      displayGasUrl.textContent = activeGasUrl;
+      displayGasUrl.style.color = "#059669";
+    } else {
+      displayGasUrl.textContent = "Belum ditetapkan (Sila klik Tetapan URL Google Sheet atau hardcode dalam config.js)";
+      displayGasUrl.style.color = "#0284c7";
+    }
+  }
+
   if (sourceEl) {
-    if (hasCustom) {
-      sourceEl.textContent = "Jadual Khas (Dimuat Naik)";
+    if (hasGasUrl && MASTER_TEACHERS.length > 0) {
+      sourceEl.textContent = "Google Sheet Sekolah (Aktif)";
+      sourceEl.style.color = "#16a34a";
+    } else if (hasCustom) {
+      sourceEl.textContent = "Jadual Khas (Dimuat Naik CSV/JSON)";
+      sourceEl.style.color = "#0284c7";
+    } else if (MASTER_TEACHERS.length > 0) {
+      sourceEl.textContent = "Data Tersimpan Sekolah";
       sourceEl.style.color = "#0284c7";
     } else {
-      sourceEl.textContent = "Jadual Asal (SK Tampasuk 1)";
-      sourceEl.style.color = "#16a34a";
+      sourceEl.textContent = "Sistem Kosong (Sedia Diisi)";
+      sourceEl.style.color = "#d97706";
+    }
+  }
+
+  if (gsStatusBadge) {
+    if (hasGasUrl) {
+      gsStatusBadge.textContent = "Disambungkan ke Google Sheet";
+      gsStatusBadge.style.background = "#dcfce7";
+      gsStatusBadge.style.color = "#15803d";
+      gsStatusBadge.style.borderColor = "#86efac";
+    } else {
+      gsStatusBadge.textContent = "Belum Disambung";
+      gsStatusBadge.style.background = "#fef3c7";
+      gsStatusBadge.style.color = "#b45309";
+      gsStatusBadge.style.borderColor = "#fde68a";
     }
   }
 
@@ -5062,22 +5334,24 @@ function renderImportPage() {
     slotsCountEl.textContent = `${totalSlots} Slot Pengajaran`;
   }
 
+  populateSchoolProfileFormInputs();
+
   if (window.lucide) window.lucide.createIcons();
 }
 
 function downloadCSVTimetableTemplate() {
   let csv = "Nama Guru,Hari,Slot (1-13),Mata Pelajaran,Kelas\n";
-  csv += "En. Mudah Hj. Admaim,Isnin,9,PI,5B\n";
-  csv += "Datin Razana Hj. Abd. Wahid,Isnin,8,PM,5A\n";
-  csv += "Datin Razana Hj. Abd. Wahid,Isnin,9,PM,5A\n";
-  csv += "Pn. Hamisah Janah,Selasa,10,PM,1A\n";
-  csv += "En. Amriee Abdullah,Isnin,2,SEJ,6B\n";
+  csv += "Cikgu Ahmad bin Razali,Isnin,1,BM,1 Bijak\n";
+  csv += "Cikgu Ahmad bin Razali,Isnin,2,BM,1 Bijak\n";
+  csv += "Cikgu Siti Aminah binti Musa,Isnin,3,BI,2 Bestari\n";
+  csv += "Cikgu Faridah binti Hassan,Selasa,4,MT,3 Cemerlang\n";
+  csv += "Cikgu Hafiz bin Ibrahim,Rabu,5,SN,4 Dinamik\n";
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "templat_jadual_guru.csv";
+  a.download = "templat_jadual_guru_eggs.csv";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -5086,21 +5360,30 @@ function downloadCSVTimetableTemplate() {
 }
 
 function downloadCSVTeachersTemplate() {
-  let csv = "Nama Guru,Kumpulan (1-4),No WhatsApp\n";
-  MASTER_TEACHERS.forEach(t => {
-    let grp = "Kumpulan 1";
-    for (const [gName, members] of Object.entries(TEACHER_GROUPS)) {
-      if (members.includes(t)) { grp = gName; break; }
-    }
-    const phone = getTeacherPhone(t) || "";
-    csv += `"${t}",${grp},${phone}\n`;
-  });
+  let csv = "Bil,Nama Guru,Kumpulan Bertugas,No WhatsApp,Jawatan / Catatan,Kod Warna (Automatik)\n";
+  if (MASTER_TEACHERS.length > 0) {
+    MASTER_TEACHERS.forEach((t, idx) => {
+      let grp = "Kumpulan 1";
+      for (const [gName, members] of Object.entries(TEACHER_GROUPS)) {
+        if (members.includes(t)) { grp = gName; break; }
+      }
+      const phone = getTeacherPhone(t) || "";
+      const pal = typeof getTeacherColor === "function" ? getTeacherColor(t) : null;
+      const hex = (pal && (pal.hex || pal.dot)) ? (pal.hex || pal.dot) : "";
+      csv += `${idx + 1},"${t}",${grp},${phone},Guru Akademik,${hex}\n`;
+    });
+  } else {
+    csv += `1,"Cikgu Ahmad bin Razali",Kumpulan 1,60123456789,Guru Akademik,#2563EB\n`;
+    csv += `2,"Cikgu Siti Aminah binti Musa",Kumpulan 2,60134567890,Guru Akademik,#059669\n`;
+    csv += `3,"Cikgu Faridah binti Hassan",Kumpulan 3,60145678901,Guru Akademik,#D97706\n`;
+    csv += `4,"Cikgu Hafiz bin Ibrahim",Kumpulan 4,60198765432,Guru Akademik,#7C3AED\n`;
+  }
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "templat_senarai_guru.csv";
+  a.download = "templat_senarai_guru_eggs.csv";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -5168,12 +5451,10 @@ function setupImportPageEvents() {
 
       try {
         if (content.startsWith("{") || content.startsWith("[")) {
-          // JSON format
           const json = JSON.parse(content);
           parsedImportData = json;
           showToast("Data JSON sah berjaya dibaca!", "success");
         } else {
-          // CSV format
           const parsed = parseTimetableCSV(content);
           if (!parsed || parsed.length === 0) {
             showToast("Format CSV tidak sah atau tiada data ditemui.", "error");
@@ -5219,9 +5500,15 @@ function setupImportPageEvents() {
       }
 
       try {
-        // Bina jadual individu baharu
+        // Jika objek backup penuh JSON
+        if (!Array.isArray(parsedImportData) && parsedImportData.timetable) {
+          applySchoolData(parsedImportData, true);
+          showToast("Data backup JSON berjaya dipulihkan sepenuhnya!", "success");
+          return;
+        }
+
         const newTimetable = {};
-        const newTeachersSet = new Set();
+        const newTeachersSet = new Set(MASTER_TEACHERS);
 
         if (Array.isArray(parsedImportData)) {
           parsedImportData.forEach(item => {
@@ -5237,25 +5524,31 @@ function setupImportPageEvents() {
         const newTeachersList = [...newTeachersSet];
         if (newTeachersList.length > 0) {
           MASTER_TEACHERS = newTeachersList;
+          // Agihkan guru baharu yang tiada kumpulan ke Kumpulan 1..4 secara seimbang
+          newTeachersList.forEach((t, idx) => {
+            const alreadyInGroup = Object.values(TEACHER_GROUPS).some(arr => Array.isArray(arr) && arr.includes(t));
+            if (!alreadyInGroup) {
+              const gKey = `Kumpulan ${(idx % 4) + 1}`;
+              if (!TEACHER_GROUPS[gKey]) TEACHER_GROUPS[gKey] = [];
+              TEACHER_GROUPS[gKey].push(t);
+            }
+          });
         }
         Object.assign(TIMETABLE, newTimetable);
 
-        localStorage.setItem(APP_CONFIG.storageKeys.customTimetable, JSON.stringify(newTimetable));
-        if (newTeachersList.length > 0) {
-          localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(newTeachersList));
+        if (typeof rebuildClassTimetablesFromMaster === "function") {
+          rebuildClassTimetablesFromMaster();
         }
 
-        showToast("Jadual waktu baharu berjaya disimpan dan diaktifkan!", "success");
-        renderImportPage();
+        localStorage.setItem(APP_CONFIG.storageKeys.customTimetable, JSON.stringify(TIMETABLE));
+        if (newTeachersList.length > 0) {
+          localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(MASTER_TEACHERS));
+        }
 
-        // Segar semula pilihan guru pada dropdown
-        const teacherSelects = document.querySelectorAll(".teacher-select");
-        teacherSelects.forEach(s => {
-          const val = s.value;
-          s.innerHTML = `<option value="">Pilih guru tidak hadir</option>` +
-            MASTER_TEACHERS.map(t => `<option value="${t}">${t}</option>`).join("");
-          if (val) s.value = val;
-        });
+        refreshAllTeacherDropdowns();
+        populateCalendarClassFilter();
+        renderImportPage();
+        showToast("Jadual waktu baharu berjaya disimpan dan diaktifkan!", "success");
 
       } catch (e) {
         showToast("Gagal menyimpan jadual: " + e.message, "error");
@@ -5268,17 +5561,28 @@ function setupImportPageEvents() {
   if (btnExport) {
     btnExport.addEventListener("click", () => {
       const backupObj = {
-        school: APP_CONFIG.schoolName,
+        profile: {
+          schoolName: APP_CONFIG.schoolName,
+          schoolCode: APP_CONFIG.schoolCode,
+          schoolAddress: APP_CONFIG.schoolAddress,
+          schoolMotto: APP_CONFIG.schoolMotto,
+          schoolSubMotto: APP_CONFIG.schoolSubMotto,
+          schoolPPD: APP_CONFIG.schoolPPD,
+          schoolLogo: APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo
+        },
         exportDate: new Date().toISOString(),
+        slots: STANDARD_SLOTS,
+        rehatIndices: REHAT_SLOT_INDICES,
         teachers: MASTER_TEACHERS,
         groups: TEACHER_GROUPS,
+        phones: DEFAULT_TEACHER_PHONES,
         timetable: TIMETABLE
       };
       const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `backup_jadual_${APP_CONFIG.schoolName.replace(/\s+/g, '_')}.json`;
+      a.download = `backup_jadual_${(APP_CONFIG.schoolName || "sekolah").replace(/\s+/g, '_')}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -5287,25 +5591,251 @@ function setupImportPageEvents() {
     });
   }
 
-  // Butang Reset Jadual Asal
+  // Butang Kosongkan Data Jadual Tempatan
   const btnReset = document.getElementById("btn-reset-default-schedule");
   if (btnReset) {
     btnReset.addEventListener("click", () => {
-      if (confirm("Adakah anda pasti mahu memulihkan jadual asal SK Tampasuk 1? Sebarang jadual yang diimport akan dipadamkan.")) {
+      if (confirm("Adakah anda pasti mahu mengosongkan data jadual yang disimpan secara tempatan pada pelayar ini?")) {
         localStorage.removeItem(APP_CONFIG.storageKeys.customTimetable);
         localStorage.removeItem(APP_CONFIG.storageKeys.customTeachers);
+        localStorage.removeItem(APP_CONFIG.storageKeys.schoolDataCache);
         location.reload();
+      }
+    });
+  }
+
+  // Butang Kosongkan Rekod Penggantian
+  const btnClearRecords = document.getElementById("btn-reset-all-records-import");
+  if (btnClearRecords) {
+    btnClearRecords.addEventListener("click", () => {
+      if (confirm("Adakah anda pasti mahu mengosongkan semua rekod penggantian tempatan pada pelayar ini?")) {
+        localStorage.removeItem(APP_CONFIG.storageKeys.records);
+        allRecords = [];
+        renderPage5();
+        showToast("Semua rekod penggantian tempatan telah dikosongkan.", "info");
       }
     });
   }
 }
 
-// Inisialisasi Semakan Jadual Khas daripada Storan Tempatan
+/* ========================================================
+   MODUL TETAPAN PROFIL SEKOLAH & LOGO RASMI (WHITE-LABEL)
+   ======================================================== */
+function populateSchoolProfileFormInputs() {
+  const fName = document.getElementById("prof-school-name");
+  const fCode = document.getElementById("prof-school-code");
+  const fPass = document.getElementById("prof-admin-pass");
+  const fAddr = document.getElementById("prof-school-address");
+  const fPpd = document.getElementById("prof-school-ppd");
+  const fMotto = document.getElementById("prof-school-motto");
+  const fSubMotto = document.getElementById("prof-school-submotto");
+  const fLogoUrl = document.getElementById("prof-logo-url");
+
+  if (fName) fName.value = APP_CONFIG.schoolName || "";
+  if (fCode) fCode.value = (APP_CONFIG.auth && APP_CONFIG.auth.defaultUser) ? APP_CONFIG.auth.defaultUser : (APP_CONFIG.schoolCode || "admin");
+  if (fPass) fPass.value = (APP_CONFIG.auth && APP_CONFIG.auth.defaultPass) ? APP_CONFIG.auth.defaultPass : "admin123";
+  if (fAddr) fAddr.value = APP_CONFIG.schoolAddress || "";
+  if (fPpd) fPpd.value = APP_CONFIG.schoolPPD || "";
+  if (fMotto) fMotto.value = APP_CONFIG.schoolMotto || "";
+  if (fSubMotto) fSubMotto.value = APP_CONFIG.schoolSubMotto || "";
+  if (fLogoUrl) fLogoUrl.value = (!APP_CONFIG.schoolLogoBase64 && APP_CONFIG.schoolLogo !== "assets/images/logo-sekolah.svg") ? APP_CONFIG.schoolLogo : "";
+}
+
+function setupSchoolProfileForm() {
+  const form = document.getElementById("school-profile-form");
+  const logoFileInput = document.getElementById("prof-logo-upload");
+  const logoUrlInput = document.getElementById("prof-logo-url");
+
+  if (logoFileInput) {
+    logoFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        showToast("Saiz fail logo terlalu besar (maksimum 1.5MB).", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target.result;
+        APP_CONFIG.schoolLogoBase64 = base64;
+        updateSchoolBrandingDOM();
+        showToast("Logo sekolah sedia disimpan. Klik 'Simpan Profil Sekolah'.", "info");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nameVal = document.getElementById("prof-school-name")?.value.trim() || "NAMA SEKOLAH ANDA";
+      const codeVal = document.getElementById("prof-school-code")?.value.trim() || "admin";
+      const passVal = document.getElementById("prof-admin-pass")?.value.trim() || "admin123";
+      const addrVal = document.getElementById("prof-school-address")?.value.trim() || "ALAMAT SURAT-MENYURAT SEKOLAH ANDA";
+      const ppdVal = document.getElementById("prof-school-ppd")?.value.trim() || "Pejabat Pendidikan Daerah • Jabatan Pendidikan Negeri";
+      const mottoVal = document.getElementById("prof-school-motto")?.value.trim() || "BERILMU BERBAKTI";
+      const subMottoVal = document.getElementById("prof-school-submotto")?.value.trim() || "DISIPLIN ASAS KECEMERLANGAN";
+      const urlVal = logoUrlInput ? logoUrlInput.value.trim() : "";
+
+      APP_CONFIG.schoolName = nameVal;
+      APP_CONFIG.schoolCode = codeVal;
+      APP_CONFIG.schoolAddress = addrVal;
+      APP_CONFIG.schoolPPD = ppdVal;
+      APP_CONFIG.schoolMotto = mottoVal;
+      APP_CONFIG.schoolSubMotto = subMottoVal;
+
+      if (urlVal) {
+        APP_CONFIG.schoolLogo = urlVal;
+        APP_CONFIG.schoolLogoBase64 = "";
+      }
+
+      if (APP_CONFIG.auth) {
+        APP_CONFIG.auth.defaultUser = codeVal;
+        APP_CONFIG.auth.defaultPass = passVal;
+      }
+
+      const customProfile = {
+        schoolName: APP_CONFIG.schoolName,
+        schoolCode: APP_CONFIG.schoolCode,
+        schoolAddress: APP_CONFIG.schoolAddress,
+        schoolPPD: APP_CONFIG.schoolPPD,
+        schoolMotto: APP_CONFIG.schoolMotto,
+        schoolSubMotto: APP_CONFIG.schoolSubMotto,
+        schoolLogo: APP_CONFIG.schoolLogoBase64 || APP_CONFIG.schoolLogo,
+        defaultUser: codeVal,
+        defaultPass: passVal
+      };
+
+      localStorage.setItem(APP_CONFIG.storageKeys.customSchoolProfile, JSON.stringify(customProfile));
+      updateSchoolBrandingDOM();
+      showToast("Profil & Identiti Sekolah berjaya dikemas kini!", "success");
+    });
+  }
+}
+
+/* ========================================================
+   MODUL SAMBUNGAN GOOGLE SHEETS (TETAPAN URL & SEGERAK)
+   ======================================================== */
+function setupGoogleSheetsUI() {
+  const modal = document.getElementById("modal-gas-config");
+  const openBtn = document.getElementById("btn-config-gas-modal");
+  const closeBtn = document.getElementById("modal-gas-close");
+  const saveBtn = document.getElementById("btn-save-gas-modal");
+  const testBtn = document.getElementById("btn-test-gas-modal");
+  const urlInput = document.getElementById("input-gas-url-modal");
+  const testResultEl = document.getElementById("modal-gas-test-result");
+  const syncNowBtn = document.getElementById("btn-sync-gas");
+  const lastSyncEl = document.getElementById("gas-last-sync-time");
+
+  if (openBtn && modal) {
+    openBtn.addEventListener("click", () => {
+      if (urlInput) {
+        urlInput.value = DatabaseAPI.getScriptUrl ? DatabaseAPI.getScriptUrl() : (APP_CONFIG.googleAppsScriptUrl || "");
+      }
+      if (testResultEl) testResultEl.classList.add("hidden");
+      modal.classList.remove("hidden");
+      if (window.lucide) window.lucide.createIcons();
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  }
+
+  if (testBtn && urlInput) {
+    testBtn.addEventListener("click", async () => {
+      const url = urlInput.value.trim();
+      if (!url) {
+        showToast("Sila masukkan URL Web App Google Apps Script terlebih dahulu.", "error");
+        return;
+      }
+      const origHtml = testBtn.innerHTML;
+      testBtn.disabled = true;
+      testBtn.innerHTML = "Menguji...";
+      const res = await DatabaseAPI.testConnection(url);
+      testBtn.disabled = false;
+      testBtn.innerHTML = origHtml;
+      if (testResultEl) {
+        testResultEl.classList.remove("hidden");
+        testResultEl.style.background = res.success ? "#dcfce7" : "#fee2e2";
+        testResultEl.style.color = res.success ? "#166534" : "#991b1b";
+        testResultEl.textContent = res.message || (res.success ? "Sambungan berjaya!" : "Sambungan gagal.");
+      }
+      if (res.success) {
+        showToast(res.message || "Sambungan berjaya!", "success");
+      } else {
+        showToast(res.message || "Sambungan gagal.", "error");
+      }
+    });
+  }
+
+  if (saveBtn && urlInput) {
+    saveBtn.addEventListener("click", async () => {
+      const url = urlInput.value.trim();
+      localStorage.setItem(APP_CONFIG.storageKeys.customGasUrl, url);
+      APP_CONFIG.googleAppsScriptUrl = url;
+      if (modal) modal.classList.add("hidden");
+      renderImportPage();
+      if (url) {
+        showToast("URL Google Sheet disimpan! Menyegerak data sekolah...", "info");
+        const ok = await triggerCloudSync(true);
+        if (ok && lastSyncEl) {
+          lastSyncEl.textContent = "Terakhir disegerak: " + new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
+        }
+      } else {
+        showToast("URL Google Sheet telah dikosongkan.", "info");
+      }
+    });
+  }
+
+  if (syncNowBtn) {
+    syncNowBtn.addEventListener("click", async () => {
+      const url = DatabaseAPI.getScriptUrl ? DatabaseAPI.getScriptUrl() : (APP_CONFIG.googleAppsScriptUrl || "");
+      if (!url) {
+        showToast("Sila tetapkan URL Web App Google Sheet terlebih dahulu.", "error");
+        if (openBtn) openBtn.click();
+        return;
+      }
+      const origHtml = syncNowBtn.innerHTML;
+      syncNowBtn.disabled = true;
+      syncNowBtn.innerHTML = `<i data-lucide="refresh-cw" class="animate-spin" style="width:15px;height:15px;"></i> Menyegerak...`;
+      if (window.lucide) window.lucide.createIcons();
+      const ok = await triggerCloudSync(true);
+      if (ok && lastSyncEl) {
+        lastSyncEl.textContent = "Terakhir disegerak: " + new Date().toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
+      }
+      syncNowBtn.disabled = false;
+      syncNowBtn.innerHTML = origHtml;
+      if (window.lucide) window.lucide.createIcons();
+    });
+  }
+}
+
+// Inisialisasi Semakan Jadual Khas & Profil Sekolah daripada Storan Tempatan
 function initActiveTimetable() {
   try {
-    const savedTimetable = localStorage.getItem(APP_CONFIG.storageKeys.customTimetable);
-    const savedTeachers = localStorage.getItem(APP_CONFIG.storageKeys.customTeachers);
+    // 1. Semak schoolData penuh daripada Google Sheet yang disimpan
+    const savedSchoolData = localStorage.getItem(APP_CONFIG.storageKeys.schoolDataCache);
+    if (savedSchoolData) {
+      const parsedSD = JSON.parse(savedSchoolData);
+      applySchoolData(parsedSD, false);
+    }
 
+    // 2. Semak profil sekolah custom daripada borang
+    const savedCustomProfile = localStorage.getItem(APP_CONFIG.storageKeys.customSchoolProfile);
+    if (savedCustomProfile) {
+      const p = JSON.parse(savedCustomProfile);
+      applySchoolData({ profile: p }, false);
+    }
+
+    // 3. Semak jadual & guru custom CSV
+    const savedTeachers = localStorage.getItem(APP_CONFIG.storageKeys.customTeachers);
     if (savedTeachers) {
       const parsedTeachers = JSON.parse(savedTeachers);
       if (Array.isArray(parsedTeachers) && parsedTeachers.length > 0) {
@@ -5313,12 +5843,21 @@ function initActiveTimetable() {
       }
     }
 
+    const savedTimetable = localStorage.getItem(APP_CONFIG.storageKeys.customTimetable);
     if (savedTimetable) {
       const parsedTT = JSON.parse(savedTimetable);
       Object.assign(TIMETABLE, parsedTT);
     }
+
+    if (typeof rebuildClassTimetablesFromMaster === "function") {
+      rebuildClassTimetablesFromMaster();
+    }
+
+    updateSchoolBrandingDOM();
+    refreshAllTeacherDropdowns();
+    populateCalendarClassFilter();
   } catch (err) {
-    console.warn("Gagal memuatkan jadual khas daripada localStorage:", err);
+    console.warn("Gagal memuatkan data tempatan:", err);
   }
 }
 
@@ -5341,10 +5880,10 @@ function setupAuth() {
 
   const authCfg = APP_CONFIG.auth || {
     enabled: true,
-    defaultUser: "xba5346",
-    defaultPass: "xba5346",
-    sessionKey: "eguru_auth_session_v2",
-    rememberKey: "eguru_auth_remember_v2"
+    defaultUser: "admin",
+    defaultPass: "admin123",
+    sessionKey: "eggs_komersial_auth_session_v1",
+    rememberKey: "eggs_komersial_auth_remember_v1"
   };
 
   if (!authCfg.enabled) {
@@ -5384,11 +5923,10 @@ function setupAuth() {
     const u = userInput ? userInput.value.trim().toLowerCase() : "";
     const p = passInput ? passInput.value.trim() : "";
 
-    const expectedUser = (authCfg.defaultUser || "xba5346").toLowerCase();
-    const expectedPass = authCfg.defaultPass || "xba5346";
+    const expectedUser = (APP_CONFIG.auth?.defaultUser || "admin").toLowerCase();
+    const expectedPass = APP_CONFIG.auth?.defaultPass || "admin123";
 
     if (u === expectedUser && p === expectedPass) {
-      // Log masuk berjaya
       if (errorAlert) errorAlert.classList.add("hidden");
       const token = "auth_" + Date.now();
       sessionStorage.setItem(authCfg.sessionKey, token);
@@ -5403,9 +5941,8 @@ function setupAuth() {
       overlay.setAttribute("aria-hidden", "true");
 
       if (passInput) passInput.value = "";
-      showToast("Log masuk berjaya! Selamat datang ke Sistem e-Guru Ganti.", "success");
+      showToast("Log masuk berjaya! Selamat datang ke Sistem e-GGs (e-Guru Ganti Sekolah).", "success");
     } else {
-      // Kata laluan atau ID salah
       if (errorAlert) {
         if (errorText) errorText.textContent = "ID Pengguna atau Kata Laluan tidak tepat. Sila semak semula.";
         errorAlert.classList.remove("hidden");
@@ -5413,7 +5950,7 @@ function setupAuth() {
       const card = overlay.querySelector(".login-card");
       if (card) {
         card.style.animation = "none";
-        void card.offsetWidth; // trigger reflow
+        void card.offsetWidth;
         card.style.animation = "loginShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both";
       }
       if (passInput) {
@@ -5442,5 +5979,3 @@ function setupAuth() {
     });
   }
 }
-
-
