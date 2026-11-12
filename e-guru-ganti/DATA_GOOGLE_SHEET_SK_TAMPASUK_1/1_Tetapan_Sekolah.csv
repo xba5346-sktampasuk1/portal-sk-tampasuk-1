@@ -1,12 +1,12 @@
-﻿"Parameter","Nilai (Sila Isi Di Sini)","Keterangan & Panduan"
-"Nama Sekolah","SK TAMPASUK 1","Nama rasmi sekolah"
-"Kod Sekolah","xba5346","Kod sekolah KPM (digunakan sebagai ID Pengguna log masuk)"
-"Alamat Sekolah","W.D.T 158, 89150, KOTA BELUD, SABAH","Alamat penuh sekolah"
-"PPD / JPN","Pejabat Pendidikan Daerah Kota Belud • Jabatan Pendidikan Negeri Sabah • Kementerian Pendidikan Malaysia","Maklumat PPD & JPN untuk paparan rasmi di bahagian bawah (Footer)"
-"Moto Sekolah","SEKATA MELAKAR KECEMERLANGAN","Moto rasmi sekolah"
-"Sub-Moto Sekolah","ILMU CAHAYA HIDUP","Slogan atau sub-moto sekolah"
-"URL Logo Sekolah","","Biarkan kosong untuk guna logo rasmi sedia ada atau masukkan URL logo"
-"Kata Laluan Admin","xba5346","Kata laluan pentadbir untuk log masuk ke sistem e-GGs"
-"Sesi Persekolahan","Pagi Sahaja","Pilihan: Pagi Sahaja atau Dua Sesi (Pagi & Petang)"
-"Had Beban Harian","8","Had amaran maksimum waktu ganti seorang guru dalam sehari"
-"Had Beban Mingguan","8","Had amaran beban guru ganti dalam seminggu"
+﻿Parameter,Nilai (Sila Isi Di Sini),Keterangan & Panduan
+Nama Sekolah,SK TAMPASUK 1,Nama rasmi sekolah
+Kod Sekolah,xba5346,Kod sekolah KPM (digunakan sebagai ID Pengguna log masuk)
+Alamat Sekolah,"W.D.T 158, 89150, KOTA BELUD, SABAH",Alamat penuh sekolah
+PPD / JPN,Pejabat Pendidikan Daerah Kota Belud • Jabatan Pendidikan Negeri Sabah • Kementerian Pendidikan Malaysia,Maklumat PPD & JPN untuk paparan rasmi di bahagian bawah (Footer)
+Moto Sekolah,SEKATA MELAKAR KECEMERLANGAN,Moto rasmi sekolah
+Sub-Moto Sekolah,ILMU CAHAYA HIDUP,Slogan atau sub-moto sekolah
+URL Logo Sekolah,,Biarkan kosong untuk guna logo rasmi sedia ada atau masukkan URL logo
+Kata Laluan Admin,xba5346,Kata laluan pentadbir untuk log masuk ke sistem e-GGs
+Sesi Persekolahan,Pagi Sahaja,Pilihan: Pagi Sahaja atau Dua Sesi (Pagi & Petang)
+Had Beban Harian,8,Had amaran maksimum waktu ganti seorang guru dalam sehari
+Had Beban Mingguan,8,Had amaran beban guru ganti dalam seminggu

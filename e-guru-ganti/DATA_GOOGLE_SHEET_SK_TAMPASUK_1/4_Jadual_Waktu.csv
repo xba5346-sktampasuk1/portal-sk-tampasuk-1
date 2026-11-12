@@ -1,609 +1,609 @@
-﻿"Nama Guru","Hari (Isnin-Jumaat)","Slot (Nombor Slot 1-13)","Mata Pelajaran","Kelas","Sesi"
-"En. Mudah Hj. Admaim","Isnin","9","PI","5B","Pagi"
-"En. Mudah Hj. Admaim","Selasa","3","PI","5B","Pagi"
-"En. Mudah Hj. Admaim","Rabu","7","PI","5B","Pagi"
-"En. Mudah Hj. Admaim","Rabu","8","PI","5B","Pagi"
-"En. Mudah Hj. Admaim","Khamis","8","PI","5B","Pagi"
-"En. Mudah Hj. Admaim","Khamis","9","PI","5B","Pagi"
-"Datin Razana Hj. Abd. Wahid","Isnin","8","PM","5A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Isnin","9","PM","5A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Selasa","1","PM","5A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Selasa","2","PM","5A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Selasa","4","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Selasa","5","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Rabu","7","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Rabu","8","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Khamis","7","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Khamis","8","PM","3A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Jumaat","4","PM","5A","Pagi"
-"Datin Razana Hj. Abd. Wahid","Jumaat","5","PM","5A","Pagi"
-"Pn. Hamisah Janah","Isnin","11","PM","6A","Pagi"
-"Pn. Hamisah Janah","Selasa","10","PM","1A","Pagi"
-"Pn. Hamisah Janah","Selasa","11","PM","1A","Pagi"
-"Pn. Hamisah Janah","Rabu","3","PM","6A","Pagi"
-"Pn. Hamisah Janah","Rabu","9","PM","1A","Pagi"
-"Pn. Hamisah Janah","Rabu","10","PM","1A","Pagi"
-"Pn. Hamisah Janah","Khamis","9","PM","6A","Pagi"
-"Pn. Hamisah Janah","Khamis","10","PM","6A","Pagi"
-"Pn. Hamisah Janah","Jumaat","1","PM","1A","Pagi"
-"Pn. Hamisah Janah","Jumaat","2","PM","1A","Pagi"
-"Pn. Hamisah Janah","Jumaat","4","PM","6A","Pagi"
-"Pn. Hamisah Janah","Jumaat","5","PM","6A","Pagi"
-"Pn. Jennet Gindawa","Isnin","4","BKD","3A","Pagi"
-"Pn. Jennet Gindawa","Isnin","5","BKD","3A","Pagi"
-"Pn. Jennet Gindawa","Selasa","7","SN","5B","Pagi"
-"Pn. Jennet Gindawa","Selasa","9","SN","1B","Pagi"
-"Pn. Jennet Gindawa","Rabu","8","BKD","2A","Pagi"
-"Pn. Jennet Gindawa","Rabu","9","BKD","2A","Pagi"
-"Pn. Jennet Gindawa","Khamis","1","SN","5B","Pagi"
-"Pn. Jennet Gindawa","Khamis","2","SN","5B","Pagi"
-"Pn. Jennet Gindawa","Khamis","8","MZ","5A","Pagi"
-"Pn. Jennet Gindawa","Khamis","10","SN","5B","Pagi"
-"Pn. Jennet Gindawa","Jumaat","3","SN","1B","Pagi"
-"Pn. Jennet Gindawa","Jumaat","4","SN","1B","Pagi"
-"En. Amriee Abdullah","Isnin","2","SEJ","6B","Pagi"
-"En. Amriee Abdullah","Isnin","3","SEJ","6B","Pagi"
-"En. Amriee Abdullah","Isnin","5","SEJ","6A","Pagi"
-"En. Amriee Abdullah","Isnin","7","MZ","2A","Pagi"
-"En. Amriee Abdullah","Isnin","9","PK","1B","Pagi"
-"En. Amriee Abdullah","Isnin","10","PM","2A","Pagi"
-"En. Amriee Abdullah","Isnin","11","PM","2A","Pagi"
-"En. Amriee Abdullah","Selasa","3","SEJ","5A","Pagi"
-"En. Amriee Abdullah","Selasa","5","SEJ","6A","Pagi"
-"En. Amriee Abdullah","Selasa","7","PM","2A","Pagi"
-"En. Amriee Abdullah","Selasa","8","PM","2A","Pagi"
-"En. Amriee Abdullah","Selasa","9","PK","4A","Pagi"
-"En. Amriee Abdullah","Rabu","1","PSV","6A","Pagi"
-"En. Amriee Abdullah","Rabu","2","PSV","6A","Pagi"
-"En. Amriee Abdullah","Rabu","3","PJ","4A","Pagi"
-"En. Amriee Abdullah","Rabu","5","PJ","1B","Pagi"
-"En. Amriee Abdullah","Khamis","1","PJ","1B","Pagi"
-"En. Amriee Abdullah","Khamis","3","MZ","2B","Pagi"
-"En. Amriee Abdullah","Khamis","7","SEJ","5A","Pagi"
-"En. Amriee Abdullah","Khamis","9","PM","2A","Pagi"
-"En. Amriee Abdullah","Khamis","10","PM","2A","Pagi"
-"En. Amriee Abdullah","Jumaat","1","PSV","6B","Pagi"
-"En. Amriee Abdullah","Jumaat","2","PSV","6B","Pagi"
-"En. Amriee Abdullah","Jumaat","3","PJ","4A","Pagi"
-"En. Amriee Abdullah","Jumaat","7","SEJ","5B","Pagi"
-"En. Amriee Abdullah","Jumaat","8","SEJ","5B","Pagi"
-"Pn. Anidah Samad","Isnin","2","BM","4A","Pagi"
-"Pn. Anidah Samad","Isnin","3","BM","4A","Pagi"
-"Pn. Anidah Samad","Isnin","8","BM","4B","Pagi"
-"Pn. Anidah Samad","Isnin","9","BM","4B","Pagi"
-"Pn. Anidah Samad","Selasa","1","BM","4A","Pagi"
-"Pn. Anidah Samad","Selasa","2","BM","4A","Pagi"
-"Pn. Anidah Samad","Selasa","4","BM","4B","Pagi"
-"Pn. Anidah Samad","Selasa","5","BM","4B","Pagi"
-"Pn. Anidah Samad","Rabu","1","BM","4B","Pagi"
-"Pn. Anidah Samad","Rabu","2","BM","4B","Pagi"
-"Pn. Anidah Samad","Rabu","4","BM","4A","Pagi"
-"Pn. Anidah Samad","Rabu","5","BM","4A","Pagi"
-"Pn. Anidah Samad","Rabu","7","SEJ","4B","Pagi"
-"Pn. Anidah Samad","Rabu","8","SEJ","4B","Pagi"
-"Pn. Anidah Samad","Khamis","2","PSV","4B","Pagi"
-"Pn. Anidah Samad","Khamis","3","PSV","4B","Pagi"
-"Pn. Anidah Samad","Khamis","5","BM","4A","Pagi"
-"Pn. Anidah Samad","Khamis","7","BM","4A","Pagi"
-"Pn. Anidah Samad","Khamis","8","BM","4A","Pagi"
-"Pn. Anidah Samad","Khamis","10","BM","4B","Pagi"
-"Pn. Anidah Samad","Jumaat","1","PSV","4A","Pagi"
-"Pn. Anidah Samad","Jumaat","2","PSV","4A","Pagi"
-"Pn. Anidah Samad","Jumaat","4","PSV","2A","Pagi"
-"Pn. Anidah Samad","Jumaat","5","PSV","2A","Pagi"
-"Pn. Anidah Samad","Jumaat","7","BM","4B","Pagi"
-"Pn. Anidah Samad","Jumaat","8","BM","4B","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","2","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","3","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","5","MZ","1B","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","7","M3","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","8","M3","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","10","M3","4A","Pagi"
-"Pn. Anna Octavia Ninteh","Isnin","11","M3","4A","Pagi"
-"Pn. Anna Octavia Ninteh","Selasa","3","M3","4A","Pagi"
-"Pn. Anna Octavia Ninteh","Selasa","7","M3","6A","Pagi"
-"Pn. Anna Octavia Ninteh","Selasa","8","M3","6A","Pagi"
-"Pn. Anna Octavia Ninteh","Selasa","10","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Selasa","11","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Rabu","3","MZ","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Rabu","7","M3","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Rabu","8","M3","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Rabu","9","M3","6A","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","1","M3","4A","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","2","M3","4A","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","4","PSV","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","5","PSV","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","9","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Khamis","10","M3","2B","Pagi"
-"Pn. Anna Octavia Ninteh","Jumaat","1","M3","6A","Pagi"
-"Pn. Anna Octavia Ninteh","Jumaat","2","M3","6A","Pagi"
-"Pn. Anna Octavia Ninteh","Jumaat","4","M3","1A","Pagi"
-"Pn. Anna Octavia Ninteh","Jumaat","5","M3","1A","Pagi"
-"En. Duin Lasig","Isnin","4","M3","3B","Pagi"
-"En. Duin Lasig","Isnin","5","M3","3B","Pagi"
-"En. Duin Lasig","Isnin","10","M3","3A","Pagi"
-"En. Duin Lasig","Isnin","11","M3","3A","Pagi"
-"En. Duin Lasig","Selasa","3","M3","2A","Pagi"
-"En. Duin Lasig","Selasa","4","M3","2A","Pagi"
-"En. Duin Lasig","Selasa","8","M3","3A","Pagi"
-"En. Duin Lasig","Selasa","9","M3","3A","Pagi"
-"En. Duin Lasig","Rabu","2","M3","3A","Pagi"
-"En. Duin Lasig","Rabu","3","M3","3A","Pagi"
-"En. Duin Lasig","Rabu","7","M3","3B","Pagi"
-"En. Duin Lasig","Rabu","8","M3","3B","Pagi"
-"En. Duin Lasig","Khamis","4","M3","2A","Pagi"
-"En. Duin Lasig","Khamis","5","M3","2A","Pagi"
-"En. Duin Lasig","Khamis","9","M3","3B","Pagi"
-"En. Duin Lasig","Khamis","10","M3","3B","Pagi"
-"En. Duin Lasig","Jumaat","7","M3","2A","Pagi"
-"En. Duin Lasig","Jumaat","8","M3","2A","Pagi"
-"Pn. Fatimah Daud","Isnin","4","PI","2B","Pagi"
-"Pn. Fatimah Daud","Isnin","5","PI","2B","Pagi"
-"Pn. Fatimah Daud","Isnin","8","PI","6B","Pagi"
-"Pn. Fatimah Daud","Isnin","9","PI","6B","Pagi"
-"Pn. Fatimah Daud","Isnin","11","PI","6A","Pagi"
-"Pn. Fatimah Daud","Isnin","12","TASMEK","6A","Pagi"
-"Pn. Fatimah Daud","Isnin","13","TASMEK","6A","Pagi"
-"Pn. Fatimah Daud","Selasa","4","PI","4A","Pagi"
-"Pn. Fatimah Daud","Selasa","5","PI","4A","Pagi"
-"Pn. Fatimah Daud","Selasa","7","PI","2B","Pagi"
-"Pn. Fatimah Daud","Selasa","8","PI","2B","Pagi"
-"Pn. Fatimah Daud","Selasa","10","PI","6B","Pagi"
-"Pn. Fatimah Daud","Selasa","11","PI","6B","Pagi"
-"Pn. Fatimah Daud","Selasa","12","TASMEK","3A","Pagi"
-"Pn. Fatimah Daud","Selasa","13","TASMEK","3A","Pagi"
-"Pn. Fatimah Daud","Rabu","3","PI","6A","Pagi"
-"Pn. Fatimah Daud","Rabu","7","PI","4A","Pagi"
-"Pn. Fatimah Daud","Rabu","8","PI","4A","Pagi"
-"Pn. Fatimah Daud","Rabu","10","PI","6B","Pagi"
-"Pn. Fatimah Daud","Rabu","11","TASMEK","3B","Pagi"
-"Pn. Fatimah Daud","Rabu","12","TASMEK","3B","Pagi"
-"Pn. Fatimah Daud","Khamis","3","PI","4A","Pagi"
-"Pn. Fatimah Daud","Khamis","4","PI","4A","Pagi"
-"Pn. Fatimah Daud","Khamis","5","PI","6B","Pagi"
-"Pn. Fatimah Daud","Khamis","9","PI","6A","Pagi"
-"Pn. Fatimah Daud","Khamis","10","PI","6A","Pagi"
-"Pn. Fatimah Daud","Khamis","11","TASMEK","1A","Pagi"
-"Pn. Fatimah Daud","Khamis","12","TASMEK","1A","Pagi"
-"Pn. Fatimah Daud","Jumaat","1","PI","2B","Pagi"
-"Pn. Fatimah Daud","Jumaat","2","PI","2B","Pagi"
-"Pn. Fatimah Daud","Jumaat","4","PI","6A","Pagi"
-"Pn. Fatimah Daud","Jumaat","5","PI","6A","Pagi"
-"En. George Simun","Isnin","2","BM","1B","Pagi"
-"En. George Simun","Isnin","3","BM","1B","Pagi"
-"En. George Simun","Isnin","4","BM","1B","Pagi"
-"En. George Simun","Isnin","9","BM","2B","Pagi"
-"En. George Simun","Isnin","10","BM","2B","Pagi"
-"En. George Simun","Selasa","1","BM","1B","Pagi"
-"En. George Simun","Selasa","4","BM","2B","Pagi"
-"En. George Simun","Selasa","5","BM","2B","Pagi"
-"En. George Simun","Selasa","9","BM","2B","Pagi"
-"En. George Simun","Selasa","10","BM","1B","Pagi"
-"En. George Simun","Selasa","11","BM","1B","Pagi"
-"En. George Simun","Rabu","1","BM","2B","Pagi"
-"En. George Simun","Rabu","2","BM","2B","Pagi"
-"En. George Simun","Rabu","7","BM","1B","Pagi"
-"En. George Simun","Rabu","8","BM","1B","Pagi"
-"En. George Simun","Khamis","1","BM","2B","Pagi"
-"En. George Simun","Khamis","2","BM","2B","Pagi"
-"En. George Simun","Khamis","7","MZ","5B","Pagi"
-"En. George Simun","Khamis","9","BM","1B","Pagi"
-"En. George Simun","Khamis","10","BM","1B","Pagi"
-"En. George Simun","Jumaat","1","BM","1B","Pagi"
-"En. George Simun","Jumaat","2","BM","1B","Pagi"
-"En. George Simun","Jumaat","4","BM","2B","Pagi"
-"En. George Simun","Jumaat","5","BM","2B","Pagi"
-"En. George Simun","Jumaat","7","BM","2B","Pagi"
-"Pn. Kasmalah Ismail","Isnin","2","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Isnin","3","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Isnin","8","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Isnin","9","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Isnin","11","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","1","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","2","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","5","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","7","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","8","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Selasa","9","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","1","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","2","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","4","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","5","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","7","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","9","SEJ","4A","Pagi"
-"Pn. Kasmalah Ismail","Rabu","10","SEJ","4A","Pagi"
-"Pn. Kasmalah Ismail","Khamis","4","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Khamis","5","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Khamis","7","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Khamis","8","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Jumaat","1","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Jumaat","2","BM","2A","Pagi"
-"Pn. Kasmalah Ismail","Jumaat","7","BM","1A","Pagi"
-"Pn. Kasmalah Ismail","Jumaat","8","BM","1A","Pagi"
-"En. L Asmara Luandim","Isnin","4","BM","5A","Pagi"
-"En. L Asmara Luandim","Isnin","5","BM","5A","Pagi"
-"En. L Asmara Luandim","Isnin","7","BM","5A","Pagi"
-"En. L Asmara Luandim","Isnin","9","BM","6A","Pagi"
-"En. L Asmara Luandim","Isnin","10","BM","6A","Pagi"
-"En. L Asmara Luandim","Selasa","3","BM","6A","Pagi"
-"En. L Asmara Luandim","Selasa","4","BM","6A","Pagi"
-"En. L Asmara Luandim","Selasa","5","PK","3B","Pagi"
-"En. L Asmara Luandim","Selasa","9","BM","5A","Pagi"
-"En. L Asmara Luandim","Selasa","10","BM","5A","Pagi"
-"En. L Asmara Luandim","Selasa","11","BM","6A","Pagi"
-"En. L Asmara Luandim","Rabu","1","PJ","3A","Pagi"
-"En. L Asmara Luandim","Rabu","3","PJ","3B","Pagi"
-"En. L Asmara Luandim","Rabu","9","BM","5A","Pagi"
-"En. L Asmara Luandim","Rabu","10","BM","5A","Pagi"
-"En. L Asmara Luandim","Khamis","1","PSV","3B","Pagi"
-"En. L Asmara Luandim","Khamis","2","PSV","3B","Pagi"
-"En. L Asmara Luandim","Khamis","4","BM","5A","Pagi"
-"En. L Asmara Luandim","Khamis","5","BM","5A","Pagi"
-"En. L Asmara Luandim","Khamis","7","BM","6A","Pagi"
-"En. L Asmara Luandim","Khamis","8","BM","6A","Pagi"
-"En. L Asmara Luandim","Khamis","9","PK","3A","Pagi"
-"En. L Asmara Luandim","Jumaat","3","PJ","3A","Pagi"
-"En. L Asmara Luandim","Jumaat","5","PJ","3B","Pagi"
-"En. L Asmara Luandim","Jumaat","7","BM","6A","Pagi"
-"En. L Asmara Luandim","Jumaat","8","BM","6A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","4","PI","Pra Anggerik","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","5","PI","Pra Anggerik","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","10","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","11","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","12","TASMEK","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Isnin","13","TASMEK","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","2","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","3","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","7","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","8","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","10","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Selasa","11","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","3","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","4","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","9","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","10","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","11","TASMEK","2B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Rabu","12","TASMEK","2B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","2","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","3","PI","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","9","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","10","PI","2A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","11","TASMEK","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Khamis","12","TASMEK","1B","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Jumaat","1","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Jumaat","2","PI","1A","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Jumaat","4","PI","Pra Anggerik","Pagi"
-"Pn. Mastikahjunaidah Shahrom","Jumaat","5","PI","Pra Anggerik","Pagi"
-"Pn. Milnah Namih","Isnin","3","BI","6A","Pagi"
-"Pn. Milnah Namih","Isnin","4","BI","6A","Pagi"
-"Pn. Milnah Namih","Isnin","7","BI","4A","Pagi"
-"Pn. Milnah Namih","Isnin","8","BI","4A","Pagi"
-"Pn. Milnah Namih","Selasa","1","BI","6A","Pagi"
-"Pn. Milnah Namih","Selasa","2","BI","6A","Pagi"
-"Pn. Milnah Namih","Selasa","4","BI","5A","Pagi"
-"Pn. Milnah Namih","Selasa","5","BI","5A","Pagi"
-"Pn. Milnah Namih","Selasa","7","BI","4A","Pagi"
-"Pn. Milnah Namih","Selasa","8","BI","4A","Pagi"
-"Pn. Milnah Namih","Rabu","1","BI","4A","Pagi"
-"Pn. Milnah Namih","Rabu","2","BI","4A","Pagi"
-"Pn. Milnah Namih","Rabu","4","BI","6A","Pagi"
-"Pn. Milnah Namih","Rabu","5","BI","6A","Pagi"
-"Pn. Milnah Namih","Rabu","7","BI","5A","Pagi"
-"Pn. Milnah Namih","Rabu","8","BI","5A","Pagi"
-"Pn. Milnah Namih","Khamis","3","BI","6A","Pagi"
-"Pn. Milnah Namih","Khamis","4","BI","6A","Pagi"
-"Pn. Milnah Namih","Khamis","9","BI","5A","Pagi"
-"Pn. Milnah Namih","Khamis","10","BI","5A","Pagi"
-"Pn. Milnah Namih","Jumaat","2","BI","5A","Pagi"
-"Pn. Milnah Namih","Jumaat","3","BI","5A","Pagi"
-"Pn. Milnah Namih","Jumaat","4","BI","4A","Pagi"
-"Pn. Milnah Namih","Jumaat","5","BI","4A","Pagi"
-"Pn. Milnah Namih","Jumaat","7","RBT","4A","Pagi"
-"Pn. Milnah Namih","Jumaat","8","RBT","4A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Isnin","3","PK","5B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Isnin","4","SN","4A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Isnin","5","SN","4A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Isnin","9","SN","1A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Isnin","10","SN","1A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","1","SN","4B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","2","SN","4B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","4","SN","1A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","7","RBT","6B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","9","RBT","6A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Selasa","10","RBT","6A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Rabu","1","SN","5A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Rabu","2","SN","5A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Rabu","3","PJ","5B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Rabu","9","RBT","5B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Rabu","10","RBT","5B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","2","RBT","5A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","3","RBT","5A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","5","PJ","5B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","7","RBT","6B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","9","SN","4A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Khamis","10","SN","4A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Jumaat","1","SN","4B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Jumaat","2","SN","4B","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Jumaat","7","SN","5A","Pagi"
-"En. Mohd. Hafiz Qayyum Ahmad","Jumaat","8","SN","5A","Pagi"
-"Pn. Muhayan Diman","Isnin","2","BM","3A","Pagi"
-"Pn. Muhayan Diman","Isnin","3","BM","3A","Pagi"
-"Pn. Muhayan Diman","Isnin","7","BM","3B","Pagi"
-"Pn. Muhayan Diman","Isnin","8","BM","3B","Pagi"
-"Pn. Muhayan Diman","Isnin","9","BM","3A","Pagi"
-"Pn. Muhayan Diman","Selasa","2","BM","3A","Pagi"
-"Pn. Muhayan Diman","Selasa","3","BM","3A","Pagi"
-"Pn. Muhayan Diman","Selasa","7","BM","3A","Pagi"
-"Pn. Muhayan Diman","Selasa","9","BM","3B","Pagi"
-"Pn. Muhayan Diman","Selasa","10","BM","3B","Pagi"
-"Pn. Muhayan Diman","Rabu","1","BM","3B","Pagi"
-"Pn. Muhayan Diman","Rabu","2","BM","3B","Pagi"
-"Pn. Muhayan Diman","Rabu","4","BM","3A","Pagi"
-"Pn. Muhayan Diman","Rabu","5","BM","3A","Pagi"
-"Pn. Muhayan Diman","Rabu","9","BM","3B","Pagi"
-"Pn. Muhayan Diman","Rabu","10","BM","3B","Pagi"
-"Pn. Muhayan Diman","Khamis","2","BM","3A","Pagi"
-"Pn. Muhayan Diman","Khamis","3","BM","3A","Pagi"
-"Pn. Muhayan Diman","Khamis","7","BM","3B","Pagi"
-"Pn. Muhayan Diman","Khamis","8","BM","3B","Pagi"
-"Pn. Muhayan Diman","Jumaat","1","PSV","3A","Pagi"
-"Pn. Muhayan Diman","Jumaat","2","PSV","3A","Pagi"
-"Pn. Muhayan Diman","Jumaat","4","BM","3A","Pagi"
-"Pn. Muhayan Diman","Jumaat","5","BM","3A","Pagi"
-"Pn. Muhayan Diman","Jumaat","7","BM","3B","Pagi"
-"Pn. Muhayan Diman","Jumaat","8","BM","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","2","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","3","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","7","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","8","PI","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","9","PI","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","12","TASMEK","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Isnin","13","TASMEK","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","1","PI","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","2","PI","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","4","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","5","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","8","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Selasa","9","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","4","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","5","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","7","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","8","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","11","TASMEK","5B","Pagi"
-"En. Muhd. Huzaifah Arman","Rabu","12","TASMEK","5B","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","1","PI","4B","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","3","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","4","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","7","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","8","PI","3A","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","11","TASMEK","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Khamis","12","TASMEK","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Jumaat","1","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Jumaat","2","PI","3B","Pagi"
-"En. Muhd. Huzaifah Arman","Jumaat","4","PI","5A","Pagi"
-"En. Muhd. Huzaifah Arman","Jumaat","5","PI","5A","Pagi"
-"En. Rejos Baking","Isnin","2","PSV","5A","Pagi"
-"En. Rejos Baking","Isnin","3","PSV","5A","Pagi"
-"En. Rejos Baking","Isnin","4","RBT","4B","Pagi"
-"En. Rejos Baking","Isnin","5","RBT","4B","Pagi"
-"En. Rejos Baking","Isnin","7","PK","6B","Pagi"
-"En. Rejos Baking","Isnin","9","MZ","3B","Pagi"
-"En. Rejos Baking","Selasa","1","PJ","1A","Pagi"
-"En. Rejos Baking","Selasa","3","PJ","4B","Pagi"
-"En. Rejos Baking","Selasa","5","PJ","6B","Pagi"
-"En. Rejos Baking","Selasa","7","MZ","4B","Pagi"
-"En. Rejos Baking","Selasa","9","PK","1A","Pagi"
-"En. Rejos Baking","Selasa","11","PK","5A","Pagi"
-"En. Rejos Baking","Rabu","1","PJ","6B","Pagi"
-"En. Rejos Baking","Rabu","3","PJ","4B","Pagi"
-"En. Rejos Baking","Rabu","5","PJ","5A","Pagi"
-"En. Rejos Baking","Rabu","7","PK","6A","Pagi"
-"En. Rejos Baking","Rabu","8","MZ","6A","Pagi"
-"En. Rejos Baking","Rabu","9","MZ","6B","Pagi"
-"En. Rejos Baking","Khamis","3","PJ","1A","Pagi"
-"En. Rejos Baking","Khamis","5","PJ","6A","Pagi"
-"En. Rejos Baking","Khamis","7","PK","4B","Pagi"
-"En. Rejos Baking","Khamis","9","PSV","1A","Pagi"
-"En. Rejos Baking","Khamis","10","PSV","1A","Pagi"
-"En. Rejos Baking","Jumaat","1","PJ","5A","Pagi"
-"En. Rejos Baking","Jumaat","3","PJ","6A","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","2","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","3","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","7","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","8","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","10","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Isnin","11","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","1","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","2","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","7","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","8","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","10","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Selasa","11","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","1","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","2","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","4","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","5","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","7","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","8","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Rabu","10","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Khamis","1","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Khamis","2","BI","2A","Pagi"
-"Pn. Rohanah Mohd. Soud","Khamis","5","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Khamis","7","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Khamis","8","BI","2B","Pagi"
-"Pn. Rohanah Mohd. Soud","Jumaat","3","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Jumaat","4","BI","3B","Pagi"
-"Pn. Rohanah Mohd. Soud","Jumaat","8","BI","2B","Pagi"
-"Cik Rozeline Francis","Isnin","2","BKD","6A","Pagi"
-"Cik Rozeline Francis","Isnin","10","BKD","5A","Pagi"
-"Cik Rozeline Francis","Isnin","11","BKD","5A","Pagi"
-"Cik Rozeline Francis","Selasa","3","PJ","2B","Pagi"
-"Cik Rozeline Francis","Selasa","5","PJ","2A","Pagi"
-"Cik Rozeline Francis","Selasa","10","BKD","4A","Pagi"
-"Cik Rozeline Francis","Selasa","11","BKD","4A","Pagi"
-"Cik Rozeline Francis","Rabu","3","PJ","2A","Pagi"
-"Cik Rozeline Francis","Rabu","5","PJ","2B","Pagi"
-"Cik Rozeline Francis","Rabu","10","BKD","6A","Pagi"
-"Cik Rozeline Francis","Khamis","1","BKD","1A","Pagi"
-"Cik Rozeline Francis","Khamis","2","BKD","1A","Pagi"
-"Cik Rozeline Francis","Khamis","3","PK","2A","Pagi"
-"Cik Rozeline Francis","Jumaat","3","PK","2B","Pagi"
-"Cik Rozie Sumil","Isnin","2","M3","4B","Pagi"
-"Cik Rozie Sumil","Isnin","3","M3","4B","Pagi"
-"Cik Rozie Sumil","Isnin","10","M3","1B","Pagi"
-"Cik Rozie Sumil","Isnin","11","M3","1B","Pagi"
-"Cik Rozie Sumil","Selasa","1","M3","6B","Pagi"
-"Cik Rozie Sumil","Selasa","2","M3","6B","Pagi"
-"Cik Rozie Sumil","Selasa","4","M3","1B","Pagi"
-"Cik Rozie Sumil","Selasa","5","M3","1B","Pagi"
-"Cik Rozie Sumil","Selasa","7","M3","5A","Pagi"
-"Cik Rozie Sumil","Selasa","8","M3","5A","Pagi"
-"Cik Rozie Sumil","Rabu","3","M3","5A","Pagi"
-"Cik Rozie Sumil","Rabu","4","M3","5A","Pagi"
-"Cik Rozie Sumil","Rabu","8","M3","6B","Pagi"
-"Cik Rozie Sumil","Rabu","9","M3","1B","Pagi"
-"Cik Rozie Sumil","Rabu","10","M3","1B","Pagi"
-"Cik Rozie Sumil","Khamis","1","M3","5A","Pagi"
-"Cik Rozie Sumil","Khamis","3","M3","6B","Pagi"
-"Cik Rozie Sumil","Khamis","4","M3","6B","Pagi"
-"Cik Rozie Sumil","Khamis","8","M3","4B","Pagi"
-"Cik Rozie Sumil","Khamis","9","M3","4B","Pagi"
-"Cik Rozie Sumil","Jumaat","5","M3","4B","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","2","BA","6A","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","4","BA","3A","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","5","BA","3A","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","7","PI","Pra Dahlia","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","10","BA","5A","Pagi"
-"Pn. Salhah Awang Tengah","Isnin","11","BA","5A","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","1","BA","3B","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","2","BA","3B","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","4","BA","5B","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","5","BA","5B","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","10","BA","4A","Pagi"
-"Pn. Salhah Awang Tengah","Selasa","11","BA","4A","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","3","BA","2B","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","4","BA","2B","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","7","BA","6B","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","8","BA","2A","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","9","BA","2A","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","10","BA","6A","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","11","TASMEK","4A","Pagi"
-"Pn. Salhah Awang Tengah","Rabu","12","TASMEK","4A","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","1","BA","1A","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","2","BA","1A","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","4","BA","1B","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","5","BA","1B","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","7","PI","Pra Dahlia","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","10","BA","6B","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","11","TASMEK","6B","Pagi"
-"Pn. Salhah Awang Tengah","Khamis","12","TASMEK","6B","Pagi"
-"Pn. Salhah Awang Tengah","Jumaat","3","BA","4B","Pagi"
-"Pn. Salhah Awang Tengah","Jumaat","4","BA","4B","Pagi"
-"Pn. Salhah Awang Tengah","Jumaat","7","PI","Pra Dahlia","Pagi"
-"Pn. Salhah Awang Tengah","Jumaat","8","PI","Pra Dahlia","Pagi"
-"Pn. Yunizah Esun","Isnin","4","SN","2A","Pagi"
-"Pn. Yunizah Esun","Isnin","5","SN","2A","Pagi"
-"Pn. Yunizah Esun","Isnin","7","SN","6A","Pagi"
-"Pn. Yunizah Esun","Isnin","8","SN","6A","Pagi"
-"Pn. Yunizah Esun","Isnin","9","MZ","4A","Pagi"
-"Pn. Yunizah Esun","Isnin","11","SN","2B","Pagi"
-"Pn. Yunizah Esun","Selasa","1","SN","3A","Pagi"
-"Pn. Yunizah Esun","Selasa","3","SN","3B","Pagi"
-"Pn. Yunizah Esun","Selasa","4","SN","3B","Pagi"
-"Pn. Yunizah Esun","Selasa","8","SN","6B","Pagi"
-"Pn. Yunizah Esun","Selasa","9","SN","6B","Pagi"
-"Pn. Yunizah Esun","Selasa","11","SN","3B","Pagi"
-"Pn. Yunizah Esun","Rabu","2","SN","6B","Pagi"
-"Pn. Yunizah Esun","Rabu","3","SN","6B","Pagi"
-"Pn. Yunizah Esun","Rabu","9","SN","2B","Pagi"
-"Pn. Yunizah Esun","Rabu","10","SN","2B","Pagi"
-"Pn. Yunizah Esun","Khamis","1","SN","6A","Pagi"
-"Pn. Yunizah Esun","Khamis","2","SN","6A","Pagi"
-"Pn. Yunizah Esun","Khamis","4","SN","3A","Pagi"
-"Pn. Yunizah Esun","Khamis","5","SN","3A","Pagi"
-"Pn. Yunizah Esun","Khamis","7","PSV","1B","Pagi"
-"Pn. Yunizah Esun","Khamis","8","PSV","1B","Pagi"
-"Pn. Yunizah Esun","Khamis","10","MZ","3A","Pagi"
-"Pn. Yunizah Esun","Jumaat","3","SN","2A","Pagi"
-"Pn. Yunizah Esun","Jumaat","4","PSV","5B","Pagi"
-"Pn. Yunizah Esun","Jumaat","5","PSV","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","4","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","5","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","7","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","8","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","10","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Isnin","11","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","3","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","4","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","8","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","9","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","10","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Selasa","11","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Rabu","4","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Rabu","5","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Rabu","9","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Rabu","10","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Khamis","1","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Khamis","3","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Khamis","4","BI","5B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Khamis","8","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Khamis","9","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Jumaat","3","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Jumaat","4","BI","6B","Pagi"
-"Pn. Zuraidah Hj. Marjin","Jumaat","7","BI","3A","Pagi"
-"Pn. Zuraidah Hj. Marjin","Jumaat","8","BI","3A","Pagi"
-"Pn. Zurinah Jubidi","Isnin","4","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Isnin","5","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Isnin","7","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Isnin","8","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Isnin","10","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Isnin","11","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Selasa","2","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Selasa","3","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Selasa","7","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Selasa","8","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Selasa","10","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Selasa","11","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Rabu","1","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Rabu","2","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Rabu","4","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Rabu","5","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Rabu","9","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Rabu","10","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Khamis","4","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Khamis","5","BI","4B","Pagi"
-"Pn. Zurinah Jubidi","Khamis","7","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Khamis","8","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Jumaat","3","BI","1A","Pagi"
-"Pn. Zurinah Jubidi","Jumaat","5","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Jumaat","7","BI","1B","Pagi"
-"Pn. Zurinah Jubidi","Jumaat","8","BI","1B","Pagi"
-"Cik Anizah Anis Dalinsip","Isnin","7","M3","5B","Pagi"
-"Cik Anizah Anis Dalinsip","Isnin","8","M3","5B","Pagi"
-"Cik Anizah Anis Dalinsip","Selasa","4","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Selasa","5","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Selasa","10","M3","5B","Pagi"
-"Cik Anizah Anis Dalinsip","Selasa","11","M3","5B","Pagi"
-"Cik Anizah Anis Dalinsip","Rabu","7","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Rabu","8","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Khamis","3","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Khamis","4","PM","4A","Pagi"
-"Cik Anizah Anis Dalinsip","Jumaat","3","M3","5B","Pagi"
-"Cik Prettnyrina Dualis","Isnin","2","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Isnin","4","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Isnin","5","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Isnin","10","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Isnin","11","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Selasa","1","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Selasa","2","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Rabu","1","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Rabu","2","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Rabu","4","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Rabu","5","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Khamis","1","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Khamis","2","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Jumaat","1","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Jumaat","2","BM","5B","Pagi"
-"Cik Prettnyrina Dualis","Jumaat","5","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Jumaat","7","BM","6B","Pagi"
-"Cik Prettnyrina Dualis","Jumaat","8","BM","6B","Pagi"
+﻿Nama Guru,Hari (Isnin-Jumaat),Slot (Nombor Slot 1-13),Mata Pelajaran,Kelas,Kumpulan Bertugas (Pilihan),Sesi
+En. Mudah Hj. Admaim,Isnin,9,PI,5B,Kumpulan 1,Pagi
+En. Mudah Hj. Admaim,Selasa,3,PI,5B,Kumpulan 1,Pagi
+En. Mudah Hj. Admaim,Rabu,7,PI,5B,Kumpulan 1,Pagi
+En. Mudah Hj. Admaim,Rabu,8,PI,5B,Kumpulan 1,Pagi
+En. Mudah Hj. Admaim,Khamis,8,PI,5B,Kumpulan 1,Pagi
+En. Mudah Hj. Admaim,Khamis,9,PI,5B,Kumpulan 1,Pagi
+Datin Razana Hj. Abd. Wahid,Isnin,8,PM,5A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Isnin,9,PM,5A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Selasa,1,PM,5A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Selasa,2,PM,5A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Selasa,4,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Selasa,5,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Rabu,7,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Rabu,8,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Khamis,7,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Khamis,8,PM,3A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Jumaat,4,PM,5A,Kumpulan 2,Pagi
+Datin Razana Hj. Abd. Wahid,Jumaat,5,PM,5A,Kumpulan 2,Pagi
+Pn. Hamisah Janah,Isnin,11,PM,6A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Selasa,10,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Selasa,11,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Rabu,3,PM,6A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Rabu,9,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Rabu,10,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Khamis,9,PM,6A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Khamis,10,PM,6A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Jumaat,1,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Jumaat,2,PM,1A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Jumaat,4,PM,6A,Kumpulan 3,Pagi
+Pn. Hamisah Janah,Jumaat,5,PM,6A,Kumpulan 3,Pagi
+Pn. Jennet Gindawa,Isnin,4,BKD,3A,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Isnin,5,BKD,3A,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Selasa,7,SN,5B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Selasa,9,SN,1B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Rabu,8,BKD,2A,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Rabu,9,BKD,2A,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Khamis,1,SN,5B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Khamis,2,SN,5B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Khamis,8,MZ,5A,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Khamis,10,SN,5B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Jumaat,3,SN,1B,Kumpulan 4,Pagi
+Pn. Jennet Gindawa,Jumaat,4,SN,1B,Kumpulan 4,Pagi
+En. Amriee Abdullah,Isnin,2,SEJ,6B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,3,SEJ,6B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,5,SEJ,6A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,7,MZ,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,9,PK,1B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,10,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Isnin,11,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Selasa,3,SEJ,5A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Selasa,5,SEJ,6A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Selasa,7,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Selasa,8,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Selasa,9,PK,4A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Rabu,1,PSV,6A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Rabu,2,PSV,6A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Rabu,3,PJ,4A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Rabu,5,PJ,1B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Khamis,1,PJ,1B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Khamis,3,MZ,2B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Khamis,7,SEJ,5A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Khamis,9,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Khamis,10,PM,2A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Jumaat,1,PSV,6B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Jumaat,2,PSV,6B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Jumaat,3,PJ,4A,Kumpulan 3,Pagi
+En. Amriee Abdullah,Jumaat,7,SEJ,5B,Kumpulan 3,Pagi
+En. Amriee Abdullah,Jumaat,8,SEJ,5B,Kumpulan 3,Pagi
+Pn. Anidah Samad,Isnin,2,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Isnin,3,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Isnin,8,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Isnin,9,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Selasa,1,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Selasa,2,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Selasa,4,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Selasa,5,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,1,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,2,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,4,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,5,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,7,SEJ,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Rabu,8,SEJ,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,2,PSV,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,3,PSV,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,5,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,7,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,8,BM,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Khamis,10,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,1,PSV,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,2,PSV,4A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,4,PSV,2A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,5,PSV,2A,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,7,BM,4B,Kumpulan 1,Pagi
+Pn. Anidah Samad,Jumaat,8,BM,4B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,2,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,3,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,5,MZ,1B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,7,M3,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,8,M3,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,10,M3,4A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Isnin,11,M3,4A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Selasa,3,M3,4A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Selasa,7,M3,6A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Selasa,8,M3,6A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Selasa,10,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Selasa,11,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Rabu,3,MZ,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Rabu,7,M3,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Rabu,8,M3,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Rabu,9,M3,6A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,1,M3,4A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,2,M3,4A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,4,PSV,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,5,PSV,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,9,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Khamis,10,M3,2B,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Jumaat,1,M3,6A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Jumaat,2,M3,6A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Jumaat,4,M3,1A,Kumpulan 1,Pagi
+Pn. Anna Octavia Ninteh,Jumaat,5,M3,1A,Kumpulan 1,Pagi
+En. Duin Lasig,Isnin,4,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Isnin,5,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Isnin,10,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Isnin,11,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Selasa,3,M3,2A,Kumpulan 4,Pagi
+En. Duin Lasig,Selasa,4,M3,2A,Kumpulan 4,Pagi
+En. Duin Lasig,Selasa,8,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Selasa,9,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Rabu,2,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Rabu,3,M3,3A,Kumpulan 4,Pagi
+En. Duin Lasig,Rabu,7,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Rabu,8,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Khamis,4,M3,2A,Kumpulan 4,Pagi
+En. Duin Lasig,Khamis,5,M3,2A,Kumpulan 4,Pagi
+En. Duin Lasig,Khamis,9,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Khamis,10,M3,3B,Kumpulan 4,Pagi
+En. Duin Lasig,Jumaat,7,M3,2A,Kumpulan 4,Pagi
+En. Duin Lasig,Jumaat,8,M3,2A,Kumpulan 4,Pagi
+Pn. Fatimah Daud,Isnin,4,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,5,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,8,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,9,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,11,PI,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,12,TASMEK,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Isnin,13,TASMEK,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,4,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,5,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,7,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,8,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,10,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,11,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,12,TASMEK,3A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Selasa,13,TASMEK,3A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,3,PI,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,7,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,8,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,10,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,11,TASMEK,3B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Rabu,12,TASMEK,3B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,3,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,4,PI,4A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,5,PI,6B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,9,PI,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,10,PI,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,11,TASMEK,1A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Khamis,12,TASMEK,1A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Jumaat,1,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Jumaat,2,PI,2B,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Jumaat,4,PI,6A,Kumpulan 3,Pagi
+Pn. Fatimah Daud,Jumaat,5,PI,6A,Kumpulan 3,Pagi
+En. George Simun,Isnin,2,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Isnin,3,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Isnin,4,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Isnin,9,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Isnin,10,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Selasa,1,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Selasa,4,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Selasa,5,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Selasa,9,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Selasa,10,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Selasa,11,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Rabu,1,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Rabu,2,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Rabu,7,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Rabu,8,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Khamis,1,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Khamis,2,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Khamis,7,MZ,5B,Kumpulan 3,Pagi
+En. George Simun,Khamis,9,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Khamis,10,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Jumaat,1,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Jumaat,2,BM,1B,Kumpulan 3,Pagi
+En. George Simun,Jumaat,4,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Jumaat,5,BM,2B,Kumpulan 3,Pagi
+En. George Simun,Jumaat,7,BM,2B,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Isnin,2,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Isnin,3,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Isnin,8,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Isnin,9,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Isnin,11,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,1,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,2,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,5,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,7,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,8,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Selasa,9,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,1,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,2,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,4,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,5,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,7,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,9,SEJ,4A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Rabu,10,SEJ,4A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Khamis,4,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Khamis,5,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Khamis,7,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Khamis,8,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Jumaat,1,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Jumaat,2,BM,2A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Jumaat,7,BM,1A,Kumpulan 3,Pagi
+Pn. Kasmalah Ismail,Jumaat,8,BM,1A,Kumpulan 3,Pagi
+En. L Asmara Luandim,Isnin,4,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Isnin,5,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Isnin,7,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Isnin,9,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Isnin,10,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,3,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,4,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,5,PK,3B,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,9,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,10,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Selasa,11,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Rabu,1,PJ,3A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Rabu,3,PJ,3B,Kumpulan 2,Pagi
+En. L Asmara Luandim,Rabu,9,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Rabu,10,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,1,PSV,3B,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,2,PSV,3B,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,4,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,5,BM,5A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,7,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,8,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Khamis,9,PK,3A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Jumaat,3,PJ,3A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Jumaat,5,PJ,3B,Kumpulan 2,Pagi
+En. L Asmara Luandim,Jumaat,7,BM,6A,Kumpulan 2,Pagi
+En. L Asmara Luandim,Jumaat,8,BM,6A,Kumpulan 2,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,4,PI,Pra Anggerik,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,5,PI,Pra Anggerik,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,10,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,11,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,12,TASMEK,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Isnin,13,TASMEK,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,2,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,3,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,7,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,8,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,10,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Selasa,11,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,3,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,4,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,9,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,10,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,11,TASMEK,2B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Rabu,12,TASMEK,2B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,2,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,3,PI,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,9,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,10,PI,2A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,11,TASMEK,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Khamis,12,TASMEK,1B,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Jumaat,1,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Jumaat,2,PI,1A,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Jumaat,4,PI,Pra Anggerik,Kumpulan 1,Pagi
+Pn. Mastikahjunaidah Shahrom,Jumaat,5,PI,Pra Anggerik,Kumpulan 1,Pagi
+Pn. Milnah Namih,Isnin,3,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Isnin,4,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Isnin,7,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Isnin,8,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,1,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,2,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,4,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,5,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,7,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Selasa,8,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,1,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,2,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,4,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,5,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,7,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Rabu,8,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Khamis,3,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Khamis,4,BI,6A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Khamis,9,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Khamis,10,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,2,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,3,BI,5A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,4,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,5,BI,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,7,RBT,4A,Kumpulan 1,Pagi
+Pn. Milnah Namih,Jumaat,8,RBT,4A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Isnin,3,PK,5B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Isnin,4,SN,4A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Isnin,5,SN,4A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Isnin,9,SN,1A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Isnin,10,SN,1A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,1,SN,4B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,2,SN,4B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,4,SN,1A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,7,RBT,6B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,9,RBT,6A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Selasa,10,RBT,6A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Rabu,1,SN,5A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Rabu,2,SN,5A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Rabu,3,PJ,5B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Rabu,9,RBT,5B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Rabu,10,RBT,5B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,2,RBT,5A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,3,RBT,5A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,5,PJ,5B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,7,RBT,6B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,9,SN,4A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Khamis,10,SN,4A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Jumaat,1,SN,4B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Jumaat,2,SN,4B,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Jumaat,7,SN,5A,Kumpulan 1,Pagi
+En. Mohd. Hafiz Qayyum Ahmad,Jumaat,8,SN,5A,Kumpulan 1,Pagi
+Pn. Muhayan Diman,Isnin,2,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Isnin,3,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Isnin,7,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Isnin,8,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Isnin,9,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Selasa,2,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Selasa,3,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Selasa,7,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Selasa,9,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Selasa,10,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,1,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,2,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,4,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,5,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,9,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Rabu,10,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Khamis,2,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Khamis,3,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Khamis,7,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Khamis,8,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,1,PSV,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,2,PSV,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,4,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,5,BM,3A,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,7,BM,3B,Kumpulan 4,Pagi
+Pn. Muhayan Diman,Jumaat,8,BM,3B,Kumpulan 4,Pagi
+En. Muhd. Huzaifah Arman,Isnin,2,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,3,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,7,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,8,PI,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,9,PI,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,12,TASMEK,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Isnin,13,TASMEK,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,1,PI,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,2,PI,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,4,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,5,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,8,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Selasa,9,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,4,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,5,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,7,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,8,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,11,TASMEK,5B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Rabu,12,TASMEK,5B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,1,PI,4B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,3,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,4,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,7,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,8,PI,3A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,11,TASMEK,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Khamis,12,TASMEK,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Jumaat,1,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Jumaat,2,PI,3B,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Jumaat,4,PI,5A,Kumpulan 2,Pagi
+En. Muhd. Huzaifah Arman,Jumaat,5,PI,5A,Kumpulan 2,Pagi
+En. Rejos Baking,Isnin,2,PSV,5A,Kumpulan 3,Pagi
+En. Rejos Baking,Isnin,3,PSV,5A,Kumpulan 3,Pagi
+En. Rejos Baking,Isnin,4,RBT,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Isnin,5,RBT,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Isnin,7,PK,6B,Kumpulan 3,Pagi
+En. Rejos Baking,Isnin,9,MZ,3B,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,1,PJ,1A,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,3,PJ,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,5,PJ,6B,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,7,MZ,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,9,PK,1A,Kumpulan 3,Pagi
+En. Rejos Baking,Selasa,11,PK,5A,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,1,PJ,6B,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,3,PJ,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,5,PJ,5A,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,7,PK,6A,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,8,MZ,6A,Kumpulan 3,Pagi
+En. Rejos Baking,Rabu,9,MZ,6B,Kumpulan 3,Pagi
+En. Rejos Baking,Khamis,3,PJ,1A,Kumpulan 3,Pagi
+En. Rejos Baking,Khamis,5,PJ,6A,Kumpulan 3,Pagi
+En. Rejos Baking,Khamis,7,PK,4B,Kumpulan 3,Pagi
+En. Rejos Baking,Khamis,9,PSV,1A,Kumpulan 3,Pagi
+En. Rejos Baking,Khamis,10,PSV,1A,Kumpulan 3,Pagi
+En. Rejos Baking,Jumaat,1,PJ,5A,Kumpulan 3,Pagi
+En. Rejos Baking,Jumaat,3,PJ,6A,Kumpulan 3,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,2,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,3,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,7,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,8,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,10,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Isnin,11,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,1,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,2,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,7,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,8,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,10,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Selasa,11,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,1,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,2,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,4,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,5,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,7,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,8,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Rabu,10,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Khamis,1,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Khamis,2,BI,2A,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Khamis,5,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Khamis,7,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Khamis,8,BI,2B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Jumaat,3,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Jumaat,4,BI,3B,Kumpulan 1,Pagi
+Pn. Rohanah Mohd. Soud,Jumaat,8,BI,2B,Kumpulan 1,Pagi
+Cik Rozeline Francis,Isnin,2,BKD,6A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Isnin,10,BKD,5A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Isnin,11,BKD,5A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Selasa,3,PJ,2B,Kumpulan 2,Pagi
+Cik Rozeline Francis,Selasa,5,PJ,2A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Selasa,10,BKD,4A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Selasa,11,BKD,4A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Rabu,3,PJ,2A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Rabu,5,PJ,2B,Kumpulan 2,Pagi
+Cik Rozeline Francis,Rabu,10,BKD,6A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Khamis,1,BKD,1A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Khamis,2,BKD,1A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Khamis,3,PK,2A,Kumpulan 2,Pagi
+Cik Rozeline Francis,Jumaat,3,PK,2B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Isnin,2,M3,4B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Isnin,3,M3,4B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Isnin,10,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Isnin,11,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,1,M3,6B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,2,M3,6B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,4,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,5,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,7,M3,5A,Kumpulan 2,Pagi
+Cik Rozie Sumil,Selasa,8,M3,5A,Kumpulan 2,Pagi
+Cik Rozie Sumil,Rabu,3,M3,5A,Kumpulan 2,Pagi
+Cik Rozie Sumil,Rabu,4,M3,5A,Kumpulan 2,Pagi
+Cik Rozie Sumil,Rabu,8,M3,6B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Rabu,9,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Rabu,10,M3,1B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Khamis,1,M3,5A,Kumpulan 2,Pagi
+Cik Rozie Sumil,Khamis,3,M3,6B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Khamis,4,M3,6B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Khamis,8,M3,4B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Khamis,9,M3,4B,Kumpulan 2,Pagi
+Cik Rozie Sumil,Jumaat,5,M3,4B,Kumpulan 2,Pagi
+Pn. Salhah Awang Tengah,Isnin,2,BA,6A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Isnin,4,BA,3A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Isnin,5,BA,3A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Isnin,7,PI,Pra Dahlia,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Isnin,10,BA,5A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Isnin,11,BA,5A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,1,BA,3B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,2,BA,3B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,4,BA,5B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,5,BA,5B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,10,BA,4A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Selasa,11,BA,4A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,3,BA,2B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,4,BA,2B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,7,BA,6B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,8,BA,2A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,9,BA,2A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,10,BA,6A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,11,TASMEK,4A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Rabu,12,TASMEK,4A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,1,BA,1A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,2,BA,1A,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,4,BA,1B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,5,BA,1B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,7,PI,Pra Dahlia,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,10,BA,6B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,11,TASMEK,6B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Khamis,12,TASMEK,6B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Jumaat,3,BA,4B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Jumaat,4,BA,4B,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Jumaat,7,PI,Pra Dahlia,Kumpulan 4,Pagi
+Pn. Salhah Awang Tengah,Jumaat,8,PI,Pra Dahlia,Kumpulan 4,Pagi
+Pn. Yunizah Esun,Isnin,4,SN,2A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Isnin,5,SN,2A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Isnin,7,SN,6A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Isnin,8,SN,6A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Isnin,9,MZ,4A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Isnin,11,SN,2B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,1,SN,3A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,3,SN,3B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,4,SN,3B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,8,SN,6B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,9,SN,6B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Selasa,11,SN,3B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Rabu,2,SN,6B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Rabu,3,SN,6B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Rabu,9,SN,2B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Rabu,10,SN,2B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,1,SN,6A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,2,SN,6A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,4,SN,3A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,5,SN,3A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,7,PSV,1B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,8,PSV,1B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Khamis,10,MZ,3A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Jumaat,3,SN,2A,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Jumaat,4,PSV,5B,Kumpulan 2,Pagi
+Pn. Yunizah Esun,Jumaat,5,PSV,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,4,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,5,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,7,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,8,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,10,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Isnin,11,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,3,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,4,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,8,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,9,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,10,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Selasa,11,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Rabu,4,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Rabu,5,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Rabu,9,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Rabu,10,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Khamis,1,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Khamis,3,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Khamis,4,BI,5B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Khamis,8,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Khamis,9,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Jumaat,3,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Jumaat,4,BI,6B,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Jumaat,7,BI,3A,Kumpulan 2,Pagi
+Pn. Zuraidah Hj. Marjin,Jumaat,8,BI,3A,Kumpulan 2,Pagi
+Pn. Zurinah Jubidi,Isnin,4,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Isnin,5,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Isnin,7,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Isnin,8,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Isnin,10,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Isnin,11,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,2,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,3,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,7,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,8,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,10,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Selasa,11,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,1,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,2,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,4,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,5,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,9,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Rabu,10,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Khamis,4,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Khamis,5,BI,4B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Khamis,7,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Khamis,8,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Jumaat,3,BI,1A,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Jumaat,5,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Jumaat,7,BI,1B,Kumpulan 4,Pagi
+Pn. Zurinah Jubidi,Jumaat,8,BI,1B,Kumpulan 4,Pagi
+Cik Anizah Anis Dalinsip,Isnin,7,M3,5B,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Isnin,8,M3,5B,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Selasa,4,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Selasa,5,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Selasa,10,M3,5B,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Selasa,11,M3,5B,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Rabu,7,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Rabu,8,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Khamis,3,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Khamis,4,PM,4A,Kumpulan 1,Pagi
+Cik Anizah Anis Dalinsip,Jumaat,3,M3,5B,Kumpulan 1,Pagi
+Cik Prettnyrina Dualis,Isnin,2,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Isnin,4,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Isnin,5,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Isnin,10,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Isnin,11,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Selasa,1,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Selasa,2,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Rabu,1,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Rabu,2,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Rabu,4,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Rabu,5,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Khamis,1,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Khamis,2,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Jumaat,1,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Jumaat,2,BM,5B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Jumaat,5,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Jumaat,7,BM,6B,Kumpulan 4,Pagi
+Cik Prettnyrina Dualis,Jumaat,8,BM,6B,Kumpulan 4,Pagi

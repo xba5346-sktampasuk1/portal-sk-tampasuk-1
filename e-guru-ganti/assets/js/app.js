@@ -298,7 +298,7 @@ function showToast(message, type = "neutral") {
 function updateGroupMembers() {
   const val = kumpulanSelect.value;
   groupMembersDisplay.innerHTML = "";
-  if (val && TEACHER_GROUPS[val]) {
+  if (val && Array.isArray(TEACHER_GROUPS[val]) && TEACHER_GROUPS[val].length > 0) {
     // Dapatkan senarai guru tidak hadir yang dipilih
     const absentTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
       .map(r => r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value.trim() : "")
@@ -329,6 +329,22 @@ function updateGroupMembers() {
       groupMembersDisplay.appendChild(card);
     });
     if (window.lucide) window.lucide.createIcons();
+  } else if (val) {
+    groupMembersDisplay.innerHTML = `
+      <div style="grid-column: 1 / -1; background:var(--bg-subtle); border:1px dashed var(--border-subtle); border-radius:10px; padding:0.75rem 1rem; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        <span>Tiada senarai guru ditetapkan bagi <strong>${val}</strong> buat masa ini. (Sekolah tanpa kumpulan bertugas boleh membiarkan ruang ini kosong).</span>
+        <button type="button" class="action-btn btn-secondary" style="font-size:0.75rem; padding:0.35rem 0.75rem;" onclick="document.querySelector('[data-page=page-import]')?.click(); setTimeout(() => document.getElementById('duty-group-manager-card')?.scrollIntoView({behavior:'smooth'}), 150);">
+          <i data-lucide="users" style="width:14px;height:14px;"></i> Urus Kumpulan Bertugas
+        </button>
+      </div>
+    `;
+    if (window.lucide) window.lucide.createIcons();
+  } else {
+    groupMembersDisplay.innerHTML = `
+      <div style="grid-column: 1 / -1; background:var(--bg-subtle); border:1px dashed var(--border-subtle); border-radius:10px; padding:0.65rem 1rem; font-size:0.8rem; color:var(--text-muted);">
+        Pilih kumpulan bertugas di atas (Kumpulan 1 – 4) untuk memaparkan senarai guru bertugas mingguan, atau biarkan kosong jika sekolah tidak menggunakan kumpulan bertugas.
+      </div>
+    `;
   }
 }
 
@@ -984,11 +1000,29 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
   if (window.lucide) window.lucide.createIcons();
 
-  // Paparan Mini Jadual Guru Berada Tepat di Tengah-Tengah Skrin (Center of Viewport)
-  popover.style.top = "50%";
-  popover.style.left = "50%";
-  popover.style.transform = "translate(-50%, -50%) scale(1)";
+  // Paparan Mini Jadual Guru Berada di Tengah tetapi TIDAK Menghalang Senarai Nama Guru pada Dropdown
   popover.classList.remove("hidden");
+  const popW = popover.offsetWidth || 320;
+  let centerX = window.innerWidth * 0.5;
+
+  const wrapperEl = targetElement
+    ? (targetElement.closest(".custom-ganti-wrapper") || targetElement.closest(".custom-ganti-menu") || targetElement)
+    : null;
+  if (wrapperEl) {
+    const wrapRect = wrapperEl.getBoundingClientRect();
+    if (wrapRect.width > 0) {
+      // Kekalkan jarak bersih sekurang-kurangnya 24px di sebelah kiri kotak/senarai dropdown Guru Pengganti
+      const maxAllowedCenterX = wrapRect.left - 24 - (popW / 2);
+      if (centerX > maxAllowedCenterX) {
+        centerX = maxAllowedCenterX;
+      }
+    }
+  }
+  centerX = Math.max((popW / 2) + 16, centerX);
+
+  popover.style.top = "50%";
+  popover.style.left = `${Math.round(centerX)}px`;
+  popover.style.transform = "translate(-50%, -50%) scale(1)";
   popover.style.opacity = "1";
 }
 
@@ -1134,11 +1168,9 @@ function autoFillSchedule(options = {}) {
 
 // Cadangan Guru Ganti Pintar dengan Pengesanan Pertindihan Semasa (Clash Prevention)
 function dapatkanCadanganGuruGanti(kumpulanVal, hariVal, masaVal, currentRow) {
-  if (!kumpulanVal || !TEACHER_GROUPS[kumpulanVal]) {
-    return { bertugas: [], tidakBertugasBebas: [] };
-  }
-
-  const dutyTeachers = TEACHER_GROUPS[kumpulanVal];
+  const dutyTeachers = (kumpulanVal && Array.isArray(TEACHER_GROUPS[kumpulanVal]))
+    ? TEACHER_GROUPS[kumpulanVal]
+    : [];
   const absentTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
     .map(r => r.querySelector(".teacher-select").value)
     .filter(Boolean);
@@ -1168,12 +1200,13 @@ function dapatkanCadanganGuruGanti(kumpulanVal, hariVal, masaVal, currentRow) {
   };
 
   const bertugas = dutyTeachers.map(checkTeacher);
-  const tidakBertugasBebas = MASTER_TEACHERS
+  const nonDutyChecked = MASTER_TEACHERS
     .filter(name => !dutyTeachers.includes(name))
-    .map(checkTeacher)
-    .filter(c => c.boleh);
+    .map(checkTeacher);
+  const tidakBertugasBebas = nonDutyChecked.filter(c => c.boleh);
+  const tidakBertugasSibuk = nonDutyChecked.filter(c => !c.boleh);
 
-  return { bertugas, tidakBertugasBebas };
+  return { bertugas, tidakBertugasBebas, tidakBertugasSibuk };
 }
 
 // Mengemas kini pilihan dropdown Guru Ganti di semua baris
@@ -1320,59 +1353,92 @@ function kemasKiniSemuaCadanganGuruGanti() {
       addCustomGroup("⭐ Guru Pasangan Serentak (Cantum Kelas)", [partnerInfo]);
     }
 
-    if (kv && hv && masaVal) {
-      const { bertugas, tidakBertugasBebas } = dapatkanCadanganGuruGanti(kv, hv, masaVal, row);
+    if (hv && masaVal) {
+      const { bertugas, tidakBertugasBebas, tidakBertugasSibuk = [] } = dapatkanCadanganGuruGanti(kv, hv, masaVal, row);
       const countP = (n) => countPeriods(n, hv);
       const sortFn = (a, b) => countP(a.nama) - countP(b.nama);
 
       let kb = bertugas.filter(c => c.boleh).sort(sortFn);
       let ks = bertugas.filter(c => !c.boleh).sort(sortFn);
       let ntb = tidakBertugasBebas.sort(sortFn);
+      let nts = tidakBertugasSibuk.sort(sortFn);
 
       // Asingkan partnerTeacher agar tidak berulang dalam senarai di bawah
       if (partnerInfo) {
         kb = kb.filter(c => c.nama !== partnerInfo.nama);
         ks = ks.filter(c => c.nama !== partnerInfo.nama);
         ntb = ntb.filter(c => c.nama !== partnerInfo.nama);
+        nts = nts.filter(c => c.nama !== partnerInfo.nama);
       }
 
-      if (kb.length) {
-        const og = document.createElement("optgroup");
-        og.label = "Guru Bertugas (Bebas)";
-        kb.forEach(c => {
-          const opt = document.createElement("option");
-          opt.value = c.nama;
-          opt.textContent = formatLabel(c.nama);
-          og.appendChild(opt);
-        });
-        selectEl.appendChild(og);
-        addCustomGroup("Guru Bertugas (Bebas)", kb);
-      }
+      const hasDutyGroupMembers = (kb.length + ks.length) > 0;
 
-      if (ks.length) {
-        const og = document.createElement("optgroup");
-        og.label = "Guru Bertugas (Ada Kelas / Tidak Hadir / Bertindih)";
-        ks.forEach(c => {
-          const opt = document.createElement("option");
-          opt.value = c.nama;
-          opt.textContent = `${formatLabel(c.nama)} [${c.status}]`;
-          og.appendChild(opt);
-        });
-        selectEl.appendChild(og);
-        addCustomGroup("Guru Bertugas (Ada Kelas / Bertindih)", ks, true);
-      }
+      if (hasDutyGroupMembers) {
+        if (kb.length) {
+          const og = document.createElement("optgroup");
+          og.label = "Guru Bertugas (Bebas)";
+          kb.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.nama;
+            opt.textContent = formatLabel(c.nama);
+            og.appendChild(opt);
+          });
+          selectEl.appendChild(og);
+          addCustomGroup("Guru Bertugas (Bebas)", kb);
+        }
 
-      if (ntb.length) {
-        const og = document.createElement("optgroup");
-        og.label = "Guru Tidak Bertugas (Bebas)";
-        ntb.forEach(c => {
-          const opt = document.createElement("option");
-          opt.value = c.nama;
-          opt.textContent = formatLabel(c.nama);
-          og.appendChild(opt);
-        });
-        selectEl.appendChild(og);
-        addCustomGroup("Guru Tidak Bertugas (Bebas)", ntb);
+        if (ks.length) {
+          const og = document.createElement("optgroup");
+          og.label = "Guru Bertugas (Ada Kelas / Tidak Hadir / Bertindih)";
+          ks.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.nama;
+            opt.textContent = `${formatLabel(c.nama)} [${c.status}]`;
+            og.appendChild(opt);
+          });
+          selectEl.appendChild(og);
+          addCustomGroup("Guru Bertugas (Ada Kelas / Bertindih)", ks, true);
+        }
+
+        if (ntb.length) {
+          const og = document.createElement("optgroup");
+          og.label = "Guru Tidak Bertugas (Bebas)";
+          ntb.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.nama;
+            opt.textContent = formatLabel(c.nama);
+            og.appendChild(opt);
+          });
+          selectEl.appendChild(og);
+          addCustomGroup("Guru Tidak Bertugas (Bebas)", ntb);
+        }
+      } else {
+        // Jika sekolah tidak menggunakan Kumpulan Bertugas (atau dibiarkan kosong)
+        if (ntb.length) {
+          const og = document.createElement("optgroup");
+          og.label = "Guru Bebas (Tiada Kelas)";
+          ntb.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.nama;
+            opt.textContent = formatLabel(c.nama);
+            og.appendChild(opt);
+          });
+          selectEl.appendChild(og);
+          addCustomGroup("Guru Bebas (Tiada Kelas)", ntb);
+        }
+
+        if (nts.length) {
+          const og = document.createElement("optgroup");
+          og.label = "Guru Ada Kelas / Bertindih";
+          nts.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.nama;
+            opt.textContent = `${formatLabel(c.nama)} [${c.status}]`;
+            og.appendChild(opt);
+          });
+          selectEl.appendChild(og);
+          addCustomGroup("Guru Ada Kelas / Bertindih", nts, true);
+        }
       }
 
       // Pilihan Guru UBK
@@ -3206,7 +3272,7 @@ function printDailyAttendanceReport() {
           </table>`
       }
 
-      <div class="section-title">2. Senarai Penuh Kehadiran 27 Guru Sekolah</div>
+      <div class="section-title">2. Senarai Penuh Kehadiran ${totalTeachers} Guru Sekolah</div>
       <table class="table">
         <thead>
           <tr>
@@ -5175,20 +5241,48 @@ function applySchoolData(schoolData, saveToStorage = true) {
 
   // 3. Senarai Guru, Kumpulan Bertugas, No WhatsApp & Kod Warna Automatik Guru
   if (Array.isArray(schoolData.teachers) && schoolData.teachers.length > 0) {
-    MASTER_TEACHERS = schoolData.teachers;
+    MASTER_TEACHERS = schoolData.teachers.filter(t => t && String(t).trim().toLowerCase() !== "nama guru" && String(t).trim().toLowerCase() !== "nama_guru");
   }
   const groupsObj = schoolData.groups || schoolData.teacherGroups;
   if (groupsObj && typeof groupsObj === "object") {
-    TEACHER_GROUPS = groupsObj;
+    const cleanedGroups = {};
+    Object.entries(groupsObj).forEach(([gName, list]) => {
+      if (Array.isArray(list)) {
+        cleanedGroups[gName] = list.filter(t => t && String(t).trim().toLowerCase() !== "nama guru");
+      }
+    });
+    TEACHER_GROUPS = cleanedGroups;
   }
+
+  // Pemulihan Pintar: Jika tajuk Google Sheet lama menyebabkan Kumpulan Bertugas termasuk ke dalam 'phones' dan No Telefon termasuk ke dalam 'teacherSessions'
   const phonesObj = schoolData.phones || schoolData.teacherPhones;
+  const sessionsObj = schoolData.teacherSessions || {};
   if (phonesObj && typeof phonesObj === "object") {
-    Object.assign(DEFAULT_TEACHER_PHONES, phonesObj);
+    Object.entries(phonesObj).forEach(([guru, val]) => {
+      if (!guru || guru.toLowerCase() === "nama guru") return;
+      const strVal = String(val || "").trim();
+      if (/^(kumpulan\s*[1-9]|[1-9])$/i.test(strVal)) {
+        const grpNum = strVal.match(/([1-9])/)[1];
+        const normGrp = `Kumpulan ${grpNum}`;
+        if (!TEACHER_GROUPS[normGrp]) TEACHER_GROUPS[normGrp] = [];
+        if (!TEACHER_GROUPS[normGrp].includes(guru)) {
+          TEACHER_GROUPS[normGrp].push(guru);
+        }
+        // Semak jika nombor telefon berada dalam teacherSessions[guru]
+        const sesVal = String(sessionsObj[guru] || "").trim();
+        if (/^\+?6?01[\d\-\s]{6,12}$/.test(sesVal)) {
+          DEFAULT_TEACHER_PHONES[guru] = sesVal;
+        }
+      } else if (strVal && !/^6\.01e\+\d+$/i.test(strVal)) {
+        DEFAULT_TEACHER_PHONES[guru] = strVal;
+      }
+    });
   }
+
   const colorsObj = schoolData.colors || schoolData.teacherColors;
   if (colorsObj && typeof colorsObj === "object" && typeof TEACHER_CUSTOM_COLORS === "object") {
     Object.entries(colorsObj).forEach(([guru, hex]) => {
-      if (guru && hex && typeof hexToTeacherPalette === "function") {
+      if (guru && guru.toLowerCase() !== "nama guru" && hex && typeof hexToTeacherPalette === "function") {
         const pal = hexToTeacherPalette(hex);
         if (pal) TEACHER_CUSTOM_COLORS[guru] = pal;
       }
@@ -5255,6 +5349,10 @@ function applySchoolData(schoolData, saveToStorage = true) {
 
   updateSchoolBrandingDOM();
   refreshAllTeacherDropdowns();
+  updateGroupMembers();
+  if (typeof kemasKiniSemuaCadanganGuruGanti === "function") {
+    kemasKiniSemuaCadanganGuruGanti();
+  }
   populateCalendarClassFilter();
   renderImportPage();
 
@@ -5335,17 +5433,97 @@ function renderImportPage() {
   }
 
   populateSchoolProfileFormInputs();
+  renderDutyGroupManagerTable();
 
   if (window.lucide) window.lucide.createIcons();
 }
 
+function renderDutyGroupManagerTable() {
+  const tbody = document.getElementById("duty-group-manager-tbody");
+  if (!tbody) return;
+
+  const cleanTeachers = MASTER_TEACHERS.filter(t => t && String(t).trim().toLowerCase() !== "nama guru");
+  if (cleanTeachers.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+          Belum ada senarai guru didaftarkan. Sila tambah nama guru menggunakan borang di atas, muat naik fail CSV, atau segerak dari Google Sheet.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = "";
+  cleanTeachers.forEach((guru, idx) => {
+    let currentGrp = "";
+    for (const [gName, members] of Object.entries(TEACHER_GROUPS)) {
+      if (Array.isArray(members) && members.includes(guru)) {
+        currentGrp = gName;
+        break;
+      }
+    }
+    const phone = getTeacherPhone(guru) || "";
+    const col = getTeacherColor(guru);
+
+    const tr = document.createElement("tr");
+    tr.style.borderBottom = "1px solid var(--border-subtle)";
+    tr.innerHTML = `
+      <td style="text-align:center; padding:8px 10px; font-weight:700; color:var(--text-muted);">${idx + 1}</td>
+      <td style="padding:8px 10px;">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="width:10px; height:10px; border-radius:50%; background:${col.primary}; display:inline-block; flex-shrink:0;"></span>
+          <strong style="color:var(--text-primary);">${guru}</strong>
+        </div>
+      </td>
+      <td style="padding:6px 10px;">
+        <select class="field-control duty-group-row-select" data-guru="${guru}" style="padding:0.35rem 0.6rem; font-size:0.8rem; font-weight:600;">
+          <option value="" ${!currentGrp ? "selected" : ""}>Tiada Kumpulan (Kosong)</option>
+          <option value="Kumpulan 1" ${currentGrp === "Kumpulan 1" ? "selected" : ""}>Kumpulan 1</option>
+          <option value="Kumpulan 2" ${currentGrp === "Kumpulan 2" ? "selected" : ""}>Kumpulan 2</option>
+          <option value="Kumpulan 3" ${currentGrp === "Kumpulan 3" ? "selected" : ""}>Kumpulan 3</option>
+          <option value="Kumpulan 4" ${currentGrp === "Kumpulan 4" ? "selected" : ""}>Kumpulan 4</option>
+        </select>
+      </td>
+      <td style="padding:8px 10px; font-family:monospace; color:var(--text-secondary);">${phone || "—"}</td>
+    `;
+
+    const sel = tr.querySelector(".duty-group-row-select");
+    if (sel) {
+      sel.addEventListener("change", () => {
+        const newGrp = sel.value;
+        Object.keys(TEACHER_GROUPS).forEach(gKey => {
+          if (Array.isArray(TEACHER_GROUPS[gKey])) {
+            TEACHER_GROUPS[gKey] = TEACHER_GROUPS[gKey].filter(t => t !== guru);
+          }
+        });
+        if (newGrp) {
+          if (!TEACHER_GROUPS[newGrp]) TEACHER_GROUPS[newGrp] = [];
+          if (!TEACHER_GROUPS[newGrp].includes(guru)) {
+            TEACHER_GROUPS[newGrp].push(guru);
+          }
+        }
+        const groupsKey = APP_CONFIG.storageKeys.customTeacherGroups || "eguru-custom-teacher-groups-v2";
+        localStorage.setItem(groupsKey, JSON.stringify(TEACHER_GROUPS));
+        updateGroupMembers();
+        if (typeof kemasKiniSemuaCadanganGuruGanti === "function") {
+          kemasKiniSemuaCadanganGuruGanti();
+        }
+        showToast(`Kumpulan bertugas bagi ${guru} dikemas kini kepada ${newGrp || "Tiada Kumpulan"}.`, "success");
+      });
+    }
+
+    tbody.appendChild(tr);
+  });
+}
+
 function downloadCSVTimetableTemplate() {
-  let csv = "Nama Guru,Hari,Slot (1-13),Mata Pelajaran,Kelas\n";
-  csv += "Cikgu Ahmad bin Razali,Isnin,1,BM,1 Bijak\n";
-  csv += "Cikgu Ahmad bin Razali,Isnin,2,BM,1 Bijak\n";
-  csv += "Cikgu Siti Aminah binti Musa,Isnin,3,BI,2 Bestari\n";
-  csv += "Cikgu Faridah binti Hassan,Selasa,4,MT,3 Cemerlang\n";
-  csv += "Cikgu Hafiz bin Ibrahim,Rabu,5,SN,4 Dinamik\n";
+  let csv = "Nama Guru,Hari,Slot (1-13),Mata Pelajaran,Kelas,Kumpulan Bertugas (Pilihan)\n";
+  csv += "Cikgu Ahmad bin Razali,Isnin,1,BM,1 Bijak,Kumpulan 1\n";
+  csv += "Cikgu Ahmad bin Razali,Isnin,2,BM,1 Bijak,Kumpulan 1\n";
+  csv += "Cikgu Siti Aminah binti Musa,Isnin,3,BI,2 Bestari,Kumpulan 2\n";
+  csv += "Cikgu Faridah binti Hassan,Selasa,4,MT,3 Cemerlang,Kumpulan 3\n";
+  csv += "Cikgu Hafiz bin Ibrahim,Rabu,5,SN,4 Dinamik,Kumpulan 4\n";
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -5360,23 +5538,23 @@ function downloadCSVTimetableTemplate() {
 }
 
 function downloadCSVTeachersTemplate() {
-  let csv = "Bil,Nama Guru,Kumpulan Bertugas,No WhatsApp,Jawatan / Catatan,Kod Warna (Automatik)\n";
+  let csv = "Nama Guru,Kumpulan Bertugas (Pilihan: Kumpulan 1 - 4),No Telefon WhatsApp,Emel Rasmi (Pilihan),Sesi,Kod Warna (Automatik)\n";
   if (MASTER_TEACHERS.length > 0) {
-    MASTER_TEACHERS.forEach((t, idx) => {
-      let grp = "Kumpulan 1";
+    MASTER_TEACHERS.forEach((t) => {
+      let grp = "";
       for (const [gName, members] of Object.entries(TEACHER_GROUPS)) {
-        if (members.includes(t)) { grp = gName; break; }
+        if (Array.isArray(members) && members.includes(t)) { grp = gName; break; }
       }
-      const phone = getTeacherPhone(t) || "";
+      const phone = (getTeacherPhone(t) || "").replace(/^\+/, "");
       const pal = typeof getTeacherColor === "function" ? getTeacherColor(t) : null;
-      const hex = (pal && (pal.hex || pal.dot)) ? (pal.hex || pal.dot) : "";
-      csv += `${idx + 1},"${t}",${grp},${phone},Guru Akademik,${hex}\n`;
+      const hex = (pal && (pal.hex || pal.primary || pal.dot)) ? (pal.hex || pal.primary || pal.dot) : "";
+      csv += `"${t}",${grp},${phone},,Pagi,${hex}\n`;
     });
   } else {
-    csv += `1,"Cikgu Ahmad bin Razali",Kumpulan 1,60123456789,Guru Akademik,#2563EB\n`;
-    csv += `2,"Cikgu Siti Aminah binti Musa",Kumpulan 2,60134567890,Guru Akademik,#059669\n`;
-    csv += `3,"Cikgu Faridah binti Hassan",Kumpulan 3,60145678901,Guru Akademik,#D97706\n`;
-    csv += `4,"Cikgu Hafiz bin Ibrahim",Kumpulan 4,60198765432,Guru Akademik,#7C3AED\n`;
+    csv += `"Cikgu Ahmad bin Razali",Kumpulan 1,60123456789,,Pagi,#2563EB\n`;
+    csv += `"Cikgu Siti Aminah binti Musa",Kumpulan 2,60134567890,,Pagi,#059669\n`;
+    csv += `"Cikgu Faridah binti Hassan",Kumpulan 3,60145678901,,Pagi,#D97706\n`;
+    csv += `"Cikgu Hafiz bin Ibrahim",Kumpulan 4,60198765432,,Pagi,#7C3AED\n`;
   }
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -5388,25 +5566,65 @@ function downloadCSVTeachersTemplate() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast("Templat senarai guru (CSV) berjaya dimuat turun.", "success");
+  showToast("Templat senarai guru & kumpulan bertugas (CSV) berjaya dimuat turun.", "success");
+}
+
+function normalizeDutyGroupLabel(rawVal) {
+  if (!rawVal) return "";
+  const v = String(rawVal).trim();
+  if (/^[1-9]$/.test(v)) return `Kumpulan ${v}`;
+  const m = v.match(/^kumpulan\s*([1-9])$/i);
+  if (m) return `Kumpulan ${m[1]}`;
+  if (/^kumpulan\s+\S+/i.test(v)) return v;
+  return "";
 }
 
 function parseTimetableCSV(text) {
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   if (lines.length < 2) return null;
 
+  const headerLower = lines[0].toLowerCase();
+  const isTeacherListCsv = (headerLower.includes("whatsapp") || headerLower.includes("telefon") || headerLower.includes("kod warna")) && !headerLower.includes("mata pelajaran");
+  const startIdx = (headerLower.includes("guru") || headerLower.includes("hari") || headerLower.includes("bil")) ? 1 : 0;
+
   const results = [];
-  const startIdx = lines[0].toLowerCase().includes("guru") ? 1 : 0;
 
   for (let i = startIdx; i < lines.length; i++) {
     const parts = lines[i].split(",").map(p => p.trim().replace(/^["']|["']$/g, ""));
-    if (parts.length >= 5) {
+    if (parts.length < 2) continue;
+
+    if (isTeacherListCsv) {
+      // Menyokong format [Bil, Nama Guru, Kumpulan, No Tel...] ATAU [Nama Guru, Kumpulan, No Tel...]
+      const hasBilCol = /^\d+$/.test(parts[0]) && parts.length >= 3;
+      const offset = hasBilCol ? 1 : 0;
+      const guru = parts[0 + offset] || "";
+      if (!guru || guru.toLowerCase() === "nama guru") continue;
+      const kumpulan = normalizeDutyGroupLabel(parts[1 + offset] || "");
+      const phone = parts[2 + offset] || "";
+      const hex = parts.find(p => p.startsWith("#") && (p.length === 7 || p.length === 4)) || "";
       results.push({
-        guru: parts[0],
+        isTeacherOnly: true,
+        guru,
+        kumpulan,
+        phone,
+        hex,
+        hari: "— (Senarai Guru)",
+        slot: "—",
+        subjek: phone ? `Tel: ${phone}` : "—",
+        kelas: hex || "Automatik"
+      });
+    } else if (parts.length >= 5) {
+      const guru = parts[0];
+      if (!guru || guru.toLowerCase() === "nama guru") continue;
+      const rawGrp = parts[5] || parts[6] || "";
+      const kumpulan = normalizeDutyGroupLabel(rawGrp);
+      results.push({
+        guru: guru,
         hari: parts[1],
         slot: Number(parts[2]),
         subjek: parts[3],
-        kelas: parts[4]
+        kelas: parts[4],
+        kumpulan: kumpulan
       });
     }
   }
@@ -5461,7 +5679,7 @@ function setupImportPageEvents() {
             return;
           }
           parsedImportData = parsed;
-          showToast(`${parsed.length} baris jadual berjaya dibaca!`, "success");
+          showToast(`${parsed.length} rekod data berjaya dibaca!`, "success");
         }
 
         if (previewSection && previewTbody) {
@@ -5469,12 +5687,16 @@ function setupImportPageEvents() {
           const rowsToShow = Array.isArray(parsedImportData) ? parsedImportData.slice(0, 15) : [];
           rowsToShow.forEach(r => {
             const tr = document.createElement("tr");
+            const grpBadge = r.kumpulan
+              ? `<span style="background:#dcfce7; color:#166534; padding:2px 8px; border-radius:999px; font-weight:700; font-size:11px;">${r.kumpulan}</span>`
+              : `<span style="color:#94a3b8; font-style:italic; font-size:11px;">Tiada / Kosong</span>`;
             tr.innerHTML = `
               <td style="padding:6px 10px; font-weight:700;">${r.guru || "—"}</td>
               <td style="padding:6px 10px;">${r.hari || "—"}</td>
               <td style="padding:6px 10px; font-family:monospace;">${r.slot || "—"}</td>
               <td style="padding:6px 10px; color:#1d4ed8; font-weight:600;">${r.subjek || "—"}</td>
               <td style="padding:6px 10px;">${r.kelas || "—"}</td>
+              <td style="padding:6px 10px;">${grpBadge}</td>
             `;
             previewTbody.appendChild(tr);
           });
@@ -5512,29 +5734,46 @@ function setupImportPageEvents() {
 
         if (Array.isArray(parsedImportData)) {
           parsedImportData.forEach(item => {
-            if (!item.guru) return;
+            if (!item.guru || item.guru.toLowerCase() === "nama guru") return;
             newTeachersSet.add(item.guru);
-            if (!newTimetable[item.guru]) newTimetable[item.guru] = {};
-            if (!newTimetable[item.guru][item.hari]) newTimetable[item.guru][item.hari] = [];
-            const slotTime = STANDARD_SLOTS[item.slot] || `Slot ${item.slot}`;
-            newTimetable[item.guru][item.hari].push([slotTime, item.subjek, item.kelas]);
+
+            // Jika Kumpulan Bertugas dinyatakan dalam CSV (sama ada fail Senarai Guru atau fail Jadual Waktu)
+            if (item.kumpulan) {
+              Object.keys(TEACHER_GROUPS).forEach(gKey => {
+                if (Array.isArray(TEACHER_GROUPS[gKey])) {
+                  TEACHER_GROUPS[gKey] = TEACHER_GROUPS[gKey].filter(t => t !== item.guru);
+                }
+              });
+              if (!TEACHER_GROUPS[item.kumpulan]) TEACHER_GROUPS[item.kumpulan] = [];
+              if (!TEACHER_GROUPS[item.kumpulan].includes(item.guru)) {
+                TEACHER_GROUPS[item.kumpulan].push(item.guru);
+              }
+            }
+
+            if (item.phone && !/^6\.01e\+\d+$/i.test(item.phone)) {
+              DEFAULT_TEACHER_PHONES[item.guru] = item.phone;
+            }
+            if (item.hex && typeof hexToTeacherPalette === "function") {
+              const pal = hexToTeacherPalette(item.hex);
+              if (pal) TEACHER_CUSTOM_COLORS[item.guru] = pal;
+            }
+
+            if (!item.isTeacherOnly && item.hari && item.slot) {
+              if (!newTimetable[item.guru]) newTimetable[item.guru] = {};
+              if (!newTimetable[item.guru][item.hari]) newTimetable[item.guru][item.hari] = [];
+              const slotTime = STANDARD_SLOTS[item.slot] || `Slot ${item.slot}`;
+              newTimetable[item.guru][item.hari].push([slotTime, item.subjek, item.kelas]);
+            }
           });
         }
 
         const newTeachersList = [...newTeachersSet];
         if (newTeachersList.length > 0) {
           MASTER_TEACHERS = newTeachersList;
-          // Agihkan guru baharu yang tiada kumpulan ke Kumpulan 1..4 secara seimbang
-          newTeachersList.forEach((t, idx) => {
-            const alreadyInGroup = Object.values(TEACHER_GROUPS).some(arr => Array.isArray(arr) && arr.includes(t));
-            if (!alreadyInGroup) {
-              const gKey = `Kumpulan ${(idx % 4) + 1}`;
-              if (!TEACHER_GROUPS[gKey]) TEACHER_GROUPS[gKey] = [];
-              TEACHER_GROUPS[gKey].push(t);
-            }
-          });
         }
-        Object.assign(TIMETABLE, newTimetable);
+        if (Object.keys(newTimetable).length > 0) {
+          Object.assign(TIMETABLE, newTimetable);
+        }
 
         if (typeof rebuildClassTimetablesFromMaster === "function") {
           rebuildClassTimetablesFromMaster();
@@ -5544,11 +5783,17 @@ function setupImportPageEvents() {
         if (newTeachersList.length > 0) {
           localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(MASTER_TEACHERS));
         }
+        const groupsKey = APP_CONFIG.storageKeys.customTeacherGroups || "eguru-custom-teacher-groups-v2";
+        localStorage.setItem(groupsKey, JSON.stringify(TEACHER_GROUPS));
 
         refreshAllTeacherDropdowns();
+        updateGroupMembers();
+        if (typeof kemasKiniSemuaCadanganGuruGanti === "function") {
+          kemasKiniSemuaCadanganGuruGanti();
+        }
         populateCalendarClassFilter();
         renderImportPage();
-        showToast("Jadual waktu baharu berjaya disimpan dan diaktifkan!", "success");
+        showToast("Data guru, kumpulan bertugas & jadual waktu berjaya disimpan dan diaktifkan!", "success");
 
       } catch (e) {
         showToast("Gagal menyimpan jadual: " + e.message, "error");
@@ -5614,6 +5859,63 @@ function setupImportPageEvents() {
         renderPage5();
         showToast("Semua rekod penggantian tempatan telah dikosongkan.", "info");
       }
+    });
+  }
+
+  // Borang Tambah / Kemas Kini Guru & Kumpulan Bertugas (Pilihan)
+  const quickTeacherForm = document.getElementById("quick-add-teacher-group-form");
+  if (quickTeacherForm) {
+    quickTeacherForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById("quick-teacher-name");
+      const grpSelect = document.getElementById("quick-teacher-group");
+      const phoneInput = document.getElementById("quick-teacher-phone");
+
+      const guru = nameInput ? nameInput.value.trim() : "";
+      const grp = grpSelect ? grpSelect.value.trim() : "";
+      const phone = phoneInput ? phoneInput.value.trim() : "";
+
+      if (!guru || guru.toLowerCase() === "nama guru") {
+        showToast("Sila masukkan nama guru yang sah.", "error");
+        return;
+      }
+
+      if (!MASTER_TEACHERS.includes(guru)) {
+        MASTER_TEACHERS.push(guru);
+      }
+
+      Object.keys(TEACHER_GROUPS).forEach(gKey => {
+        if (Array.isArray(TEACHER_GROUPS[gKey])) {
+          TEACHER_GROUPS[gKey] = TEACHER_GROUPS[gKey].filter(t => t !== guru);
+        }
+      });
+
+      if (grp) {
+        if (!TEACHER_GROUPS[grp]) TEACHER_GROUPS[grp] = [];
+        if (!TEACHER_GROUPS[grp].includes(guru)) {
+          TEACHER_GROUPS[grp].push(guru);
+        }
+      }
+
+      if (phone) {
+        DEFAULT_TEACHER_PHONES[guru] = phone;
+        saveTeacherPhone(guru, phone);
+      }
+
+      localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(MASTER_TEACHERS));
+      const groupsKey = APP_CONFIG.storageKeys.customTeacherGroups || "eguru-custom-teacher-groups-v2";
+      localStorage.setItem(groupsKey, JSON.stringify(TEACHER_GROUPS));
+
+      if (nameInput) nameInput.value = "";
+      if (phoneInput) phoneInput.value = "";
+
+      refreshAllTeacherDropdowns();
+      updateGroupMembers();
+      if (typeof kemasKiniSemuaCadanganGuruGanti === "function") {
+        kemasKiniSemuaCadanganGuruGanti();
+      }
+      renderImportPage();
+      showToast(`Maklumat guru (${guru}) & Kumpulan Bertugas (${grp || "Tiada Kumpulan"}) berjaya disimpan!`, "success");
     });
   }
 }
@@ -5834,12 +6136,21 @@ function initActiveTimetable() {
       applySchoolData({ profile: p }, false);
     }
 
-    // 3. Semak jadual & guru custom CSV
+    // 3. Semak jadual, guru & kumpulan bertugas custom CSV
     const savedTeachers = localStorage.getItem(APP_CONFIG.storageKeys.customTeachers);
     if (savedTeachers) {
       const parsedTeachers = JSON.parse(savedTeachers);
       if (Array.isArray(parsedTeachers) && parsedTeachers.length > 0) {
-        MASTER_TEACHERS = parsedTeachers;
+        MASTER_TEACHERS = parsedTeachers.filter(t => t && String(t).trim().toLowerCase() !== "nama guru");
+      }
+    }
+
+    const groupsKey = APP_CONFIG.storageKeys.customTeacherGroups || "eguru-custom-teacher-groups-v2";
+    const savedGroups = localStorage.getItem(groupsKey);
+    if (savedGroups) {
+      const parsedGroups = JSON.parse(savedGroups);
+      if (parsedGroups && typeof parsedGroups === "object") {
+        TEACHER_GROUPS = parsedGroups;
       }
     }
 

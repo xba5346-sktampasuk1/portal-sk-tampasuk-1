@@ -42,6 +42,7 @@ const APP_CONFIG = {
     removedSlots: "eguru-removed-teacher-slots",
     customTimetable: "eguru-custom-timetable-v2",
     customTeachers: "eguru-custom-teachers-v2",
+    customTeacherGroups: "eguru-custom-teacher-groups-v2",
     schoolDataCache: "eguru-school-data-cache-v2",
     customGasUrl: "eguru_custom_gas_url",
     customSchoolProfile: "eguru_custom_school_profile_v2"

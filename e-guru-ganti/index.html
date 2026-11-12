@@ -260,11 +260,11 @@
 
             <div id="absent-teachers-container" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
 
-            <!-- Kumpulan Bertugas -->
+            <!-- Kumpulan Bertugas (Pilihan) -->
             <div style="margin-top:1.5rem;">
-              <label for="kumpulan" class="teacher-field-label">Kumpulan Bertugas</label>
-              <select id="kumpulan" class="field-control" required style="width:100%;">
-                <option value="">Pilih kumpulan</option>
+              <label for="kumpulan" class="teacher-field-label">Kumpulan Bertugas <span style="font-weight:500; color:var(--text-muted); font-size:0.78rem;">(Pilihan — Biarkan kosong jika sekolah tiada kumpulan)</span></label>
+              <select id="kumpulan" class="field-control" style="width:100%;">
+                <option value="">Tiada / Pilih kumpulan bertugas (Pilihan)</option>
                 <option value="Kumpulan 1">Kumpulan 1</option>
                 <option value="Kumpulan 2">Kumpulan 2</option>
                 <option value="Kumpulan 3">Kumpulan 3</option>
@@ -975,17 +975,18 @@
 
           <div style="display:flex; flex-direction:column; gap:0.75rem;">
             <button id="btn-download-csv-timetable" type="button" class="action-btn" style="background:#16a34a; color:#ffffff; justify-content:center;">
-              <i data-lucide="file-down" style="width:16px;height:16px;"></i> Muat Turun Templat Jadual Guru (CSV)
+              <i data-lucide="file-down" style="width:16px;height:16px;"></i> Muat Turun Templat Jadual Guru &amp; Kumpulan (CSV)
             </button>
             <button id="btn-download-csv-teachers" type="button" class="action-btn" style="background:#0d9488; color:#ffffff; justify-content:center;">
-              <i data-lucide="users" style="width:16px;height:16px;"></i> Muat Turun Templat Senarai Guru &amp; No. Tel (CSV)
+              <i data-lucide="users" style="width:16px;height:16px;"></i> Muat Turun Templat Senarai Guru &amp; Kumpulan Bertugas (CSV)
             </button>
           </div>
 
           <div style="margin-top:1.25rem; font-size:0.78rem; color:var(--text-muted); line-height:1.5;">
             <strong>Format Lajur CSV Jadual:</strong><br>
-            <code>Nama Guru, Hari, Slot Waktu (1-13), Mata Pelajaran, Kelas</code><br>
-            <em>Contoh:</em> <code>Cikgu Ahmad bin Razali, Isnin, 2, BM, 4 Arif</code>
+            <code>Nama Guru, Hari, Slot Waktu (1-13), Mata Pelajaran, Kelas, Kumpulan Bertugas (Pilihan)</code><br>
+            <em>Contoh:</em> <code>Cikgu Ahmad bin Razali, Isnin, 2, BM, 4 Arif, Kumpulan 1</code><br>
+            <span style="display:block; margin-top:4px; color:#0369a1;">💡 <em>Lajur <strong>Kumpulan Bertugas</strong> penting untuk sekolah yang mengamalkan penggiliran kumpulan bertugas (Kumpulan 1 – 4). Sekolah yang tidak menggunakan sistem kumpulan boleh membiarkan ruang tersebut kosong.</em></span>
           </div>
         </section>
 
@@ -997,7 +998,7 @@
             </div>
             <div>
               <h3 style="font-weight:700; font-size:1.05rem; color:var(--text-primary); margin:0;">2. Muat Naik &amp; Import</h3>
-              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Pilih fail CSV atau JSON jadual waktu untuk dikemaskini.</p>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Pilih fail CSV atau JSON jadual waktu / senarai guru untuk dikemaskini.</p>
             </div>
           </div>
 
@@ -1041,12 +1042,76 @@
                 <th style="padding:6px 10px;">Slot / Masa</th>
                 <th style="padding:6px 10px;">Mata Pelajaran</th>
                 <th style="padding:6px 10px;">Kelas</th>
+                <th style="padding:6px 10px;">Kumpulan Bertugas (Pilihan)</th>
               </tr>
             </thead>
             <tbody id="import-preview-tbody"></tbody>
           </table>
         </div>
       </div>
+
+      <!-- KAD UTAMA 3: Pengurusan Senarai Guru & Kumpulan Bertugas (Pilihan) -->
+      <section id="duty-group-manager-card" class="section-card" style="padding:1.5rem; margin-top:1.5rem; border-left:4px solid #10b981;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i data-lucide="users" style="width:22px;height:22px;"></i>
+            </div>
+            <div>
+              <h3 style="font-weight:800; font-size:1.1rem; color:var(--text-primary); margin:0;">3. Pengurusan Senarai Guru &amp; Kumpulan Bertugas (Pilihan)</h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">
+                Tetapkan atau kemas kini <strong>Kumpulan Bertugas (Kumpulan 1 – 4)</strong> bagi setiap guru. Sekolah yang tidak menggunakan kumpulan bertugas boleh membiarkannya kosong (<em>Tiada Kumpulan</em>).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Borang Tambah / Kemas Kini Guru & Kumpulan Bertugas -->
+        <form id="quick-add-teacher-group-form" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.85rem; align-items:end; background:var(--bg-subtle); border:1px solid var(--border-subtle); border-radius:10px; padding:1rem; margin-bottom:1.25rem;">
+          <div>
+            <label for="quick-teacher-name" class="teacher-field-label">Nama Guru:</label>
+            <input id="quick-teacher-name" type="text" class="field-control" placeholder="cth: Cikgu Ahmad bin Razali" required>
+          </div>
+          <div>
+            <label for="quick-teacher-group" class="teacher-field-label">Kumpulan Bertugas (Pilihan):</label>
+            <select id="quick-teacher-group" class="field-control">
+              <option value="">Tiada Kumpulan (Biarkan Kosong)</option>
+              <option value="Kumpulan 1">Kumpulan 1</option>
+              <option value="Kumpulan 2">Kumpulan 2</option>
+              <option value="Kumpulan 3">Kumpulan 3</option>
+              <option value="Kumpulan 4">Kumpulan 4</option>
+            </select>
+          </div>
+          <div>
+            <label for="quick-teacher-phone" class="teacher-field-label">No. Telefon WhatsApp (Pilihan):</label>
+            <input id="quick-teacher-phone" type="text" class="field-control" placeholder="cth: 60123456789">
+          </div>
+          <div>
+            <button type="submit" class="action-btn btn-primary" style="width:100%; justify-content:center; font-weight:700;">
+              <i data-lucide="user-plus" style="width:16px;height:16px;"></i> Tambah / Simpan Guru
+            </button>
+          </div>
+        </form>
+
+        <!-- Jadual Senarai Guru & Penetapan Kumpulan Bertugas -->
+        <div style="max-height:360px; overflow-y:auto; border:1px solid var(--border-subtle); border-radius:10px;">
+          <table class="schedule-table" style="font-size:0.82rem; width:100%;">
+            <thead>
+              <tr>
+                <th style="width:48px; text-align:center; padding:8px 10px;">#</th>
+                <th style="padding:8px 10px;">Nama Guru</th>
+                <th style="width:240px; padding:8px 10px;">Kumpulan Bertugas (Pilihan)</th>
+                <th style="width:180px; padding:8px 10px;">No. Telefon WhatsApp</th>
+              </tr>
+            </thead>
+            <tbody id="duty-group-manager-tbody">
+              <tr>
+                <td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Belum ada senarai guru didaftarkan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <!-- Footer Rasmi KPM & Institusi -->

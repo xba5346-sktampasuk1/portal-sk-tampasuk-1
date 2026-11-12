@@ -225,29 +225,31 @@ function getSchoolSettings() {
     const val = String(rows[i][1] || "").trim();
     if (!val) continue;
 
-    if (key.includes("nama sekolah") && val !== "NAMA SEKOLAH ANDA") {
+    if ((key.includes("nama sekolah") || key === "schoolname") && val !== "NAMA SEKOLAH ANDA") {
       settings.schoolName = val;
-    } else if (key.includes("kod sekolah")) {
+    } else if (key.includes("kod sekolah") || key === "schoolcode") {
       settings.schoolCode = val;
+      if (!settings.defaultUser) settings.defaultUser = val;
+    } else if (key === "defaultuser" || key.includes("id pengguna")) {
       settings.defaultUser = val;
-    } else if (key.includes("alamat") && val !== "ALAMAT SURAT-MENYURAT SEKOLAH ANDA") {
+    } else if ((key.includes("alamat") || key === "schooladdress") && val !== "ALAMAT SURAT-MENYURAT SEKOLAH ANDA") {
       settings.schoolAddress = val;
-    } else if (key.includes("ppd") || key.includes("jpn") || key.includes("jabatan")) {
+    } else if (key.includes("ppd") || key.includes("jpn") || key.includes("jabatan") || key === "schoolppd") {
       settings.schoolPPD = val;
-    } else if (key.includes("sub-moto") || key.includes("sub motto") || key.includes("slogan")) {
+    } else if (key.includes("sub-moto") || key.includes("sub motto") || key.includes("slogan") || key === "schoolsubmotto") {
       settings.schoolSubMotto = val;
-    } else if (key.includes("moto") || key.includes("motto")) {
+    } else if (key.includes("moto") || key.includes("motto") || key === "schoolmotto") {
       settings.schoolMotto = val;
-    } else if (key.includes("logo")) {
+    } else if (key.includes("logo") || key === "schoollogo") {
       settings.schoolLogo = val;
-    } else if (key.includes("kata laluan") || key.includes("password")) {
+    } else if (key.includes("kata laluan") || key.includes("password") || key === "defaultpass" || key === "adminpass") {
       settings.adminPass = val;
       settings.defaultPass = val;
-    } else if (key.includes("beban harian")) {
+    } else if (key.includes("beban harian") || key === "overloadthresholddaily") {
       const d = parseInt(val, 10) || 8;
       settings.overloadDaily = d;
       settings.overloadThresholdDaily = d;
-    } else if (key.includes("beban mingguan")) {
+    } else if (key.includes("beban mingguan") || key === "overloadthresholdweekly") {
       const w = parseInt(val, 10) || 8;
       settings.overloadWeekly = w;
       settings.overloadThresholdWeekly = w;
@@ -334,16 +336,24 @@ function getSchoolDataPayload() {
     const header = rowsGuru[0] ? rowsGuru[0].map(h => String(h || "").toLowerCase()) : [];
     const hasGroupCol = header.some(h => h.includes("kumpulan"));
 
-    // Pastikan tajuk lajur ke-6 (Kod Warna Automatik) wujud jika jadual menggunakan format penuh
-    if (hasGroupCol && rowsGuru[0] && rowsGuru[0].length < 6) {
+    // Pastikan tajuk Baris 1 mempunyai ruangan Kumpulan Bertugas (Pilihan) & Kod Warna Automatik
+    if (!hasGroupCol || (rowsGuru[0] && rowsGuru[0].length < 6)) {
       try {
-        sheetGuru.getRange(1, 6).setValue("Kod Warna (Automatik)").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
+        sheetGuru.getRange(1, 1, 1, 6).setValues([[
+          "Nama Guru",
+          "Kumpulan Bertugas (Pilihan: Kumpulan 1 - 4 / Kosongkan Jika Tiada)",
+          "No Telefon WhatsApp (cth: 60123456789)",
+          "Emel Rasmi (Pilihan)",
+          "Sesi",
+          "Kod Warna (Automatik)"
+        ]]);
+        sheetGuru.getRange("A1:F1").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
       } catch (e) {}
     }
 
     for (let i = 1; i < rowsGuru.length; i++) {
       const name = String(rowsGuru[i][0] || "").trim();
-      if (!name) continue;
+      if (!name || name.toLowerCase() === "nama guru" || name.toLowerCase() === "nama_guru") continue;
 
       let group = "";
       let phone = "";
@@ -351,17 +361,26 @@ function getSchoolDataPayload() {
       let sesi = "Pagi";
       let colorHex = "";
 
-      if (hasGroupCol) {
-        // Format: [Nama Guru, Kumpulan Bertugas, No Telefon WhatsApp, Emel Rasmi, Sesi, Kod Warna]
-        group    = String(rowsGuru[i][1] || "").trim();
-        phone    = String(rowsGuru[i][2] || "").trim();
-        email    = String(rowsGuru[i][3] || "").trim();
-        sesi     = String(rowsGuru[i][4] || "Pagi").trim();
-        colorHex = String(rowsGuru[i][5] || "").trim();
-      } else {
-        // Format Sokongan Ringkas: [Nama Guru, No Telefon WhatsApp, Sesi]
-        phone = String(rowsGuru[i][1] || "").trim();
-        sesi  = String(rowsGuru[i][2] || "Pagi").trim();
+      // Pengesanan Pintar Lajur B hingga F (Menyokong kedua-dua susunan penuh 6-lajur dan susunan lama)
+      for (let c = 1; c < Math.min(rowsGuru[i].length, 7); c++) {
+        const val = String(rowsGuru[i][c] || "").trim();
+        if (!val) continue;
+
+        if (/^(kumpulan\s*[1-9]|[1-9])$/i.test(val)) {
+          if (!group) group = val;
+        } else if (val.startsWith("#") && (val.length === 7 || val.length === 4)) {
+          if (!colorHex) colorHex = val;
+        } else if (val.includes("@")) {
+          if (!email) email = val;
+        } else if (/^(pagi|petang)$/i.test(val)) {
+          sesi = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+        } else if (/^\+?6?01[\d\-\s]{6,12}$/.test(val) || /^6\.01e\+\d+$/i.test(val)) {
+          if (!phone && !/^6\.01e\+\d+$/i.test(val)) phone = val;
+        } else if (c === 1 && hasGroupCol && !group) {
+          group = val;
+        } else if (c === 2 && !phone) {
+          phone = val;
+        }
       }
 
       if (!teachers.includes(name)) teachers.push(name);
@@ -370,11 +389,9 @@ function getSchoolDataPayload() {
       // AUTO-ASSIGN KOD WARNA GURU: Jika belum ada kod warna dalam Google Sheet, berikan secara automatik!
       if (!colorHex || !colorHex.startsWith("#")) {
         colorHex = MASTER_TEACHER_HEX_COLORS[tIdx % MASTER_TEACHER_HEX_COLORS.length];
-        if (hasGroupCol) {
-          try {
-            sheetGuru.getRange(i + 1, 6).setValue(colorHex);
-          } catch (e) {}
-        }
+        try {
+          sheetGuru.getRange(i + 1, 6).setValue(colorHex);
+        } catch (e) {}
       }
       teacherColors[name] = colorHex;
 
@@ -385,6 +402,9 @@ function getSchoolDataPayload() {
       if (group) {
         let normGroup = group;
         if (/^[1-9]$/.test(group)) normGroup = "Kumpulan " + group;
+        else if (/^kumpulan\s*([1-9])$/i.test(group)) {
+          normGroup = "Kumpulan " + group.match(/([1-9])/)[1];
+        }
         if (!teacherGroups[normGroup]) teacherGroups[normGroup] = [];
         if (!teacherGroups[normGroup].includes(name)) {
           teacherGroups[normGroup].push(name);
@@ -393,7 +413,7 @@ function getSchoolDataPayload() {
     }
   }
 
-  // 3. Ambil Jadual Waktu Penuh & Auto-Detect Kelas (Tab Jadual_Waktu)
+  // 3. Ambil Jadual Waktu Penuh & Auto-Detect Kelas serta Kumpulan Bertugas (Tab Jadual_Waktu)
   const timetableByTeacher = {};
   const detectedClassesSet = {};
 
@@ -406,8 +426,10 @@ function getSchoolDataPayload() {
       const rawSlot = String(rowsJadual[i][2] || "").trim();
       const subjek = String(rowsJadual[i][3] || "").trim();
       const kelas = String(rowsJadual[i][4] || "").trim();
+      const col6 = String(rowsJadual[i][5] || "").trim();
+      const col7 = String(rowsJadual[i][6] || "").trim();
 
-      if (!guru || !hari || !rawSlot || !subjek || !kelas) continue;
+      if (!guru || guru.toLowerCase() === "nama guru" || !hari || !rawSlot || !subjek || !kelas) continue;
 
       if (hari.toLowerCase().includes("isn")) hari = "Isnin";
       else if (hari.toLowerCase().includes("sel")) hari = "Selasa";
@@ -419,6 +441,18 @@ function getSchoolDataPayload() {
         teachers.push(guru);
         const newIdx = teachers.indexOf(guru);
         teacherColors[guru] = MASTER_TEACHER_HEX_COLORS[newIdx % MASTER_TEACHER_HEX_COLORS.length];
+      }
+
+      // Sokong pengisian Kumpulan Bertugas terus di tab Jadual_Waktu (Lajur F atau G) jika diisi
+      const rawGrp = (/^(kumpulan\s*[1-9]|[1-9])$/i.test(col6)) ? col6 : ((/^(kumpulan\s*[1-9]|[1-9])$/i.test(col7)) ? col7 : "");
+      if (rawGrp) {
+        let normGroup = rawGrp;
+        if (/^[1-9]$/.test(rawGrp)) normGroup = "Kumpulan " + rawGrp;
+        else if (/^kumpulan\s*([1-9])$/i.test(rawGrp)) normGroup = "Kumpulan " + rawGrp.match(/([1-9])/)[1];
+        if (!teacherGroups[normGroup]) teacherGroups[normGroup] = [];
+        if (!teacherGroups[normGroup].includes(guru)) {
+          teacherGroups[normGroup].push(guru);
+        }
       }
 
       if (kelas) {
@@ -669,45 +703,54 @@ function setupSheet() {
   }
 
   // -------------------------------------------------------------------------
-  // TAB 3: Senarai_Guru (Kosong untuk diisi oleh sekolah; Kod Warna dijana automatik!)
+  // TAB 3: Senarai_Guru (Kumpulan Bertugas disediakan & boleh dibiarkan kosong jika sekolah tiada kumpulan; Kod Warna dijana automatik!)
   // -------------------------------------------------------------------------
   let sheetGuru = ss.getSheetByName(SHEET_GURU);
   if (!sheetGuru) {
     sheetGuru = ss.insertSheet(SHEET_GURU, 2);
-    sheetGuru.appendRow([
-      "Nama Guru",
-      "Kumpulan Bertugas (Kumpulan 1 - 4)",
-      "No Telefon WhatsApp (cth: 60123456789)",
-      "Emel Rasmi (Pilihan)",
-      "Sesi",
-      "Kod Warna (Automatik)"
-    ]);
-    sheetGuru.getRange("A1:F1").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
-    sheetGuru.setFrozenRows(1);
-    sheetGuru.setColumnWidth(1, 260);
-    sheetGuru.setColumnWidth(2, 230);
-    sheetGuru.setColumnWidth(3, 240);
-    sheetGuru.setColumnWidth(4, 220);
-    sheetGuru.setColumnWidth(5, 100);
-    sheetGuru.setColumnWidth(6, 170);
   }
+  sheetGuru.getRange(1, 1, 1, 6).setValues([[
+    "Nama Guru",
+    "Kumpulan Bertugas (Pilihan: Kumpulan 1 - 4 / Kosongkan Jika Tiada)",
+    "No Telefon WhatsApp (cth: 60123456789)",
+    "Emel Rasmi (Pilihan)",
+    "Sesi",
+    "Kod Warna (Automatik)"
+  ]]);
+  sheetGuru.getRange("A1:F1").setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
+  sheetGuru.setFrozenRows(1);
+  sheetGuru.setColumnWidth(1, 260);
+  sheetGuru.setColumnWidth(2, 300);
+  sheetGuru.setColumnWidth(3, 240);
+  sheetGuru.setColumnWidth(4, 220);
+  sheetGuru.setColumnWidth(5, 100);
+  sheetGuru.setColumnWidth(6, 170);
 
   // -------------------------------------------------------------------------
-  // TAB 4: Jadual_Waktu (Kosong untuk diisi oleh sekolah)
+  // TAB 4: Jadual_Waktu (Turut menyokong lajur Kumpulan Bertugas Pilihan)
   // -------------------------------------------------------------------------
   let sheetJadual = ss.getSheetByName(SHEET_JADUAL);
   if (!sheetJadual) {
     sheetJadual = ss.insertSheet(SHEET_JADUAL, 3);
-    sheetJadual.appendRow(["Nama Guru", "Hari (Isnin-Jumaat)", "Slot (Nombor Slot 1-13)", "Mata Pelajaran", "Kelas", "Sesi"]);
-    sheetJadual.getRange("A1:F1").setFontWeight("bold").setBackground("#0369a1").setFontColor("#ffffff");
-    sheetJadual.setFrozenRows(1);
-    sheetJadual.setColumnWidth(1, 260);
-    sheetJadual.setColumnWidth(2, 140);
-    sheetJadual.setColumnWidth(3, 150);
-    sheetJadual.setColumnWidth(4, 140);
-    sheetJadual.setColumnWidth(5, 130);
-    sheetJadual.setColumnWidth(6, 100);
   }
+  sheetJadual.getRange(1, 1, 1, 7).setValues([[
+    "Nama Guru",
+    "Hari (Isnin-Jumaat)",
+    "Slot (Nombor Slot 1-13)",
+    "Mata Pelajaran",
+    "Kelas",
+    "Kumpulan Bertugas (Pilihan)",
+    "Sesi"
+  ]]);
+  sheetJadual.getRange("A1:G1").setFontWeight("bold").setBackground("#0369a1").setFontColor("#ffffff");
+  sheetJadual.setFrozenRows(1);
+  sheetJadual.setColumnWidth(1, 260);
+  sheetJadual.setColumnWidth(2, 140);
+  sheetJadual.setColumnWidth(3, 150);
+  sheetJadual.setColumnWidth(4, 140);
+  sheetJadual.setColumnWidth(5, 130);
+  sheetJadual.setColumnWidth(6, 210);
+  sheetJadual.setColumnWidth(7, 100);
 
   // -------------------------------------------------------------------------
   // TAB 5: Rekod_Guru_Ganti (Disimpan secara automatik oleh sistem)
@@ -723,4 +766,11 @@ function setupSheet() {
     sheetRekod.getRange("A1:L1").setFontWeight("bold").setBackground("#1e3a8a").setFontColor("#ffffff");
     sheetRekod.setFrozenRows(1);
   }
+}
+
+/**
+ * Alias untuk setupSheet() supaya kedua-dua nama fungsi boleh dijalankan di Apps Script
+ */
+function setupDatabaseSheets() {
+  setupSheet();
 }
