@@ -261,11 +261,14 @@ function splitTimeSlot(s) {
 function rebuildClassTimetablesFromMaster(explicitClasses = []) {
   const newClassTT = {};
   const newClassSubjTeachers = {};
-  const classSet = new Set(Array.isArray(explicitClasses) ? explicitClasses.filter(Boolean) : []);
+  const cleanExplicit = (Array.isArray(explicitClasses) ? explicitClasses : [])
+    .map(c => String(c || "").trim())
+    .filter(c => c && c.toLowerCase() !== "kelas" && c.toLowerCase() !== "nama guru");
+  const classSet = new Set(cleanExplicit);
 
   if (TIMETABLE && typeof TIMETABLE === "object") {
     Object.entries(TIMETABLE).forEach(([guru, daysObj]) => {
-      if (!daysObj || typeof daysObj !== "object") return;
+      if (!guru || guru.toLowerCase() === "nama guru" || !daysObj || typeof daysObj !== "object") return;
       Object.entries(daysObj).forEach(([hari, lessons]) => {
         if (!Array.isArray(lessons)) return;
         lessons.forEach(item => {
@@ -282,6 +285,7 @@ function rebuildClassTimetablesFromMaster(explicitClasses = []) {
             if (item.slot !== undefined) explicitSlot = Number(item.slot);
           }
           if (!kelas || !subjek) return;
+          if (kelas.toLowerCase() === "kelas" || subjek.toLowerCase() === "mata pelajaran" || masa.toLowerCase().includes("slot")) return;
 
           classSet.add(kelas);
           if (!newClassTT[kelas]) newClassTT[kelas] = {};
@@ -318,9 +322,9 @@ function rebuildClassTimetablesFromMaster(explicitClasses = []) {
   CLASS_TIMETABLES = newClassTT;
   CLASS_SUBJECT_TEACHERS = newClassSubjTeachers;
 
-  const sortedClasses = Array.from(classSet).sort((a, b) =>
-    a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
-  );
+  const sortedClasses = Array.from(classSet)
+    .filter(c => c && c.toLowerCase() !== "kelas" && c.toLowerCase() !== "nama guru")
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
 
   ALL_MASTER_CLASSES = sortedClasses;
   sortedClasses.forEach(c => {

@@ -30,12 +30,13 @@ function getDayFromDate(dateStr) {
   return MALAY_DAYS[date.getDay()];
 }
 
-// Status Pengecualian Guru Ganti (Cadangan 2: Program Sekolah)
+// Status Pengecualian Guru Ganti (Cadangan 2: Program Sekolah & Guru Tiada Kelas / Tiada Gantian)
 const PROGRAM_SEKOLAH_VAL = "PROGRAM SEKOLAH (TIADA GANTIAN)";
 
 function isSpecialProgramRelief(val) {
   if (!val) return false;
-  return String(val).trim().toUpperCase().includes("PROGRAM SEKOLAH");
+  const s = String(val).trim().toUpperCase();
+  return s.includes("PROGRAM SEKOLAH") || s.includes("TIADA GANTIAN") || s.includes("TIADA KELAS");
 }
 
 // Elemen DOM Utama
@@ -807,7 +808,13 @@ function addRow(data = {}) {
       row.remove();
     }
 
-    if (!entryRows.children.length) addRow();
+    // Jangan cipta baris kosong secara paksa jika ada guru tidak hadir aktif dipilih
+    const curActive = [...teachersContainer.querySelectorAll(".teacher-row")]
+      .map(r => r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value : "")
+      .filter(Boolean);
+    if (!entryRows.children.length && curActive.length === 0) {
+      addRow();
+    }
     kemasKiniSemuaCadanganGuruGanti();
   });
 
@@ -1000,29 +1007,33 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
   if (window.lucide) window.lucide.createIcons();
 
-  // Paparan Mini Jadual Guru Berada di Tengah tetapi TIDAK Menghalang Senarai Nama Guru pada Dropdown
+  // Paparan Mini Jadual Guru Berada di Sisi Menu Supaya Langsung Tidak Menghalang Senarai Nama Guru Dropdown
   popover.classList.remove("hidden");
-  const popW = popover.offsetWidth || 320;
-  let centerX = window.innerWidth * 0.5;
+  const popW = popover.offsetWidth || 330;
 
-  const wrapperEl = targetElement
-    ? (targetElement.closest(".custom-ganti-wrapper") || targetElement.closest(".custom-ganti-menu") || targetElement)
+  const menuEl = targetElement
+    ? (targetElement.closest(".custom-ganti-menu") || targetElement.closest(".custom-ganti-wrapper") || targetElement)
     : null;
-  if (wrapperEl) {
-    const wrapRect = wrapperEl.getBoundingClientRect();
-    if (wrapRect.width > 0) {
-      // Kekalkan jarak bersih sekurang-kurangnya 24px di sebelah kiri kotak/senarai dropdown Guru Pengganti
-      const maxAllowedCenterX = wrapRect.left - 24 - (popW / 2);
-      if (centerX > maxAllowedCenterX) {
-        centerX = maxAllowedCenterX;
-      }
+  let leftPos = 16;
+  if (menuEl) {
+    const mRect = menuEl.getBoundingClientRect();
+    // Utamakan kedudukan di sebelah KIRI menu dropdown supaya pilihan nama-nama guru langsung tidak terhalang
+    if (mRect.left >= popW + 20) {
+      leftPos = mRect.left - popW - 14;
+    } else if ((window.innerWidth - mRect.right) >= popW + 20) {
+      // Jika sebelah kiri sempit, paparkan di sebelah KANAN menu
+      leftPos = mRect.right + 14;
+    } else {
+      // Skrin sempit: rapatkan ke kiri semaksimum mungkin
+      leftPos = Math.max(10, mRect.left - popW - 8);
     }
+  } else {
+    leftPos = Math.max(16, (window.innerWidth - popW) / 2);
   }
-  centerX = Math.max((popW / 2) + 16, centerX);
 
   popover.style.top = "50%";
-  popover.style.left = `${Math.round(centerX)}px`;
-  popover.style.transform = "translate(-50%, -50%) scale(1)";
+  popover.style.left = `${Math.round(leftPos)}px`;
+  popover.style.transform = "translateY(-50%) scale(1)";
   popover.style.opacity = "1";
 }
 
@@ -1031,7 +1042,7 @@ function hideTeacherHoverPopover() {
   if (popover) {
     popover.classList.add("hidden");
     popover.style.opacity = "0";
-    popover.style.transform = "translate(-50%, -50%) scale(0.95)";
+    popover.style.transform = "translateY(-50%) scale(0.95)";
   }
 }
 
@@ -1128,6 +1139,23 @@ function autoFillSchedule(options = {}) {
       return;
     }
 
+    // Jika guru ini tiada slot PdP langsung pada hari ini (0 Waktu Asal)
+    if (lessons.length === 0) {
+      addRow({
+        masa: "Tiada Kelas",
+        subjek: "Tiada PdP",
+        kelas: "—",
+        guru_tidak_hadir: t.name,
+        sebab: t.reason || "Tidak Hadir",
+        ganti: "TIADA GANTIAN",
+        saved: false,
+        isEmergency: t.isEmergency
+      });
+      newlyAddedSlots++;
+      return;
+    }
+
+    let addedForTeacher = 0;
     lessons.forEach(([masa, subjek, kelas]) => {
       // Perkara A (Pilihan 1): Kelas Prasekolah tidak memerlukan guru ganti kerana sentiasa diawasi Guru Pra & PPM
       const isPraClass = kelas && (
@@ -1151,16 +1179,32 @@ function autoFillSchedule(options = {}) {
           isEmergency: t.isEmergency
         });
         newlyAddedSlots++;
+        addedForTeacher++;
       });
     });
+
+    // Jika guru ada jadual tetapi semua kelas prasekolah/tiada slot memerlukan guru ganti
+    if (addedForTeacher === 0) {
+      addRow({
+        masa: "Tiada Kelas",
+        subjek: "Tiada PdP",
+        kelas: "—",
+        guru_tidak_hadir: t.name,
+        sebab: t.reason || "Tidak Hadir",
+        ganti: "TIADA GANTIAN",
+        saved: false,
+        isEmergency: t.isEmergency
+      });
+      newlyAddedSlots++;
+    }
   });
 
   if (newlyAddedSlots > 0) {
-    autoMessage.textContent = `${newlyAddedSlots} waktu kelas baharu berjaya diisi secara automatik. Sila tentukan guru ganti dan klik Simpan.`;
+    autoMessage.textContent = `${newlyAddedSlots} rekod waktu kelas / ketidakhadiran guru berjaya diisi secara automatik. Sila tentukan guru ganti (jika perlu) dan klik Simpan.`;
     autoMessage.classList.remove("hidden");
-  } else if (!entryRows.children.length) {
+  } else if (!entryRows.children.length && activeTeachers.length === 0) {
     addRow();
-    autoMessage.textContent = `Tiada rekod waktu kelas untuk guru terpilih pada hari ${day}.`;
+    autoMessage.textContent = `Sila pilih guru tidak hadir atau tambah waktu kelas.`;
     autoMessage.classList.remove("hidden");
   }
   kemasKiniSemuaCadanganGuruGanti();
@@ -1981,7 +2025,8 @@ function renderPage2() {
   if (typeof rebuildClassTimetablesFromMaster === "function" && (!ALL_MASTER_CLASSES || ALL_MASTER_CLASSES.length === 0)) {
     rebuildClassTimetablesFromMaster();
   }
-  const classes = (Array.isArray(ALL_MASTER_CLASSES) && ALL_MASTER_CLASSES.length > 0) ? ALL_MASTER_CLASSES : [];
+  const rawClasses = (Array.isArray(ALL_MASTER_CLASSES) && ALL_MASTER_CLASSES.length > 0) ? ALL_MASTER_CLASSES : [];
+  const classes = rawClasses.filter(c => c && String(c).trim().toLowerCase() !== "kelas" && String(c).trim().toLowerCase() !== "nama guru");
   const formattedDate = selectedDate ? formatDateDisplay(selectedDate) : "";
   const headerDateInfo = formattedDate ? ` — ${hari}, ${formattedDate}` : ` - ${hari}`;
 
@@ -3259,7 +3304,12 @@ function printDailyAttendanceReport() {
                   <td style="text-align:center;">${idx + 1}</td>
                   <td><strong>${nama}</strong></td>
                   <td><span class="badge badge-absent">${d.sebab}</span></td>
-                  <td>${d.records.map(r => `<span style="font-family:monospace; font-weight:bold;">${r.masa}</span> ${r.mata_pelajaran} (${r.kelas})`).join('<br>')}</td>
+                  <td>${d.records.map(r => {
+                    if (r.masa === "Tiada Kelas" || r.masa === "Waktu Persekolahan") {
+                      return `<span style="color:#64748b; font-style:italic;">Tiada Jadual PdP (Bebas PdP Hari Ini)</span>`;
+                    }
+                    return `<span style="font-family:monospace; font-weight:bold;">${r.masa}</span> ${r.mata_pelajaran} (${r.kelas})`;
+                  }).join('<br>')}</td>
                   <td>${d.records.map(r => {
                     if (isSpecialProgramRelief(r.guru_ganti)) {
                       return `<span style="color:#4338ca; font-weight:bold;">🏛️ ${r.guru_ganti}</span>`;
@@ -3422,7 +3472,8 @@ function populateCalendarClassFilter() {
   if (typeof rebuildClassTimetablesFromMaster === "function" && (!ALL_MASTER_CLASSES || ALL_MASTER_CLASSES.length === 0)) {
     rebuildClassTimetablesFromMaster();
   }
-  const classes = Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : [];
+  const rawClasses = Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : [];
+  const classes = rawClasses.filter(c => c && String(c).trim().toLowerCase() !== "kelas" && String(c).trim().toLowerCase() !== "nama guru");
   filterSelect.innerHTML = '<option value="">Semua Kelas (' + classes.length + ' Kelas)</option>' +
     classes.map(c => `<option value="${c}">${MASTER_CLASS_LABELS[c] || c}</option>`).join("");
   if (currentVal && classes.includes(currentVal)) {
@@ -3580,7 +3631,8 @@ function renderMasterTimetable(dateStr) {
   // Tapis kelas jika dropdown filter dipilih
   const filterSelect = document.getElementById("cal-class-filter");
   const selectedClass = filterSelect ? filterSelect.value : "";
-  const classesToRender = selectedClass ? [selectedClass] : (Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : []);
+  const rawClassesToRender = selectedClass ? [selectedClass] : (Array.isArray(ALL_MASTER_CLASSES) ? ALL_MASTER_CLASSES : []);
+  const classesToRender = rawClassesToRender.filter(c => c && String(c).trim().toLowerCase() !== "kelas" && String(c).trim().toLowerCase() !== "nama guru");
 
   if (classesToRender.length === 0) {
     content.innerHTML = `
@@ -4168,8 +4220,16 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
   }
 
   const allDomRows = [...entryRows.querySelectorAll(".schedule-row")];
-  if (!allDomRows.length) {
-    showToast("Sila tambah sekurang-kurangnya satu waktu kelas.", "error");
+  const activeTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
+    .map(r => ({
+      name: r.querySelector(".teacher-select").value,
+      reason: r.querySelector(".reason-select").value
+    }))
+    .filter(t => t.name);
+
+  // Jika tiada baris jadual DAN tiada guru tidak hadir dipilih, baru sekat
+  if (!allDomRows.length && !activeTeachers.length) {
+    showToast("Sila pilih sekurang-kurangnya seorang guru tidak hadir atau tambah waktu kelas.", "error");
     return;
   }
 
@@ -4217,32 +4277,32 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
     kumpulan: kumpulanSelect.value
   };
 
-  const activeTeachers = [...teachersContainer.querySelectorAll(".teacher-row")]
-    .map(r => ({
-      name: r.querySelector(".teacher-select").value,
-      reason: r.querySelector(".reason-select").value
-    }))
-    .filter(t => t.name);
-
   // Asingkan rekod baharu (untuk di-APPEND) dan rekod tersimpan yang diubah (untuk di-UPDATE)
   const newRecordsToSave = [];
   const modifiedRecordsToUpdate = [];
+  const teachersCoveredInDom = new Set();
 
   allDomRows.forEach(r => {
     const isSaved = r.dataset.saved === "true";
     const isModified = r.dataset.modified === "true";
     const rg = r.dataset.guruTidakHadir || (activeTeachers[0] ? activeTeachers[0].name : "");
     const rs = r.dataset.sebab || (activeTeachers[0] ? activeTeachers[0].reason : "");
+    if (rg) teachersCoveredInDom.add(rg);
+
+    const gantiVal = r.querySelector(".row-ganti").value.trim();
+    const masaVal = r.querySelector(".row-masa").value.trim();
+    const subjekVal = r.querySelector(".row-subjek").value.trim();
+    const kelasVal = r.querySelector(".row-kelas").value.trim();
 
     const recData = {
       ...commonData,
       guru_tidak_hadir: rg,
       sebab: rs,
-      masa: r.querySelector(".row-masa").value.trim(),
-      mata_pelajaran: r.querySelector(".row-subjek").value.trim(),
-      kelas: r.querySelector(".row-kelas").value.trim(),
-      guru_ganti: r.querySelector(".row-ganti").value.trim(),
-      catatan: isSpecialProgramRelief(r.querySelector(".row-ganti").value.trim()) ? `Program Sekolah - Tiada Gantian (${rg})` : `Ganti ${rg}`
+      masa: masaVal,
+      mata_pelajaran: subjekVal,
+      kelas: kelasVal,
+      guru_ganti: gantiVal,
+      catatan: isSpecialProgramRelief(gantiVal) ? `Program Sekolah / Tiada Gantian (${rg})` : `Ganti ${rg}`
     };
 
     if (!isSaved) {
@@ -4250,6 +4310,26 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
     } else if (isModified) {
       recData.id = r.dataset.id;
       modifiedRecordsToUpdate.push(recData);
+    }
+  });
+
+  // Pastikan guru tidak hadir yang tiada baris PdP (cth: tiada jadual PdP hari ini, atau baris telah dipadam oleh pengguna)
+  // tetap disimpan ke dalam Google Sheet & Pangkalan Data supaya pentadbir dapat mengetahui ketidakhadiran guru berkenaan!
+  activeTeachers.forEach(t => {
+    if (!teachersCoveredInDom.has(t.name)) {
+      const alreadySaved = allRecords.some(r => r && r.tarikh === dateInput.value && r.guru_tidak_hadir === t.name);
+      if (!alreadySaved) {
+        newRecordsToSave.push({
+          ...commonData,
+          guru_tidak_hadir: t.name,
+          sebab: t.reason || "Tidak Hadir",
+          masa: "Tiada Kelas",
+          mata_pelajaran: "Tiada PdP",
+          kelas: "—",
+          guru_ganti: "TIADA GANTIAN",
+          catatan: `Guru Tidak Hadir (${t.reason || "Tidak Hadir"}) — Tiada Jadual Kelas Terlibat`
+        });
+      }
     }
   });
 
@@ -5300,6 +5380,7 @@ function applySchoolData(schoolData, saveToStorage = true) {
       topKeys.forEach(hari => {
         const dayMap = rawTT[hari] || {};
         Object.entries(dayMap).forEach(([guru, slots]) => {
+          if (!guru || guru.toLowerCase() === "nama guru") return;
           if (!TIMETABLE[guru]) TIMETABLE[guru] = {};
           TIMETABLE[guru][hari] = slots;
         });
@@ -5307,10 +5388,18 @@ function applySchoolData(schoolData, saveToStorage = true) {
     } else {
       Object.assign(TIMETABLE, rawTT);
     }
+    // Buang sebarang entri header yang tersesat
+    Object.keys(TIMETABLE).forEach(k => {
+      if (k.toLowerCase() === "nama guru") delete TIMETABLE[k];
+    });
   }
 
+  // Tapis senarai kelas daripada perkataan "Kelas" atau "Nama Guru"
+  const cleanClasses = (Array.isArray(schoolData.classes) ? schoolData.classes : [])
+    .filter(c => c && String(c).trim().toLowerCase() !== "kelas" && String(c).trim().toLowerCase() !== "nama guru");
+
   if (typeof rebuildClassTimetablesFromMaster === "function") {
-    rebuildClassTimetablesFromMaster(Array.isArray(schoolData.classes) ? schoolData.classes : []);
+    rebuildClassTimetablesFromMaster(cleanClasses);
   }
 
   if (saveToStorage) {

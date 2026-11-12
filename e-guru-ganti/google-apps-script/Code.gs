@@ -430,6 +430,7 @@ function getSchoolDataPayload() {
       const col7 = String(rowsJadual[i][6] || "").trim();
 
       if (!guru || guru.toLowerCase() === "nama guru" || !hari || !rawSlot || !subjek || !kelas) continue;
+      if (kelas.toLowerCase() === "kelas" || subjek.toLowerCase() === "mata pelajaran" || rawSlot.toLowerCase().includes("slot")) continue;
 
       if (hari.toLowerCase().includes("isn")) hari = "Isnin";
       else if (hari.toLowerCase().includes("sel")) hari = "Selasa";
@@ -455,7 +456,7 @@ function getSchoolDataPayload() {
         }
       }
 
-      if (kelas) {
+      if (kelas && kelas.toLowerCase() !== "kelas") {
         detectedClassesSet[kelas] = true;
       }
 
@@ -476,9 +477,11 @@ function getSchoolDataPayload() {
     }
   }
 
-  const detectedClasses = Object.keys(detectedClassesSet).sort((a, b) => {
-    return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
-  });
+  const detectedClasses = Object.keys(detectedClassesSet)
+    .filter(c => c && c.toLowerCase() !== "kelas" && c.toLowerCase() !== "nama guru")
+    .sort((a, b) => {
+      return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+    });
 
   return {
     status: "success",
