@@ -446,6 +446,7 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
     } else {
       autoFillSchedule();
     }
+    persistCurrentDraft(dateInput ? dateInput.value : "");
   });
   rs.addEventListener("change", () => {
     const teacherName = ts.value;
@@ -459,6 +460,7 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
           }
         }
       });
+      persistCurrentDraft(dateInput ? dateInput.value : "");
     }
   });
 
@@ -510,8 +512,11 @@ function addTeacherRow(defaultName = "", defaultReason = "", isSaved = false, is
     const activeAbsent = [...teachersContainer.querySelectorAll(".teacher-row")].filter(r => r.querySelector(".teacher-select") && r.querySelector(".teacher-select").value);
 
     if (!curSaved.length && !activeAbsent.length) {
+      clearCurrentDraft(dateInput.value);
+      clearCancelledSlots(dateInput.value);
       loadDailyScheduleForDate(dateInput.value);
     } else {
+      persistCurrentDraft(dateInput.value);
       if (!entryRows.children.length) addRow();
       kemasKiniSemuaCadanganGuruGanti();
       showDailyStatusBanner({
@@ -784,28 +789,49 @@ function addRow(data = {}) {
         return;
       }
 
+      const curDate = dateInput ? dateInput.value : "";
       const delRes = await DatabaseAPI.deleteRecord(row.dataset.id, {
-        tarikh: dateInput.value,
+        tarikh: curDate,
         masa: masaVal,
         kelas: kelasVal,
         guru_tidak_hadir: guruAsal,
         guru_ganti: gantiVal
       });
 
-      allRecords = await DatabaseAPI.getAllRecords();
+      // Kemas kini allRecords dalam memori serta-merta tanpa perlu tunggu muat turun semula
+      allRecords = allRecords.filter(r => {
+        if (row.dataset.id && row.dataset.id !== "undefined" && r.id === row.dataset.id) return false;
+        const match = r.tarikh === curDate &&
+          String(r.guru_tidak_hadir || r.guruTidakHadir).trim().toLowerCase() === String(guruAsal).trim().toLowerCase() &&
+          String(r.masa).replace(/\s+/g, "") === String(masaVal).replace(/\s+/g, "") &&
+          String(r.kelas).trim().toLowerCase() === String(kelasVal).trim().toLowerCase();
+        return !match;
+      });
+
       row.remove();
+      recordCancelledSlot(curDate, guruAsal, masaVal, kelasVal);
+      persistCurrentDraft(curDate);
       showToast(delRes.message || "Tugasan berjaya dibatalkan.", "info");
 
-      const remaining = allRecords.filter(r => r && r.tarikh === dateInput.value);
+      const remaining = allRecords.filter(r => r && r.tarikh === curDate);
       showDailyStatusBanner({
         type: remaining.length ? "saved" : "empty",
         count: remaining.length,
         teacherCount: [...new Set(remaining.map(r => r.guru_tidak_hadir))].length,
-        date: dateInput.value,
+        date: curDate,
         day: dayInput.value
       });
     } else {
+      const curDate = dateInput ? dateInput.value : "";
+      const guruAsal = row.dataset.guruTidakHadir || "";
+      const masaVal = masaInput.value;
+      const kelasVal = kelasInput.value;
       row.remove();
+      if (guruAsal && masaVal) {
+        recordCancelledSlot(curDate, guruAsal, masaVal, kelasVal);
+      }
+      persistCurrentDraft(curDate);
+      showToast("Waktu kelas berjaya dibuang daripada draf.", "info");
     }
 
     // Jangan cipta baris kosong secara paksa jika ada guru tidak hadir aktif dipilih
@@ -835,6 +861,7 @@ function addRow(data = {}) {
         if (window.lucide) window.lucide.createIcons();
       }
     }
+    persistCurrentDraft(dateInput ? dateInput.value : "");
     kemasKiniSemuaCadanganGuruGanti();
   };
 
@@ -1009,28 +1036,52 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
   // Paparan Mini Jadual Guru Berada di Sisi Menu Supaya Langsung Tidak Menghalang Senarai Nama Guru Dropdown
   popover.classList.remove("hidden");
-  const popW = popover.offsetWidth || 330;
 
   const menuEl = targetElement
     ? (targetElement.closest(".custom-ganti-menu") || targetElement.closest(".custom-ganti-wrapper") || targetElement)
     : null;
+
   let leftPos = 16;
+  let popW = 295; // Saiz ideal padat untuk jadual 4 lajur tanpa membazir ruang
+
   if (menuEl) {
     const mRect = menuEl.getBoundingClientRect();
-    // Utamakan kedudukan di sebelah KIRI menu dropdown supaya pilihan nama-nama guru langsung tidak terhalang
-    if (mRect.left >= popW + 20) {
-      leftPos = mRect.left - popW - 14;
-    } else if ((window.innerWidth - mRect.right) >= popW + 20) {
-      // Jika sebelah kiri sempit, paparkan di sebelah KANAN menu
-      leftPos = mRect.right + 14;
+    const spaceLeft = mRect.left - 12;
+    const spaceRight = window.innerWidth - mRect.right - 12;
+
+    // Utamakan sisi yang mempunyai ruang lapang mencukupi supaya pilihan guru dropdown 100% bebas daripada terlindung
+    if (spaceLeft >= 300) {
+      // Cukup ruang lapang di sebelah KIRI menu dropdown
+      popW = Math.min(300, spaceLeft - 6);
+      leftPos = mRect.left - popW - 12;
+    } else if (spaceRight >= 300) {
+      // Cukup ruang lapang di sebelah KANAN menu dropdown
+      popW = Math.min(300, spaceRight - 6);
+      leftPos = mRect.right + 12;
+    } else if (spaceLeft >= spaceRight && spaceLeft >= 220) {
+      // Ruang sederhana: Utamakan kiri dengan mengecilkan lebar popover secara dinamik mengikut baki ruang
+      popW = Math.min(290, spaceLeft - 8);
+      leftPos = mRect.left - popW - 8;
+    } else if (spaceRight > spaceLeft && spaceRight >= 220) {
+      // Ruang sederhana: Letak di kanan dengan mengecilkan lebar popover mengikut baki ruang
+      popW = Math.min(290, spaceRight - 8);
+      leftPos = mRect.right + 8;
     } else {
-      // Skrin sempit: rapatkan ke kiri semaksimum mungkin
-      leftPos = Math.max(10, mRect.left - popW - 8);
+      // Skrin amat sempit / mudah alih: Letak di sebelah yang lebih lapang dengan jaminan jarak minimum
+      if (spaceLeft >= spaceRight) {
+        popW = Math.max(200, spaceLeft - 6);
+        leftPos = Math.max(6, mRect.left - popW - 6);
+      } else {
+        popW = Math.max(200, spaceRight - 6);
+        leftPos = mRect.right + 6;
+      }
     }
   } else {
+    popW = 295;
     leftPos = Math.max(16, (window.innerWidth - popW) / 2);
   }
 
+  popover.style.width = `${Math.round(popW)}px`;
   popover.style.top = "50%";
   popover.style.left = `${Math.round(leftPos)}px`;
   popover.style.transform = "translateY(-50%) scale(1)";
@@ -1044,6 +1095,107 @@ function hideTeacherHoverPopover() {
     popover.style.opacity = "0";
     popover.style.transform = "translateY(-50%) scale(0.95)";
   }
+}
+
+// ============================================================================
+// PENGURUSAN DRAF JADUAL & SLOT BATAL TEMPATAN (PERSISTENT ACROSS REFRESH)
+// ============================================================================
+
+function recordCancelledSlot(dateStr, guru, masa, kelas) {
+  if (!dateStr || !guru || !masa) return;
+  try {
+    const key = `eggs_cancelled_slots_${dateStr}`;
+    const existing = JSON.parse(localStorage.getItem(key) || "[]");
+    const token = `${String(guru).trim()}|${String(masa).replace(/\s+/g, "")}|${String(kelas || "").trim().toLowerCase()}`;
+    if (!existing.includes(token)) {
+      existing.push(token);
+      localStorage.setItem(key, JSON.stringify(existing));
+    }
+  } catch(e) {
+    console.warn("Gagal merekod slot batal:", e);
+  }
+}
+
+function isSlotCancelled(dateStr, guru, masa, kelas) {
+  if (!dateStr || !guru || !masa) return false;
+  try {
+    const key = `eggs_cancelled_slots_${dateStr}`;
+    const existing = JSON.parse(localStorage.getItem(key) || "[]");
+    const token = `${String(guru).trim()}|${String(masa).replace(/\s+/g, "")}|${String(kelas || "").trim().toLowerCase()}`;
+    return existing.includes(token);
+  } catch(e) {
+    return false;
+  }
+}
+
+function clearCancelledSlots(dateStr) {
+  if (!dateStr) return;
+  try {
+    localStorage.removeItem(`eggs_cancelled_slots_${dateStr}`);
+  } catch(e) {}
+}
+
+function persistCurrentDraft(dateStr) {
+  if (!dateStr) dateStr = dateInput ? dateInput.value : "";
+  if (!dateStr) return;
+
+  const teachers = [...teachersContainer.querySelectorAll(".teacher-row")].map(r => ({
+    name: r.querySelector(".teacher-select") ? r.querySelector(".teacher-select").value : "",
+    reason: r.querySelector(".reason-select") ? r.querySelector(".reason-select").value : "",
+    isEmergency: r.dataset.isEmergency === "true",
+    isProgram: r.querySelector(".teacher-program-checkbox") ? r.querySelector(".teacher-program-checkbox").checked : false
+  })).filter(t => t.name);
+
+  const rows = [...entryRows.querySelectorAll(".schedule-row")].map(r => ({
+    id: r.dataset.id || "",
+    saved: r.dataset.saved === "true",
+    modified: r.dataset.modified === "true",
+    guru_tidak_hadir: r.dataset.guruTidakHadir || "",
+    sebab: r.dataset.sebab || "",
+    masa: r.querySelector(".row-masa") ? r.querySelector(".row-masa").value.trim() : "",
+    subjek: r.querySelector(".row-subjek") ? r.querySelector(".row-subjek").value.trim() : "",
+    kelas: r.querySelector(".row-kelas") ? r.querySelector(".row-kelas").value.trim() : "",
+    ganti: r.querySelector(".row-ganti") ? r.querySelector(".row-ganti").value.trim() : ""
+  })).filter(r => r.masa || r.ganti || r.guru_tidak_hadir);
+
+  const draftKey = `eggs_draft_schedule_${dateStr}`;
+  if (teachers.length === 0 && rows.length === 0) {
+    localStorage.removeItem(draftKey);
+    return;
+  }
+
+  const draftObj = {
+    tarikh: dateStr,
+    hari: dayInput ? dayInput.value : "",
+    minggu: mingguSelect ? mingguSelect.value : "",
+    kumpulan: kumpulanSelect ? kumpulanSelect.value : "",
+    teachers,
+    rows,
+    updatedAt: Date.now()
+  };
+  try {
+    localStorage.setItem(draftKey, JSON.stringify(draftObj));
+  } catch (e) {
+    console.warn("Gagal menyimpan draf:", e);
+  }
+}
+
+function loadDraftForDate(dateStr) {
+  if (!dateStr) return null;
+  try {
+    const raw = localStorage.getItem(`eggs_draft_schedule_${dateStr}`);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+  return null;
+}
+
+function clearCurrentDraft(dateStr) {
+  if (!dateStr) return;
+  try {
+    localStorage.removeItem(`eggs_draft_schedule_${dateStr}`);
+  } catch(e) {}
 }
 
 // Pengisian Automatik Berdasarkan Guru Tidak Hadir & Hari (Append Mode: Kekalkan Rekod Sedia Ada)
@@ -1096,6 +1248,8 @@ function autoFillSchedule(options = {}) {
   // Jika options.forceRegenerate diminta:
   // Kosongkan entryRows sepenuhnya supaya jadual dijana semula dari awal tanpa sebarang duplikasi
   if (options.forceRegenerate) {
+    clearCancelledSlots(dateInput.value);
+    clearCurrentDraft(dateInput.value);
     entryRows.innerHTML = "";
   }
 
@@ -1166,6 +1320,11 @@ function autoFillSchedule(options = {}) {
       if (isPraClass) return;
 
       splitTimeSlot(masa).forEach(slotTime => {
+        // Semak sama ada slot ini telah dibatalkan / dipadamkan oleh pengguna
+        if (isSlotCancelled(dateInput.value, t.name, slotTime, kelas)) {
+          return;
+        }
+
         const partnerInfo = getConcurrentPartnerInfo(kelas, day, slotTime, subjek, absentTeacherNames);
         const assignedGanti = t.isProgram ? "PROGRAM SEKOLAH (TIADA GANTIAN)" : (partnerInfo ? partnerInfo.nama : "");
         addRow({
@@ -1207,6 +1366,7 @@ function autoFillSchedule(options = {}) {
     autoMessage.textContent = `Sila pilih guru tidak hadir atau tambah waktu kelas.`;
     autoMessage.classList.remove("hidden");
   }
+  persistCurrentDraft(dateInput ? dateInput.value : "");
   kemasKiniSemuaCadanganGuruGanti();
 }
 
@@ -1312,6 +1472,7 @@ function kemasKiniSemuaCadanganGuruGanti() {
         if (trigger) trigger.setAttribute("aria-expanded", "false");
         hideTeacherHoverPopover();
         kemasKiniSemuaCadanganGuruGanti();
+        persistCurrentDraft(dateInput ? dateInput.value : "");
       });
       menuEl.appendChild(clearItem);
     }
@@ -1378,6 +1539,7 @@ function kemasKiniSemuaCadanganGuruGanti() {
           if (trigger) trigger.setAttribute("aria-expanded", "false");
           hideTeacherHoverPopover();
           kemasKiniSemuaCadanganGuruGanti();
+          persistCurrentDraft(dateInput ? dateInput.value : "");
         });
 
         menuEl.appendChild(item);
@@ -1788,6 +1950,46 @@ function loadDailyScheduleForDate(dateStr) {
     autoMessage.classList.remove("hidden");
   } else {
     // Tiada rekod tersimpan bagi tarikh ini:
+    // Semak sama ada terdapat DRAF yang disimpan secara tempatan bagi tarikh ini
+    const savedDraft = loadDraftForDate(dateStr);
+    if (savedDraft && (savedDraft.teachers.length > 0 || savedDraft.rows.length > 0)) {
+      if (allPresentBox) allPresentBox.classList.add("hidden");
+      if (savedDraft.minggu) mingguSelect.value = savedDraft.minggu;
+      if (savedDraft.kumpulan) {
+        kumpulanSelect.value = savedDraft.kumpulan;
+        updateGroupMembers();
+      }
+
+      teachersContainer.innerHTML = "";
+      savedDraft.teachers.forEach(t => {
+        addTeacherRow(t.name, t.reason, false, t.isEmergency, t.isProgram);
+      });
+
+      entryRows.innerHTML = "";
+      savedDraft.rows.forEach(r => {
+        addRow({
+          id: r.id,
+          masa: r.masa,
+          subjek: r.subjek,
+          kelas: r.kelas,
+          ganti: r.ganti,
+          guru_tidak_hadir: r.guru_tidak_hadir,
+          sebab: r.sebab,
+          saved: r.saved || false
+        });
+      });
+
+      showDailyStatusBanner({
+        type: "draft",
+        date: dateStr,
+        day: day
+      });
+
+      autoMessage.textContent = `${savedDraft.rows.length} waktu kelas draf dimuatkan semula bagi tarikh ${formatDateDisplay(dateStr) || dateStr}.`;
+      autoMessage.classList.remove("hidden");
+      return;
+    }
+
     teachersContainer.innerHTML = "";
     addTeacherRow();
     entryRows.innerHTML = "";
@@ -4359,6 +4561,8 @@ document.getElementById("schedule-form").addEventListener("submit", async (ev) =
   submitBtn.innerHTML = origBtnContent;
 
   if (hasUpdates) {
+    clearCurrentDraft(dateInput ? dateInput.value : "");
+    clearCancelledSlots(dateInput ? dateInput.value : "");
     showToast(
       newRecordsToSave.length && modifiedRecordsToUpdate.length
         ? `${newRecordsToSave.length} tugasan baharu ditambah (Append) & ${modifiedRecordsToUpdate.length} rekod sedia ada dikemas kini!`

@@ -125,26 +125,54 @@ function doPost(e) {
     // 2. Padam / Batal Tugasan
     if (data.action === "deleteRecord") {
       let sheetRekod = ss.getSheetByName(SHEET_REKOD);
+      let deleted = false;
       if (sheetRekod) {
         const rows = sheetRekod.getDataRange().getValues();
         const hasKumpulan = rows[0] && rows[0].length >= 12 && String(rows[0][3]).toLowerCase().includes("kumpulan");
         const off = hasKumpulan ? 1 : 0;
 
+        const targetTarikh = String(data.tarikh || "").trim();
+        const targetMasa = String(data.masa || "").replace(/\s+/g, "");
+        const targetKelas = String(data.kelas || "").trim().toLowerCase();
+        const targetGuru = String(data.guru_tidak_hadir || "").trim().toLowerCase();
+
         for (let i = rows.length - 1; i >= 1; i--) {
           const row = rows[i];
-          const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
-          if (rTarikh === data.tarikh &&
-              String(row[5 + off]).trim() === String(data.masa || "").trim() &&
-              String(row[7 + off]).trim() === String(data.kelas || "").trim() &&
-              String(row[3 + off]).trim() === String(data.guru_tidak_hadir || "").trim()) {
+          let rTarikh = "";
+          if (row[0] instanceof Date) {
+            rTarikh = Utilities.formatDate(row[0], Session.getScriptTimeZone(), "yyyy-MM-dd");
+          } else if (row[0]) {
+            const s = String(row[0]).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+              rTarikh = s.substring(0, 10);
+            } else {
+              try {
+                rTarikh = Utilities.formatDate(new Date(s), Session.getScriptTimeZone(), "yyyy-MM-dd");
+              } catch(e) {
+                rTarikh = s;
+              }
+            }
+          }
+
+          const matchTarikh = (rTarikh === targetTarikh) || (String(row[0]).trim() === targetTarikh);
+          const rowMasa = String(row[5 + off] || "").replace(/\s+/g, "");
+          const rowKelas = String(row[7 + off] || "").trim().toLowerCase();
+          const rowGuru = String(row[3 + off] || "").trim().toLowerCase();
+
+          if (matchTarikh &&
+              (!targetMasa || rowMasa === targetMasa) &&
+              (!targetKelas || rowKelas === targetKelas) &&
+              (!targetGuru || rowGuru === targetGuru)) {
             sheetRekod.deleteRow(i + 1);
+            deleted = true;
             break;
           }
         }
       }
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
-        message: "Rekod berjaya dipadam dari Google Sheet"
+        deleted: deleted,
+        message: deleted ? "Rekod berjaya dipadam dari Google Sheet" : "Rekod tidak ditemui di Google Sheet"
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -533,16 +561,22 @@ function getRecordsPayload() {
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const offset = hasKumpulanCol ? 1 : 0;
+    const rTarikh = row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
+    const rGuru = row[3 + offset] || "";
+    const rMasa = row[5 + offset] || "";
+    const rKelas = row[7 + offset] || "";
+    const recId = `${rTarikh}_${rGuru}_${rMasa}_${rKelas}`.replace(/[\s\/\\:]+/g, '_');
     records.push({
-      tarikh: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "",
+      id: recId,
+      tarikh: rTarikh,
       hari: row[1],
       minggu: row[2],
       kumpulan: hasKumpulanCol ? row[3] : "",
-      guru_tidak_hadir: row[3 + offset],
+      guru_tidak_hadir: rGuru,
       sebab: row[4 + offset],
-      masa: row[5 + offset],
+      masa: rMasa,
       mata_pelajaran: row[6 + offset],
-      kelas: row[7 + offset],
+      kelas: rKelas,
       guru_ganti: row[8 + offset],
       catatan: row[9 + offset],
       timestamp: row[10 + offset]

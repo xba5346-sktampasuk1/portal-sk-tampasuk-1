@@ -25,10 +25,11 @@ const DatabaseAPI = {
    */
   async getSchoolData(forceRefresh = false) {
     const cacheKey = APP_CONFIG.storageKeys?.schoolDataCache || "eggs-komersial-school-data-cache-v1";
+    const scriptUrl = this.getScriptUrl();
 
-    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
+    if (scriptUrl && navigator.onLine) {
       try {
-        const url = `${APP_CONFIG.googleAppsScriptUrl}?action=getSchoolData&_t=${Date.now()}`;
+        const url = `${scriptUrl}?action=getSchoolData&_t=${Date.now()}`;
         const response = await fetch(url, {
           method: "GET",
           cache: "no-store",
@@ -64,9 +65,11 @@ const DatabaseAPI = {
    * Mengambil semua rekod penggantian yang telah disimpan
    */
   async getAllRecords() {
-    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
+    const scriptUrl = this.getScriptUrl();
+
+    if (scriptUrl && navigator.onLine) {
       try {
-        const noCacheUrl = `${APP_CONFIG.googleAppsScriptUrl}?action=getRecords&_t=${Date.now()}`;
+        const noCacheUrl = `${scriptUrl}?action=getRecords&_t=${Date.now()}`;
         const response = await fetch(noCacheUrl, {
           method: "GET",
           cache: "no-store",
@@ -75,8 +78,15 @@ const DatabaseAPI = {
         if (response.ok) {
           const result = await response.json();
           if (result.status === "success" && Array.isArray(result.data)) {
-            localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(result.data));
-            return result.data;
+            const withIds = result.data.map(r => {
+              if (!r.id) {
+                const g = r.guru_tidak_hadir || r.guruTidakHadir || "";
+                r.id = `${r.tarikh || ""}_${g}_${r.masa || ""}_${r.kelas || ""}`.replace(/[\s\/\\:]+/g, '_');
+              }
+              return r;
+            });
+            localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(withIds));
+            return withIds;
           }
         }
       } catch (err) {
@@ -86,7 +96,14 @@ const DatabaseAPI = {
 
     try {
       const local = localStorage.getItem(APP_CONFIG.storageKeys.records);
-      return local ? JSON.parse(local) : [];
+      const list = local ? JSON.parse(local) : [];
+      return list.map(r => {
+        if (!r.id) {
+          const g = r.guru_tidak_hadir || r.guruTidakHadir || "";
+          r.id = `${r.tarikh || ""}_${g}_${r.masa || ""}_${r.kelas || ""}`.replace(/[\s\/\\:]+/g, '_');
+        }
+        return r;
+      });
     } catch (e) {
       console.error("Ralat membaca localStorage:", e);
       return [];
@@ -97,7 +114,8 @@ const DatabaseAPI = {
    * Menyegerak terus daripada Google Sheet (Profil Sekolah + Jadual + Rekod)
    */
   async syncFromCloud() {
-    if (!APP_CONFIG.googleAppsScriptUrl) {
+    const scriptUrl = this.getScriptUrl();
+    if (!scriptUrl) {
       return { success: false, reason: "no_url", message: "URL Google Apps Script belum ditetapkan. Sila tetapkan di tab Urus & Import Jadual atau dalam fail config.js." };
     }
     if (!navigator.onLine) {
@@ -108,7 +126,7 @@ const DatabaseAPI = {
       const schoolRes = await this.getSchoolData(true);
 
       // 2. Segerak Rekod Penggantian
-      const noCacheUrl = `${APP_CONFIG.googleAppsScriptUrl}?action=getRecords&_t=${Date.now()}`;
+      const noCacheUrl = `${scriptUrl}?action=getRecords&_t=${Date.now()}`;
       const response = await fetch(noCacheUrl, {
         method: "GET",
         cache: "no-store",
@@ -118,11 +136,18 @@ const DatabaseAPI = {
       if (response.ok) {
         const result = await response.json();
         if (result && result.status === "success" && Array.isArray(result.data)) {
-          localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(result.data));
+          const withIds = result.data.map(r => {
+            if (!r.id) {
+              const g = r.guru_tidak_hadir || r.guruTidakHadir || "";
+              r.id = `${r.tarikh || ""}_${g}_${r.masa || ""}_${r.kelas || ""}`.replace(/[\s\/\\:]+/g, '_');
+            }
+            return r;
+          });
+          localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(withIds));
           return {
             success: true,
-            count: result.data.length,
-            data: result.data,
+            count: withIds.length,
+            data: withIds,
             schoolData: schoolRes && schoolRes.success ? schoolRes.data : null
           };
         }
@@ -174,10 +199,11 @@ const DatabaseAPI = {
 
     let sheetSynced = false;
     let emailStatus = "";
+    const scriptUrl = this.getScriptUrl();
 
-    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
+    if (scriptUrl && navigator.onLine) {
       try {
-        const response = await fetch(APP_CONFIG.googleAppsScriptUrl, {
+        const response = await fetch(scriptUrl, {
           method: "POST",
           headers: {
             "Content-Type": "text/plain;charset=utf-8"
@@ -237,9 +263,10 @@ const DatabaseAPI = {
     }
 
     let sheetSynced = false;
-    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine) {
+    const scriptUrl = this.getScriptUrl();
+    if (scriptUrl && navigator.onLine) {
       try {
-        const response = await fetch(APP_CONFIG.googleAppsScriptUrl, {
+        const response = await fetch(scriptUrl, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
@@ -269,8 +296,6 @@ const DatabaseAPI = {
    * Memadam / Membatalkan satu tugasan guru ganti
    */
   async deleteRecord(recordId, recordDetails = null) {
-    if (!recordId) return { success: false, message: "ID rekod tidak sah." };
-
     let existing = [];
     try {
       const local = localStorage.getItem(APP_CONFIG.storageKeys.records);
@@ -279,24 +304,62 @@ const DatabaseAPI = {
       existing = [];
     }
 
-    const targetRec = existing.find(r => r.id === recordId) || recordDetails;
-    const filtered = existing.filter(r => r.id !== recordId);
+    // Cari rekod sasaran berdasarkan ID atau butiran (tarikh, guru, masa, kelas)
+    let targetRec = null;
+    if (recordId && recordId !== "undefined") {
+      targetRec = existing.find(r => r.id === recordId);
+    }
+    if (!targetRec && recordDetails) {
+      const dTarikh = String(recordDetails.tarikh || "").trim();
+      const dGuru = String(recordDetails.guru_tidak_hadir || recordDetails.guruTidakHadir || "").trim().toLowerCase();
+      const dMasa = String(recordDetails.masa || "").replace(/\s+/g, "");
+      const dKelas = String(recordDetails.kelas || "").trim().toLowerCase();
+
+      targetRec = existing.find(r => {
+        const rTarikh = String(r.tarikh || "").trim();
+        const rGuru = String(r.guru_tidak_hadir || r.guruTidakHadir || "").trim().toLowerCase();
+        const rMasa = String(r.masa || "").replace(/\s+/g, "");
+        const rKelas = String(r.kelas || "").trim().toLowerCase();
+        return rTarikh === dTarikh && rGuru === dGuru && rMasa === dMasa && rKelas === dKelas;
+      }) || recordDetails;
+    }
+
+    if (!targetRec && !recordId) {
+      return { success: false, message: "Maklumat rekod tidak mencukupi untuk dipadam." };
+    }
+
+    const tTarikh = targetRec?.tarikh || recordDetails?.tarikh || "";
+    const tGuru = targetRec?.guru_tidak_hadir || targetRec?.guruTidakHadir || recordDetails?.guru_tidak_hadir || "";
+    const tMasa = targetRec?.masa || recordDetails?.masa || "";
+    const tKelas = targetRec?.kelas || recordDetails?.kelas || "";
+    const tGanti = targetRec?.guru_ganti || targetRec?.guruGanti || recordDetails?.guru_ganti || "";
+
+    // Tapis buang rekod daripada localStorage secara dwikunci (ID & Nilai Padanan)
+    const filtered = existing.filter(r => {
+      if (recordId && recordId !== "undefined" && r.id === recordId) return false;
+      const matchKey = String(r.tarikh || "").trim() === String(tTarikh).trim() &&
+        String(r.guru_tidak_hadir || r.guruTidakHadir || "").trim().toLowerCase() === String(tGuru).trim().toLowerCase() &&
+        String(r.masa || "").replace(/\s+/g, "") === String(tMasa).replace(/\s+/g, "") &&
+        String(r.kelas || "").trim().toLowerCase() === String(tKelas).trim().toLowerCase();
+      return !matchKey;
+    });
     localStorage.setItem(APP_CONFIG.storageKeys.records, JSON.stringify(filtered));
 
     let sheetSynced = false;
-    if (APP_CONFIG.googleAppsScriptUrl && navigator.onLine && targetRec) {
+    const scriptUrl = this.getScriptUrl();
+    if (scriptUrl && navigator.onLine) {
       try {
-        const response = await fetch(APP_CONFIG.googleAppsScriptUrl, {
+        const response = await fetch(scriptUrl, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
             action: "deleteRecord",
-            recordId: recordId,
-            tarikh: targetRec.tarikh,
-            masa: targetRec.masa,
-            kelas: targetRec.kelas,
-            guru_tidak_hadir: targetRec.guru_tidak_hadir,
-            guru_ganti: targetRec.guru_ganti
+            recordId: (recordId && recordId !== "undefined") ? recordId : "",
+            tarikh: tTarikh,
+            masa: tMasa,
+            kelas: tKelas,
+            guru_tidak_hadir: tGuru,
+            guru_ganti: tGanti
           })
         });
         if (response.ok) {
@@ -312,7 +375,7 @@ const DatabaseAPI = {
       success: true,
       sheetSynced,
       message: sheetSynced
-        ? "Tugasan berjaya dibatalkan dari Google Sheet & Peranti!"
+        ? "Tugasan berjaya dipadam daripada Google Sheet & Peranti!"
         : "Tugasan berjaya dibatalkan dalam peranti."
     };
   },

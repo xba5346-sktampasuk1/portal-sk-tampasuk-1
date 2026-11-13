@@ -793,8 +793,9 @@ h1, h2, h3, h4, h5, h6,
 .teacher-hover-popover {
   position: fixed;
   z-index: 9999999;
-  width: 330px;
-  max-width: 94vw;
+  width: 295px;
+  max-width: calc(100vw - 20px);
+  box-sizing: border-box;
   top: 50%;
   transform: translateY(-50%) scale(1);
   background-color: #ffffff;
@@ -3930,6 +3931,7 @@ a:focus-visible {
 
 /* Glassmorphism pada Hover Popover Guru */
 .teacher-hover-popover {
+  box-sizing: border-box !important;
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
