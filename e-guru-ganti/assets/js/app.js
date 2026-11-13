@@ -1034,57 +1034,73 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
 
   if (window.lucide) window.lucide.createIcons();
 
-  // Paparan Mini Jadual Guru Berada di Sisi Menu Supaya Langsung Tidak Menghalang Senarai Nama Guru Dropdown
+  // Letak mini jadual di kawasan KOSONG yang TIDAK bertindih dengan menu dropdown
+  // (kiri / kanan / bawah / atas). Jika ruang sempit, mini jadual dikecilkan (scale) supaya muat.
   popover.classList.remove("hidden");
+  popover.style.width = "300px";
+  popover.style.transform = "none";
+  popover.style.top = "0px";
+  popover.style.left = "0px";
+
+  const baseW = popover.offsetWidth || 300;
+  const baseH = popover.offsetHeight || 400;
+  const vw = document.documentElement.clientWidth || window.innerWidth;
+  const vh = document.documentElement.clientHeight || window.innerHeight;
+  const M = 8;   // jarak minimum dari tepi skrin
+  const GAP = 12; // jarak selamat dari menu dropdown
 
   const menuEl = targetElement
     ? (targetElement.closest(".custom-ganti-menu") || targetElement.closest(".custom-ganti-wrapper") || targetElement)
     : null;
 
-  let leftPos = 16;
-  let popW = 295; // Saiz ideal padat untuk jadual 4 lajur tanpa membazir ruang
+  let finalLeft, finalTop, finalScale = 1;
 
   if (menuEl) {
-    const mRect = menuEl.getBoundingClientRect();
-    const spaceLeft = mRect.left - 12;
-    const spaceRight = window.innerWidth - mRect.right - 12;
+    const r = menuEl.getBoundingClientRect();
+    // Kawasan bebas di sekeliling menu (tidak termasuk kawasan menu itu sendiri)
+    const regions = [
+      { name: "left",  x: M,            y: M,            w: r.left - GAP - M,        h: vh - 2 * M },
+      { name: "right", x: r.right + GAP, y: M,            w: vw - M - (r.right + GAP), h: vh - 2 * M },
+      { name: "below", x: M,            y: r.bottom + GAP, w: vw - 2 * M,            h: vh - M - (r.bottom + GAP) },
+      { name: "above", x: M,            y: M,            w: vw - 2 * M,            h: r.top - GAP - M }
+    ].map(reg => {
+      const sc = Math.min(1, Math.max(0, reg.w) / baseW, Math.max(0, reg.h) / baseH);
+      return Object.assign(reg, { scale: sc });
+    });
 
-    // Utamakan sisi yang mempunyai ruang lapang mencukupi supaya pilihan guru dropdown 100% bebas daripada terlindung
-    if (spaceLeft >= 300) {
-      // Cukup ruang lapang di sebelah KIRI menu dropdown
-      popW = Math.min(300, spaceLeft - 6);
-      leftPos = mRect.left - popW - 12;
-    } else if (spaceRight >= 300) {
-      // Cukup ruang lapang di sebelah KANAN menu dropdown
-      popW = Math.min(300, spaceRight - 6);
-      leftPos = mRect.right + 12;
-    } else if (spaceLeft >= spaceRight && spaceLeft >= 220) {
-      // Ruang sederhana: Utamakan kiri dengan mengecilkan lebar popover secara dinamik mengikut baki ruang
-      popW = Math.min(290, spaceLeft - 8);
-      leftPos = mRect.left - popW - 8;
-    } else if (spaceRight > spaceLeft && spaceRight >= 220) {
-      // Ruang sederhana: Letak di kanan dengan mengecilkan lebar popover mengikut baki ruang
-      popW = Math.min(290, spaceRight - 8);
-      leftPos = mRect.right + 8;
+    // Pilih kawasan pertama yang muat hampir penuh (>= 0.85), jika tiada pilih yang paling besar skalanya
+    let chosen = regions.find(g => g.scale >= 0.85);
+    if (!chosen) chosen = regions.slice().sort((a, b) => b.scale - a.scale)[0];
+
+    finalScale = Math.max(0.2, chosen.scale);
+    const pw = baseW * finalScale;
+    const ph = baseH * finalScale;
+
+    if (chosen.name === "left") {
+      finalLeft = r.left - GAP - pw;
+      finalTop = Math.min(Math.max(r.top, M), vh - ph - M);
+    } else if (chosen.name === "right") {
+      finalLeft = r.right + GAP;
+      finalTop = Math.min(Math.max(r.top, M), vh - ph - M);
+    } else if (chosen.name === "below") {
+      finalLeft = Math.min(Math.max(r.left, M), vw - pw - M);
+      finalTop = r.bottom + GAP;
     } else {
-      // Skrin amat sempit / mudah alih: Letak di sebelah yang lebih lapang dengan jaminan jarak minimum
-      if (spaceLeft >= spaceRight) {
-        popW = Math.max(200, spaceLeft - 6);
-        leftPos = Math.max(6, mRect.left - popW - 6);
-      } else {
-        popW = Math.max(200, spaceRight - 6);
-        leftPos = mRect.right + 6;
-      }
+      finalLeft = Math.min(Math.max(r.left, M), vw - pw - M);
+      finalTop = r.top - GAP - ph;
     }
+    finalLeft = Math.max(M, finalLeft);
+    finalTop = Math.max(M, finalTop);
   } else {
-    popW = 295;
-    leftPos = Math.max(16, (window.innerWidth - popW) / 2);
+    finalScale = Math.min(1, (vh - 2 * M) / baseH);
+    finalLeft = Math.max(M, (vw - baseW * finalScale) / 2);
+    finalTop = Math.max(M, (vh - baseH * finalScale) / 2);
   }
 
-  popover.style.width = `${Math.round(popW)}px`;
-  popover.style.top = "50%";
-  popover.style.left = `${Math.round(leftPos)}px`;
-  popover.style.transform = "translateY(-50%) scale(1)";
+  popover.style.transformOrigin = "top left";
+  popover.style.left = Math.round(finalLeft) + "px";
+  popover.style.top = Math.round(finalTop) + "px";
+  popover.style.transform = "scale(" + finalScale.toFixed(3) + ")";
   popover.style.opacity = "1";
 }
 
@@ -1093,7 +1109,6 @@ function hideTeacherHoverPopover() {
   if (popover) {
     popover.classList.add("hidden");
     popover.style.opacity = "0";
-    popover.style.transform = "translateY(-50%) scale(0.95)";
   }
 }
 
@@ -5632,7 +5647,7 @@ function applySchoolData(schoolData, saveToStorage = true) {
         groups: TEACHER_GROUPS,
         phones: DEFAULT_TEACHER_PHONES,
         colors: savedColorsHex,
-        classes: ALL_CLASSES,
+        classes: (typeof ALL_MASTER_CLASSES !== "undefined" && Array.isArray(ALL_MASTER_CLASSES)) ? ALL_MASTER_CLASSES : cleanClasses,
         timetable: TIMETABLE
       }));
     } catch (e) {
@@ -6192,7 +6207,7 @@ function setupImportPageEvents() {
 
       if (phone) {
         DEFAULT_TEACHER_PHONES[guru] = phone;
-        saveTeacherPhone(guru, phone);
+        setTeacherPhone(guru, phone);
       }
 
       localStorage.setItem(APP_CONFIG.storageKeys.customTeachers, JSON.stringify(MASTER_TEACHERS));
