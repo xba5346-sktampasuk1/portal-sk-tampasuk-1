@@ -3145,6 +3145,7 @@ const StorageTool = {
   CURRENT_ID_KEY: 'eopr_starter_kit_current_id',
   CLOUD_URL_KEY: 'eopr_starter_kit_cloud_url',
   SETTINGS_KEY: 'eopr_starter_kit_school_settings',
+  DELETED_IDS_KEY: 'eopr_starter_kit_deleted_ids',
   // URL Lalai Google Apps Script: Dikosongkan secara lalai untuk pakej jualan / starter kit.
   // Pihak sekolah pembeli boleh memasukkan URL Google Apps Script mereka dalam js/config.js (backendUrl)
   // atau melalui modal "Tetapan Sekolah" di skrin.
@@ -3656,29 +3657,76 @@ const StorageTool = {
       history.unshift(record);
     }
 
+    // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
+    if (this.isCloudEnabled()) {
+      this.sendToCloud(record).then(cloudRes => {
+        if (cloudRes && cloudRes.record && cloudRes.record.images) {
+          const historyNow = this.getHistory();
+          const idx = historyNow.findIndex(i => i.id === record.id);
+          if (idx >= 0) {
+            historyNow[idx].images = cloudRes.record.images;
+            this.safeSaveHistoryList(historyNow);
+          }
+        }
+      }).catch(e => console.warn('Latar belakang awan:', e));
+    }
+
+    const savedLocally = this.safeSaveHistoryList(history);
+    try {
+      localStorage.setItem(this.CURRENT_ID_KEY, currentId);
+    } catch (_) {}
+
+    return { success: true, savedLocally, record, count: history.length };
+  },
+
+  /**
+   * Simpan senarai sejarah ke localStorage dengan pengendalian kuota pintar
+   */
+  safeSaveHistoryList(history) {
     try {
       localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
-      localStorage.setItem(this.CURRENT_ID_KEY, currentId);
-
-      // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
-      if (this.isCloudEnabled()) {
-        this.sendToCloud(record).then(cloudRes => {
-          if (cloudRes && cloudRes.record && cloudRes.record.images) {
-            const historyNow = this.getHistory();
-            const idx = historyNow.findIndex(i => i.id === record.id);
-            if (idx >= 0) {
-              historyNow[idx].images = cloudRes.record.images;
-              localStorage.setItem(this.HISTORY_KEY, JSON.stringify(historyNow));
-            }
-          }
-        }).catch(e => console.warn('Latar belakang awan:', e));
-      }
-
-      return { success: true, record, count: history.length };
+      return true;
     } catch (err) {
-      console.warn('Ralat kuota LocalStorage arkib sejarah:', err);
-      return { success: false, error: err.message, record };
+      console.warn('Kuota LocalStorage penuh, mengoptimumkan imej rekod lama:', err);
+      try {
+        // Kekalkan imej penuh hanya untuk 3 rekod terkini; rekod lama guna URL awan sahaja jika ada
+        const slimHistory = history.map((item, idx) => {
+          if (idx < 3 || !item.images) return item;
+          const slimImages = {};
+          Object.entries(item.images).forEach(([slot, src]) => {
+            if (src && !String(src).startsWith('data:')) {
+              slimImages[slot] = src;
+            }
+          });
+          return { ...item, images: slimImages };
+        });
+        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(slimHistory));
+        return true;
+      } catch (err2) {
+        console.warn('Masih gagal menyimpan ke LocalStorage:', err2);
+        return false;
+      }
     }
+  },
+
+  getDeletedIds() {
+    try {
+      const raw = localStorage.getItem(this.DELETED_IDS_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return new Set(Array.isArray(arr) ? arr : []);
+    } catch (_) {
+      return new Set();
+    }
+  },
+
+  markDeletedId(id) {
+    if (!id) return;
+    try {
+      const set = this.getDeletedIds();
+      set.add(id);
+      const arr = Array.from(set).slice(-200);
+      localStorage.setItem(this.DELETED_IDS_KEY, JSON.stringify(arr));
+    } catch (_) {}
   },
 
   /**
@@ -3686,10 +3734,11 @@ const StorageTool = {
    */
   deleteFromHistory(id) {
     if (!id) return false;
+    this.markDeletedId(id);
     let history = this.getHistory();
     history = history.filter(item => item.id !== id);
     try {
-      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
+      this.safeSaveHistoryList(history);
       if (this.getCurrentEditingId() === id) {
         this.setCurrentEditingId(null);
       }
@@ -3733,11 +3782,6 @@ const StorageTool = {
     }
     const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
     if (savedUrl === 'disabled') return '';
-    // Bersihkan sisa URL SK Tampasuk lama jika wujud dari cache pelayar tempatan
-    if (savedUrl && (savedUrl.includes('AKfycbxPyNckbOzetRy') || savedUrl.includes('sktampasuk1'))) {
-      localStorage.removeItem(this.CLOUD_URL_KEY);
-      return this.getDefaultCloudUrl();
-    }
     if (savedUrl && savedUrl.trim()) return savedUrl.trim();
     return this.getDefaultCloudUrl();
   },
@@ -3788,15 +3832,16 @@ const StorageTool = {
     if (!url) return { success: false, reason: 'no_url' };
     try {
       const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
-      const res = await fetch(targetUrl);
+      const res = await fetch(targetUrl, { method: 'GET', cache: 'no-store' });
       const json = await res.json();
       if (json && json.status === 'success' && Array.isArray(json.records)) {
         const local = this.getHistory();
+        const deletedIds = this.getDeletedIds();
         const localMap = new Map();
         const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
 
         local.forEach(item => {
-          if (item && item.id) {
+          if (item && item.id && !deletedIds.has(item.id)) {
             const parsedDates = this.parseDateRange(item.tarikh);
             item.tarikh = parsedDates.start || this.normalizeDateToYMD(item.tarikh);
             if (!item.tarikhTamat && parsedDates.end) {
@@ -3821,7 +3866,7 @@ const StorageTool = {
         });
 
         json.records.forEach(cloudItem => {
-          if (cloudItem && cloudItem.id) {
+          if (cloudItem && cloudItem.id && !deletedIds.has(cloudItem.id)) {
             const parsedDates = this.parseDateRange(cloudItem.tarikh);
             cloudItem.tarikh = parsedDates.start || this.normalizeDateToYMD(cloudItem.tarikh);
             if (!cloudItem.tarikhTamat && parsedDates.end) {
@@ -3846,12 +3891,12 @@ const StorageTool = {
         });
 
         const merged = Array.from(localMap.values()).sort((a, b) => {
-          const tA = new Date(a.updatedAt || a.savedAt || a.timestamp || 0).getTime();
-          const tB = new Date(b.updatedAt || b.savedAt || b.timestamp || 0).getTime();
+          const tA = new Date(a.updatedAt || a.savedAt || a.timestamp || 0).getTime() || 0;
+          const tB = new Date(b.updatedAt || b.savedAt || b.timestamp || 0).getTime() || 0;
           return tB - tA;
         });
 
-        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(merged));
+        this.safeSaveHistoryList(merged);
         return { success: true, count: merged.length, cloudCount: json.records.length, records: merged };
       }
       return { success: false, reason: json ? json.message : 'invalid_response' };
@@ -3868,12 +3913,21 @@ const StorageTool = {
     const url = this.getCloudUrl();
     if (!url || !id) return false;
     try {
-      const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=delete&id=${encodeURIComponent(id)}&_t=${Date.now()}`;
-      await fetch(targetUrl);
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'delete', id })
+      });
       return true;
     } catch (e) {
-      console.warn('Ralat deleteFromCloud:', e);
-      return false;
+      try {
+        const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=delete&id=${encodeURIComponent(id)}&_t=${Date.now()}`;
+        await fetch(targetUrl, { method: 'GET', cache: 'no-store' });
+        return true;
+      } catch (e2) {
+        console.warn('Ralat deleteFromCloud:', e2);
+        return false;
+      }
     }
   },
 
@@ -4377,6 +4431,16 @@ window.AIAssistant = AIAssistant;
 
 const $ = (id) => document.getElementById(id);
 
+function escapeHtml(str) {
+  if (str === undefined || str === null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const placeholders = {
   program: "Masukkan nama program",
   date: "Masukkan tarikh",
@@ -4829,10 +4893,9 @@ function getSchoolSettings() {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Sekiranya simpanan peranti ini masih mengandungi nama placeholder atau alamat lama WDT 11 / 89158, tetapkan semula
+      // Sekiranya simpanan peranti ini masih mengandungi alamat lama WDT 11 / 89158, tetapkan semula
       if (parsed && (
-        parsed.schoolName === "NAMA SEKOLAH ANDA" || 
-        parsed.schoolName.includes('Tampasuk') ||
+        parsed.schoolName === "NAMA SEKOLAH ANDA" ||
         (parsed.schoolAddress && (parsed.schoolAddress.includes('WDT 11') || parsed.schoolAddress.includes('89158')))
       )) {
         localStorage.removeItem(SETTINGS_KEY);
@@ -5420,7 +5483,8 @@ function matchRecordCategory(item, filterKey) {
  */
 function deleteRecordFromHistory(recordId, recordTitle) {
   if (!window.StorageTool) return;
-  const title = recordTitle || "OPR ini";
+  const rec = window.StorageTool.getRecordById(recordId);
+  const title = recordTitle || (rec && rec.program) || "OPR ini";
   if (confirm(`Adakah anda pasti mahu memadamkan "${title}" daripada Arkib Sejarah?\n\nTindakan ini kekal dan tidak boleh diundur.`)) {
     window.StorageTool.deleteFromHistory(recordId);
     renderHistoryView();
@@ -5579,36 +5643,36 @@ function renderHistoryView() {
                 <span>NAMA PROGRAM</span>
               </div>
               <div class="p-2 font-extrabold text-xs sm:text-sm text-slate-900 uppercase leading-snug tracking-tight">
-                ${programTitle}
+                ${escapeHtml(programTitle)}
               </div>
             </div>
 
             <!-- Blok 2 & 3: Butiran Program -->
             <div class="grid grid-cols-2 gap-1.5 text-[10px] text-slate-700 font-medium mb-2">
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Tarikh:</strong> ${dateFormatted}
+                <strong class="text-slate-900">Tarikh:</strong> ${escapeHtml(dateFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Hari:</strong> ${dayFormatted}
+                <strong class="text-slate-900">Hari:</strong> ${escapeHtml(dayFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Masa:</strong> ${timeFormatted}
+                <strong class="text-slate-900">Masa:</strong> ${escapeHtml(timeFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Tempat:</strong> <span class="break-words line-clamp-2 leading-tight">${item.tempat || "-"}</span>
+                <strong class="text-slate-900">Tempat:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.tempat || "-")}</span>
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.sasaran || "-"}</span>
+                <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.sasaran || "-")}</span>
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Anjuran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.anjuran === 'Lain-lain' && item.anjuranLain ? item.anjuranLain : (item.anjuran || item.category || "-")}</span>
+                <strong class="text-slate-900">Anjuran:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.anjuran === 'Lain-lain' && item.anjuranLain ? item.anjuranLain : (item.anjuran || item.category || "-"))}</span>
               </div>
             </div>
 
             <!-- Gambar Aktiviti Yang Telah Dimuat Naik -->
             <div class="text-[9px] font-extrabold text-slate-600 flex items-center justify-between mb-1">
               <span>GAMBAR AKTIVITI (${photoCount} FOTO)</span>
-              <span class="text-[8.5px] text-blue-700 font-bold">Susun atur: ${item.photoLayout || '6'} Gambar</span>
+              <span class="text-[8.5px] text-blue-700 font-bold">Susun atur: ${escapeHtml(item.photoLayout || '6')} Gambar</span>
             </div>
             ${photosHtml}
 
@@ -5621,11 +5685,11 @@ function renderHistoryView() {
             <div class="pt-1.5 mt-1 border-t border-slate-200 flex justify-between text-[9px] text-slate-600 font-medium">
               <div>
                 <span class="text-slate-400">Penyedia:</span>
-                <strong class="block text-slate-900 truncate max-w-[120px]">${item.namaPenyedia || "Guru Penyedia"}</strong>
+                <strong class="block text-slate-900 truncate max-w-[120px]">${escapeHtml(item.namaPenyedia || "Guru Penyedia")}</strong>
               </div>
               <div class="text-right">
                 <span class="text-slate-400">Pengesah:</span>
-                <strong class="block text-slate-900 truncate max-w-[120px]">${item.namaPengesah || "Guru Besar"}</strong>
+                <strong class="block text-slate-900 truncate max-w-[120px]">${escapeHtml(item.namaPengesah || "Guru Besar")}</strong>
               </div>
             </div>
 
@@ -5642,7 +5706,7 @@ function renderHistoryView() {
         <div class="p-3 bg-slate-50/90 border-t border-slate-200 flex items-center justify-between gap-2 mt-auto">
           <!-- Butang Sunting di Page Utama -->
           <button type="button" 
-                  onclick="loadOPRToEditor('${item.id}')"
+                  onclick="loadOPRToEditor('${escapeHtml(item.id)}')"
                   class="inline-flex items-center gap-1.5 bg-blue-950 hover:bg-blue-900 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
             <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-400"></i>
             <span>Sunting</span>
@@ -5650,7 +5714,7 @@ function renderHistoryView() {
 
           <!-- Butang Cetak Pantas -->
           <button type="button" 
-                  onclick="printRecordFromHistory('${item.id}')"
+                  onclick="printRecordFromHistory('${escapeHtml(item.id)}')"
                   class="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
             <i data-lucide="printer" class="w-3.5 h-3.5"></i>
             <span>Cetak PDF</span>
@@ -5658,7 +5722,7 @@ function renderHistoryView() {
 
           <!-- Butang Padam (Delete) -->
           <button type="button" 
-                  onclick="deleteRecordFromHistory('${item.id}', '${(item.program || '').replace(/'/g, "\\'")}')"
+                  onclick="deleteRecordFromHistory('${escapeHtml(item.id)}')"
                   title="Padam rekod ini daripada arkib"
                   class="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2.5 py-1.5 rounded-xl text-xs transition">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -5905,9 +5969,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabGen = $("tab-btn-generator");
   if (tabGen) {
     tabGen.addEventListener("click", () => {
-      if (!window.StorageTool || !window.StorageTool.getCurrentEditingId()) {
-        resetOPRForm(true);
-      }
       switchView("generator");
     });
   }
@@ -6012,6 +6073,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if ($("anjuran")?.value === "Lain-lain" && !$("anjuran-lain")?.value.trim()) {
         missing.push("Masukkan Anjuran Khas");
+      }
+
+      if ($("hari")?.value === "Lain-lain" && !$("hari-lain")?.value.trim()) {
+        missing.push("Nyatakan Hari Khas");
       }
 
       const uploadedCount = window.ImageTool ? Object.keys(window.ImageTool.imageData).length : 0;

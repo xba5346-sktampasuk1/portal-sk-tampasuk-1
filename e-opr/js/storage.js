@@ -11,6 +11,7 @@ const StorageTool = {
   CURRENT_ID_KEY: 'eopr_starter_kit_current_id',
   CLOUD_URL_KEY: 'eopr_starter_kit_cloud_url',
   SETTINGS_KEY: 'eopr_starter_kit_school_settings',
+  DELETED_IDS_KEY: 'eopr_starter_kit_deleted_ids',
   // URL Lalai Google Apps Script: Dikosongkan secara lalai untuk pakej jualan / starter kit.
   // Pihak sekolah pembeli boleh memasukkan URL Google Apps Script mereka dalam js/config.js (backendUrl)
   // atau melalui modal "Tetapan Sekolah" di skrin.
@@ -522,29 +523,76 @@ const StorageTool = {
       history.unshift(record);
     }
 
+    // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
+    if (this.isCloudEnabled()) {
+      this.sendToCloud(record).then(cloudRes => {
+        if (cloudRes && cloudRes.record && cloudRes.record.images) {
+          const historyNow = this.getHistory();
+          const idx = historyNow.findIndex(i => i.id === record.id);
+          if (idx >= 0) {
+            historyNow[idx].images = cloudRes.record.images;
+            this.safeSaveHistoryList(historyNow);
+          }
+        }
+      }).catch(e => console.warn('Latar belakang awan:', e));
+    }
+
+    const savedLocally = this.safeSaveHistoryList(history);
+    try {
+      localStorage.setItem(this.CURRENT_ID_KEY, currentId);
+    } catch (_) {}
+
+    return { success: true, savedLocally, record, count: history.length };
+  },
+
+  /**
+   * Simpan senarai sejarah ke localStorage dengan pengendalian kuota pintar
+   */
+  safeSaveHistoryList(history) {
     try {
       localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
-      localStorage.setItem(this.CURRENT_ID_KEY, currentId);
-
-      // Segerakkan ke Google Sheets DELIMa di latar belakang jika URL dikonfigurasi
-      if (this.isCloudEnabled()) {
-        this.sendToCloud(record).then(cloudRes => {
-          if (cloudRes && cloudRes.record && cloudRes.record.images) {
-            const historyNow = this.getHistory();
-            const idx = historyNow.findIndex(i => i.id === record.id);
-            if (idx >= 0) {
-              historyNow[idx].images = cloudRes.record.images;
-              localStorage.setItem(this.HISTORY_KEY, JSON.stringify(historyNow));
-            }
-          }
-        }).catch(e => console.warn('Latar belakang awan:', e));
-      }
-
-      return { success: true, record, count: history.length };
+      return true;
     } catch (err) {
-      console.warn('Ralat kuota LocalStorage arkib sejarah:', err);
-      return { success: false, error: err.message, record };
+      console.warn('Kuota LocalStorage penuh, mengoptimumkan imej rekod lama:', err);
+      try {
+        // Kekalkan imej penuh hanya untuk 3 rekod terkini; rekod lama guna URL awan sahaja jika ada
+        const slimHistory = history.map((item, idx) => {
+          if (idx < 3 || !item.images) return item;
+          const slimImages = {};
+          Object.entries(item.images).forEach(([slot, src]) => {
+            if (src && !String(src).startsWith('data:')) {
+              slimImages[slot] = src;
+            }
+          });
+          return { ...item, images: slimImages };
+        });
+        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(slimHistory));
+        return true;
+      } catch (err2) {
+        console.warn('Masih gagal menyimpan ke LocalStorage:', err2);
+        return false;
+      }
     }
+  },
+
+  getDeletedIds() {
+    try {
+      const raw = localStorage.getItem(this.DELETED_IDS_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return new Set(Array.isArray(arr) ? arr : []);
+    } catch (_) {
+      return new Set();
+    }
+  },
+
+  markDeletedId(id) {
+    if (!id) return;
+    try {
+      const set = this.getDeletedIds();
+      set.add(id);
+      const arr = Array.from(set).slice(-200);
+      localStorage.setItem(this.DELETED_IDS_KEY, JSON.stringify(arr));
+    } catch (_) {}
   },
 
   /**
@@ -552,10 +600,11 @@ const StorageTool = {
    */
   deleteFromHistory(id) {
     if (!id) return false;
+    this.markDeletedId(id);
     let history = this.getHistory();
     history = history.filter(item => item.id !== id);
     try {
-      localStorage.setItem(this.HISTORY_KEY, JSON.stringify(history));
+      this.safeSaveHistoryList(history);
       if (this.getCurrentEditingId() === id) {
         this.setCurrentEditingId(null);
       }
@@ -599,11 +648,6 @@ const StorageTool = {
     }
     const savedUrl = localStorage.getItem(this.CLOUD_URL_KEY);
     if (savedUrl === 'disabled') return '';
-    // Bersihkan sisa URL SK Tampasuk lama jika wujud dari cache pelayar tempatan
-    if (savedUrl && (savedUrl.includes('AKfycbxPyNckbOzetRy') || savedUrl.includes('sktampasuk1'))) {
-      localStorage.removeItem(this.CLOUD_URL_KEY);
-      return this.getDefaultCloudUrl();
-    }
     if (savedUrl && savedUrl.trim()) return savedUrl.trim();
     return this.getDefaultCloudUrl();
   },
@@ -654,15 +698,16 @@ const StorageTool = {
     if (!url) return { success: false, reason: 'no_url' };
     try {
       const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
-      const res = await fetch(targetUrl);
+      const res = await fetch(targetUrl, { method: 'GET', cache: 'no-store' });
       const json = await res.json();
       if (json && json.status === 'success' && Array.isArray(json.records)) {
         const local = this.getHistory();
+        const deletedIds = this.getDeletedIds();
         const localMap = new Map();
         const dayNames = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
 
         local.forEach(item => {
-          if (item && item.id) {
+          if (item && item.id && !deletedIds.has(item.id)) {
             const parsedDates = this.parseDateRange(item.tarikh);
             item.tarikh = parsedDates.start || this.normalizeDateToYMD(item.tarikh);
             if (!item.tarikhTamat && parsedDates.end) {
@@ -687,7 +732,7 @@ const StorageTool = {
         });
 
         json.records.forEach(cloudItem => {
-          if (cloudItem && cloudItem.id) {
+          if (cloudItem && cloudItem.id && !deletedIds.has(cloudItem.id)) {
             const parsedDates = this.parseDateRange(cloudItem.tarikh);
             cloudItem.tarikh = parsedDates.start || this.normalizeDateToYMD(cloudItem.tarikh);
             if (!cloudItem.tarikhTamat && parsedDates.end) {
@@ -712,12 +757,12 @@ const StorageTool = {
         });
 
         const merged = Array.from(localMap.values()).sort((a, b) => {
-          const tA = new Date(a.updatedAt || a.savedAt || a.timestamp || 0).getTime();
-          const tB = new Date(b.updatedAt || b.savedAt || b.timestamp || 0).getTime();
+          const tA = new Date(a.updatedAt || a.savedAt || a.timestamp || 0).getTime() || 0;
+          const tB = new Date(b.updatedAt || b.savedAt || b.timestamp || 0).getTime() || 0;
           return tB - tA;
         });
 
-        localStorage.setItem(this.HISTORY_KEY, JSON.stringify(merged));
+        this.safeSaveHistoryList(merged);
         return { success: true, count: merged.length, cloudCount: json.records.length, records: merged };
       }
       return { success: false, reason: json ? json.message : 'invalid_response' };
@@ -734,12 +779,21 @@ const StorageTool = {
     const url = this.getCloudUrl();
     if (!url || !id) return false;
     try {
-      const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=delete&id=${encodeURIComponent(id)}&_t=${Date.now()}`;
-      await fetch(targetUrl);
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'delete', id })
+      });
       return true;
     } catch (e) {
-      console.warn('Ralat deleteFromCloud:', e);
-      return false;
+      try {
+        const targetUrl = `${url}${url.includes('?') ? '&' : '?'}action=delete&id=${encodeURIComponent(id)}&_t=${Date.now()}`;
+        await fetch(targetUrl, { method: 'GET', cache: 'no-store' });
+        return true;
+      } catch (e2) {
+        console.warn('Ralat deleteFromCloud:', e2);
+        return false;
+      }
     }
   },
 

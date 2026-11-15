@@ -5,6 +5,16 @@
 
 const $ = (id) => document.getElementById(id);
 
+function escapeHtml(str) {
+  if (str === undefined || str === null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const placeholders = {
   program: "Masukkan nama program",
   date: "Masukkan tarikh",
@@ -457,10 +467,9 @@ function getSchoolSettings() {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Sekiranya simpanan peranti ini masih mengandungi nama placeholder atau alamat lama WDT 11 / 89158, tetapkan semula
+      // Sekiranya simpanan peranti ini masih mengandungi alamat lama WDT 11 / 89158, tetapkan semula
       if (parsed && (
-        parsed.schoolName === "NAMA SEKOLAH ANDA" || 
-        parsed.schoolName.includes('Tampasuk') ||
+        parsed.schoolName === "NAMA SEKOLAH ANDA" ||
         (parsed.schoolAddress && (parsed.schoolAddress.includes('WDT 11') || parsed.schoolAddress.includes('89158')))
       )) {
         localStorage.removeItem(SETTINGS_KEY);
@@ -1048,7 +1057,8 @@ function matchRecordCategory(item, filterKey) {
  */
 function deleteRecordFromHistory(recordId, recordTitle) {
   if (!window.StorageTool) return;
-  const title = recordTitle || "OPR ini";
+  const rec = window.StorageTool.getRecordById(recordId);
+  const title = recordTitle || (rec && rec.program) || "OPR ini";
   if (confirm(`Adakah anda pasti mahu memadamkan "${title}" daripada Arkib Sejarah?\n\nTindakan ini kekal dan tidak boleh diundur.`)) {
     window.StorageTool.deleteFromHistory(recordId);
     renderHistoryView();
@@ -1207,36 +1217,36 @@ function renderHistoryView() {
                 <span>NAMA PROGRAM</span>
               </div>
               <div class="p-2 font-extrabold text-xs sm:text-sm text-slate-900 uppercase leading-snug tracking-tight">
-                ${programTitle}
+                ${escapeHtml(programTitle)}
               </div>
             </div>
 
             <!-- Blok 2 & 3: Butiran Program -->
             <div class="grid grid-cols-2 gap-1.5 text-[10px] text-slate-700 font-medium mb-2">
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Tarikh:</strong> ${dateFormatted}
+                <strong class="text-slate-900">Tarikh:</strong> ${escapeHtml(dateFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Hari:</strong> ${dayFormatted}
+                <strong class="text-slate-900">Hari:</strong> ${escapeHtml(dayFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Masa:</strong> ${timeFormatted}
+                <strong class="text-slate-900">Masa:</strong> ${escapeHtml(timeFormatted)}
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Tempat:</strong> <span class="break-words line-clamp-2 leading-tight">${item.tempat || "-"}</span>
+                <strong class="text-slate-900">Tempat:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.tempat || "-")}</span>
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.sasaran || "-"}</span>
+                <strong class="text-slate-900">Sasaran:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.sasaran || "-")}</span>
               </div>
               <div class="p-1.5 rounded bg-slate-50 border border-slate-200">
-                <strong class="text-slate-900">Anjuran:</strong> <span class="break-words line-clamp-2 leading-tight">${item.anjuran === 'Lain-lain' && item.anjuranLain ? item.anjuranLain : (item.anjuran || item.category || "-")}</span>
+                <strong class="text-slate-900">Anjuran:</strong> <span class="break-words line-clamp-2 leading-tight">${escapeHtml(item.anjuran === 'Lain-lain' && item.anjuranLain ? item.anjuranLain : (item.anjuran || item.category || "-"))}</span>
               </div>
             </div>
 
             <!-- Gambar Aktiviti Yang Telah Dimuat Naik -->
             <div class="text-[9px] font-extrabold text-slate-600 flex items-center justify-between mb-1">
               <span>GAMBAR AKTIVITI (${photoCount} FOTO)</span>
-              <span class="text-[8.5px] text-blue-700 font-bold">Susun atur: ${item.photoLayout || '6'} Gambar</span>
+              <span class="text-[8.5px] text-blue-700 font-bold">Susun atur: ${escapeHtml(item.photoLayout || '6')} Gambar</span>
             </div>
             ${photosHtml}
 
@@ -1249,11 +1259,11 @@ function renderHistoryView() {
             <div class="pt-1.5 mt-1 border-t border-slate-200 flex justify-between text-[9px] text-slate-600 font-medium">
               <div>
                 <span class="text-slate-400">Penyedia:</span>
-                <strong class="block text-slate-900 truncate max-w-[120px]">${item.namaPenyedia || "Guru Penyedia"}</strong>
+                <strong class="block text-slate-900 truncate max-w-[120px]">${escapeHtml(item.namaPenyedia || "Guru Penyedia")}</strong>
               </div>
               <div class="text-right">
                 <span class="text-slate-400">Pengesah:</span>
-                <strong class="block text-slate-900 truncate max-w-[120px]">${item.namaPengesah || "Guru Besar"}</strong>
+                <strong class="block text-slate-900 truncate max-w-[120px]">${escapeHtml(item.namaPengesah || "Guru Besar")}</strong>
               </div>
             </div>
 
@@ -1270,7 +1280,7 @@ function renderHistoryView() {
         <div class="p-3 bg-slate-50/90 border-t border-slate-200 flex items-center justify-between gap-2 mt-auto">
           <!-- Butang Sunting di Page Utama -->
           <button type="button" 
-                  onclick="loadOPRToEditor('${item.id}')"
+                  onclick="loadOPRToEditor('${escapeHtml(item.id)}')"
                   class="inline-flex items-center gap-1.5 bg-blue-950 hover:bg-blue-900 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
             <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-400"></i>
             <span>Sunting</span>
@@ -1278,7 +1288,7 @@ function renderHistoryView() {
 
           <!-- Butang Cetak Pantas -->
           <button type="button" 
-                  onclick="printRecordFromHistory('${item.id}')"
+                  onclick="printRecordFromHistory('${escapeHtml(item.id)}')"
                   class="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm transition">
             <i data-lucide="printer" class="w-3.5 h-3.5"></i>
             <span>Cetak PDF</span>
@@ -1286,7 +1296,7 @@ function renderHistoryView() {
 
           <!-- Butang Padam (Delete) -->
           <button type="button" 
-                  onclick="deleteRecordFromHistory('${item.id}', '${(item.program || '').replace(/'/g, "\\'")}')"
+                  onclick="deleteRecordFromHistory('${escapeHtml(item.id)}')"
                   title="Padam rekod ini daripada arkib"
                   class="inline-flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2.5 py-1.5 rounded-xl text-xs transition">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -1533,9 +1543,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabGen = $("tab-btn-generator");
   if (tabGen) {
     tabGen.addEventListener("click", () => {
-      if (!window.StorageTool || !window.StorageTool.getCurrentEditingId()) {
-        resetOPRForm(true);
-      }
       switchView("generator");
     });
   }
@@ -1640,6 +1647,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if ($("anjuran")?.value === "Lain-lain" && !$("anjuran-lain")?.value.trim()) {
         missing.push("Masukkan Anjuran Khas");
+      }
+
+      if ($("hari")?.value === "Lain-lain" && !$("hari-lain")?.value.trim()) {
+        missing.push("Nyatakan Hari Khas");
       }
 
       const uploadedCount = window.ImageTool ? Object.keys(window.ImageTool.imageData).length : 0;
