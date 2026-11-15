@@ -266,6 +266,18 @@ function showPage(pageId) {
       btn.classList.remove("active");
     }
   });
+
+  document.querySelectorAll(".mobile-bottom-btn").forEach(btn => {
+    if (btn.dataset.mobilePage === pageId) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  if (typeof closeMobileSidebarDrawer === "function") {
+    closeMobileSidebarDrawer();
+  }
 }
 
 // Paparan Notifikasi (Toast)
@@ -5473,6 +5485,11 @@ function updateSchoolBrandingDOM() {
   if (headerName) headerName.textContent = nameStr.toUpperCase();
   if (headerAddr) headerAddr.textContent = addrStr.toUpperCase();
 
+  const sidebarLogo = document.getElementById("sidebar-school-logo");
+  const sidebarName = document.getElementById("sidebar-school-name");
+  if (sidebarLogo) sidebarLogo.src = logoSrc;
+  if (sidebarName) sidebarName.textContent = nameStr.toUpperCase();
+
   const loginLogo = document.getElementById("login-school-logo");
   const loginName = document.getElementById("login-school-name");
   if (loginLogo) loginLogo.src = logoSrc;
@@ -5499,6 +5516,7 @@ function refreshAllTeacherDropdowns() {
     if (val && MASTER_TEACHERS.includes(val)) s.value = val;
   });
   updateGroupMembers();
+  if (typeof updatePage1KpiStrip === "function") updatePage1KpiStrip();
 }
 
 function applySchoolData(schoolData, saveToStorage = true) {
@@ -5673,6 +5691,7 @@ function applySchoolData(schoolData, saveToStorage = true) {
   }
   populateCalendarClassFilter();
   renderImportPage();
+  if (typeof updatePage1KpiStrip === "function") updatePage1KpiStrip();
 
   // Segar semula paparan halaman yang sedang aktif
   const p2 = document.getElementById("page2");
@@ -6607,4 +6626,143 @@ function setupAuth() {
       }
     });
   }
+}
+
+/* ========================================================
+   NAVIGASI DRAWER SIDEBAR & KPI EKSEKUTIF PAGE 1 (TNA STYLE)
+   ======================================================== */
+function openMobileSidebarDrawer() {
+  document.body.classList.add("sidebar-open");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (backdrop) backdrop.classList.remove("hidden");
+}
+
+function closeMobileSidebarDrawer() {
+  document.body.classList.remove("sidebar-open");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (backdrop) backdrop.classList.add("hidden");
+}
+
+function updatePage1KpiStrip() {
+  const elTotal = document.getElementById("p1-kpi-total-guru");
+  const elTotalSub = document.getElementById("p1-kpi-total-sub");
+  const elPresent = document.getElementById("p1-kpi-present-guru");
+  const elPresentSub = document.getElementById("p1-kpi-present-sub");
+  const elAbsent = document.getElementById("p1-kpi-absent-guru");
+  const elAbsentSub = document.getElementById("p1-kpi-absent-sub");
+  const elSlots = document.getElementById("p1-kpi-slots-count");
+  const elSlotsSub = document.getElementById("p1-kpi-slots-sub");
+  const elDuty = document.getElementById("p1-kpi-duty-group");
+  const elDutySub = document.getElementById("p1-kpi-duty-sub");
+
+  if (!elTotal) return;
+
+  const totalTeachers = Array.isArray(MASTER_TEACHERS) ? MASTER_TEACHERS.length : 0;
+
+  // Kira guru tidak hadir yang dipilih dalam borang semasa
+  const selectedAbsent = new Set();
+  document.querySelectorAll("#absent-teachers-container .teacher-select").forEach(sel => {
+    const val = (sel.value || "").trim();
+    if (val) selectedAbsent.add(val);
+  });
+
+  // Jika borang kosong tetapi ada rekod tersimpan bagi tarikh semasa, rujuk rekod
+  const currDate = dateInput ? dateInput.value : "";
+  if (selectedAbsent.size === 0 && currDate && Array.isArray(allRecords)) {
+    allRecords.forEach(r => {
+      if (r.tarikh === currDate && r.guruTidakHadir) {
+        selectedAbsent.add(r.guruTidakHadir);
+      }
+    });
+  }
+
+  const absentCount = selectedAbsent.size;
+  const presentCount = Math.max(0, totalTeachers - absentCount);
+  const presentPct = totalTeachers > 0 ? ((presentCount / totalTeachers) * 100).toFixed(1).replace(/\.0$/, "") : "100";
+
+  // Kira baris jadual waktu ganti semasa
+  const entryRowEls = document.querySelectorAll("#entry-rows tr.schedule-row");
+  let totalSlots = entryRowEls.length;
+  let assignedSlots = 0;
+  entryRowEls.forEach(tr => {
+    const sel = tr.querySelector(".row-ganti");
+    const isProg = tr.classList.contains("row-is-program");
+    if (isProg || (sel && sel.value && sel.value.trim() !== "")) {
+      assignedSlots++;
+    }
+  });
+
+  const kumpEl = document.getElementById("kumpulan");
+  const dutyVal = (kumpEl && kumpEl.value) ? kumpEl.value : "Semua";
+  const dayVal = (dayInput && dayInput.value) ? dayInput.value : "Hari Semasa";
+
+  elTotal.textContent = String(totalTeachers);
+  if (elTotalSub) elTotalSub.textContent = totalTeachers > 0 ? `▲ Staf Akademik Aktif` : `Sila import senarai guru`;
+
+  elPresent.textContent = String(presentCount);
+  if (elPresentSub) elPresentSub.textContent = `(${presentPct}% Hadir Bertugas)`;
+
+  elAbsent.textContent = String(absentCount);
+  if (elAbsentSub) {
+    elAbsentSub.textContent = absentCount > 0 ? `${absentCount} orang guru bercuti/luar` : `Tiada guru bercuti`;
+  }
+
+  elSlots.innerHTML = `${totalSlots} <span style="font-size:0.95rem;font-weight:700;">Waktu</span>`;
+  if (elSlotsSub) {
+    elSlotsSub.textContent = `(Selesai Diganti: ${assignedSlots}/${totalSlots})`;
+  }
+
+  if (elDuty) elDuty.textContent = dutyVal;
+  if (elDutySub) elDutySub.textContent = `Hari: ${dayVal}`;
+}
+
+function setupSidebarAndTnaDashboard() {
+  const btnOpen = document.getElementById("btn-sidebar-toggle");
+  const btnClose = document.getElementById("btn-sidebar-close");
+  const backdrop = document.getElementById("sidebar-backdrop");
+
+  if (btnOpen) {
+    btnOpen.addEventListener("click", () => {
+      if (document.body.classList.contains("sidebar-open")) {
+        closeMobileSidebarDrawer();
+      } else {
+        openMobileSidebarDrawer();
+      }
+    });
+  }
+  if (btnClose) btnClose.addEventListener("click", closeMobileSidebarDrawer);
+  if (backdrop) backdrop.addEventListener("click", closeMobileSidebarDrawer);
+
+  // Navigasi Bar Bawah Telefon Bimbit
+  document.querySelectorAll(".mobile-bottom-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const pageId = btn.dataset.mobilePage;
+      const targetNavTab = document.querySelector(`.nav-tab[data-page="${pageId}"]`);
+      if (targetNavTab) targetNavTab.click();
+    });
+  });
+
+  // Kemas kini KPI Page 1 secara automatik apabila DOM borang berubah
+  updatePage1KpiStrip();
+  const formEl = document.getElementById("schedule-form");
+  if (formEl) {
+    formEl.addEventListener("change", () => setTimeout(updatePage1KpiStrip, 30));
+    formEl.addEventListener("input", () => setTimeout(updatePage1KpiStrip, 30));
+  }
+
+  const obsTargets = [
+    document.getElementById("absent-teachers-container"),
+    document.getElementById("entry-rows")
+  ].filter(Boolean);
+
+  if (obsTargets.length > 0 && typeof MutationObserver !== "undefined") {
+    const observer = new MutationObserver(() => updatePage1KpiStrip());
+    obsTargets.forEach(t => observer.observe(t, { childList: true, subtree: true, attributes: true }));
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupSidebarAndTnaDashboard);
+} else {
+  setupSidebarAndTnaDashboard();
 }

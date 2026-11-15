@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261115a">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261116a">
 
   <!-- Lucide Icons -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
@@ -86,128 +86,231 @@
   </div>
 
   <div class="app-shell" id="app-shell">
-    <!-- Jalur Atas Sistem e-Guru Ganti -->
-    <div class="gov-top-bar" role="region" aria-label="Jalur Sistem e-Guru Ganti">
-      <div class="gov-top-bar-inner">
-        <div class="gov-top-bar-left">
-          <span class="gov-official-text" style="font-weight:700; color:#e2e8f0; display:inline-flex; align-items:center; gap:6px;">
-            Sistem e-Guru Ganti byCikguJayResources
-          </span>
-          <span class="gov-badge-verified">
-            <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Disahkan Rasmi
-          </span>
+    <!-- Latar Gelap Drawer Sidebar (Untuk Mod Telefon & Tablet) -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop hidden" aria-hidden="true"></div>
+
+    <!-- BAR SISI KIRI EKSEKUTIF (TNA DASHBOARD STYLE) -->
+    <aside id="app-sidebar" class="app-sidebar" aria-label="Menu Navigasi Utama Sistem">
+      <!-- Pengepala Jenama Bar Sisi -->
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-left">
+          <div class="sidebar-logo-ring">
+            <img id="sidebar-school-logo" src="assets/images/logo-sekolah.jpg" alt="Logo SK Tampasuk 1" class="sidebar-logo-img">
+          </div>
+          <div class="sidebar-brand-text">
+            <div class="sidebar-brand-title">Sistem e-GGs</div>
+            <div id="sidebar-school-name" class="sidebar-brand-sub">SK TAMPASUK 1 KOTA BELUD</div>
+          </div>
         </div>
-        <div class="gov-top-bar-right">
-          <!-- Aksesibiliti (Pelaras % Saiz Paparan Sahaja) -->
-          <div class="a11y-controls" aria-label="Pelaras % Saiz Paparan">
-            <span class="a11y-label">Aksesibiliti:</span>
-            <button type="button" id="btn-font-decrease" class="a11y-btn" title="Kecilkan Saiz Paparan (90%)" aria-label="Kecilkan Saiz Paparan (90%)">A-</button>
-            <button type="button" id="btn-font-reset" class="a11y-btn active" title="Saiz Paparan Asal (100%)" aria-label="Saiz Paparan Asal (100%)">A</button>
-            <button type="button" id="btn-font-increase" class="a11y-btn" title="Besarkan Saiz Paparan (115%)" aria-label="Besarkan Saiz Paparan (115%)">A+</button>
+        <button type="button" id="btn-sidebar-close" class="sidebar-close-btn" aria-label="Tutup Menu Sisi" title="Tutup Menu">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+
+      <!-- Navigasi Tab Modul (Vertical Sidebar Navigation) -->
+      <nav class="nav-container" aria-label="Modul Sistem">
+        <div class="nav-tabs-wrapper" role="tablist">
+          <button type="button" class="nav-tab active" data-page="page1">
+            <i data-lucide="layout-dashboard" style="width:17px;height:17px"></i>
+            <span>Kemasukan</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page2">
+            <i data-lucide="layout-grid" style="width:17px;height:17px"></i>
+            <span>Jadual Kelas</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page3">
+            <i data-lucide="users" style="width:17px;height:17px"></i>
+            <span>Jadual Guru</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page7">
+            <i data-lucide="calendar-days" style="width:17px;height:17px"></i>
+            <span>Jadual Induk</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page5">
+            <i data-lucide="bar-chart-3" style="width:17px;height:17px"></i>
+            <span>Statistik</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page6">
+            <i data-lucide="user-check" style="width:17px;height:17px"></i>
+            <span>Kehadiran Guru</span>
+          </button>
+          <button type="button" class="nav-tab" data-page="page-import">
+            <i data-lucide="settings" style="width:17px;height:17px"></i>
+            <span>Urus &amp; Import Jadual</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Bahagian Bawah Bar Sisi & Jalur Emas Pepenjuru -->
+      <div class="sidebar-footer">
+        <div class="sidebar-status-box">
+          <div class="sidebar-status-row">
+            <span class="sidebar-status-dot"></span>
+            <span class="sidebar-status-label">Enjin Zero-Clash AI</span>
+          </div>
+          <div class="sidebar-status-ver">Versi 2.6.0 &bull; MMI</div>
+        </div>
+        <div class="sidebar-gold-ribbon" aria-hidden="true"></div>
+      </div>
+    </aside>
+
+    <!-- RUANG KERJA UTAMA KANAN (HEADER + KANDUNGAN + FOOTER) -->
+    <div class="app-main-area" id="app-main-area">
+      <!-- Jalur Atas Sistem e-Guru Ganti -->
+      <div class="gov-top-bar" role="region" aria-label="Jalur Sistem e-Guru Ganti">
+        <div class="gov-top-bar-inner">
+          <div class="gov-top-bar-left">
+            <span class="gov-official-text" style="font-weight:700; color:#e2e8f0; display:inline-flex; align-items:center; gap:6px;">
+              Sistem e-Guru Ganti byCikguJayResources
+            </span>
+            <span class="gov-badge-verified">
+              <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Disahkan Rasmi
+            </span>
+          </div>
+          <div class="gov-top-bar-right">
+            <!-- Aksesibiliti (Pelaras % Saiz Paparan Sahaja) -->
+            <div class="a11y-controls" aria-label="Pelaras % Saiz Paparan">
+              <span class="a11y-label">Aksesibiliti:</span>
+              <button type="button" id="btn-font-decrease" class="a11y-btn" title="Kecilkan Saiz Paparan (90%)" aria-label="Kecilkan Saiz Paparan (90%)">A-</button>
+              <button type="button" id="btn-font-reset" class="a11y-btn active" title="Saiz Paparan Asal (100%)" aria-label="Saiz Paparan Asal (100%)">A</button>
+              <button type="button" id="btn-font-increase" class="a11y-btn" title="Besarkan Saiz Paparan (115%)" aria-label="Besarkan Saiz Paparan (115%)">A+</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Header Utama Sekolah -->
-    <header class="hero-band w-full">
-      <div style="max-width:1280px; margin:0 auto; padding:1.5rem 1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:1.25rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
-          <div style="display:flex; align-items:center; gap:1rem;">
-            <div class="school-logo-wrapper" style="width:74px; height:74px; border-radius:50%; background:#ffffff; padding:3px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.25); border:3px solid #ffffff; overflow:hidden; flex-shrink:0;">
-              <img id="header-school-logo" src="assets/images/logo-sekolah.jpg" alt="Lencana SK Tampasuk 1" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;">
+      <!-- Header Utama Sekolah (Dengan Bucu Pepenjuru Emas TNA Style) -->
+      <header class="hero-band w-full">
+        <div class="hero-band-inner">
+          <div class="hero-band-top-row">
+            <div class="hero-brand-cluster">
+              <!-- Butang Hamburger Menu (Untuk Telefon Bimbit & Tablet) -->
+              <button type="button" id="btn-sidebar-toggle" class="sidebar-hamburger-btn" aria-label="Buka Menu Navigasi" title="Menu Navigasi">
+                <i data-lucide="menu" style="width:22px;height:22px;"></i>
+              </button>
+
+              <div class="school-logo-wrapper" style="width:66px; height:66px; border-radius:50%; background:#ffffff; padding:3px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.25); border:2.5px solid #facc15; overflow:hidden; flex-shrink:0;">
+                <img id="header-school-logo" src="assets/images/logo-sekolah.jpg" alt="Lencana SK Tampasuk 1" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;">
+              </div>
+              <div class="hero-title-block">
+                <h1 id="header-app-title" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.55rem; font-weight:800; line-height:1.2; letter-spacing:-0.02em;">Dashboard Pengurusan Guru Ganti (e-GGs)</h1>
+                <p id="header-school-name" style="font-size:0.88rem; color:#bfdbfe; font-weight:600; margin-top:2px;">SK TAMPASUK 1 KOTA BELUD, SABAH</p>
+                <p id="header-school-address" style="font-size:0.75rem; color:#93c5fd; opacity:0.85;">W.D.T 158, 89150, KOTA BELUD</p>
+                <div class="hero-innovation-pill">
+                  <i data-lucide="copyright" style="width:13px;height:13px;"></i> byCikguJayResources
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 id="header-app-title" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.75rem; font-weight:800; line-height:1.2; letter-spacing:-0.02em;">e-GGs (e-Guru Ganti Sekolah)</h1>
-              <p id="header-school-name" style="font-size:0.88rem; color:#bfdbfe; font-weight:600; margin-top:2px;">SK TAMPASUK 1 KOTA BELUD, SABAH</p>
-              <p id="header-school-address" style="font-size:0.75rem; color:#93c5fd; opacity:0.85;">W.D.T 158, 89150, KOTA BELUD</p>
-              <div class="hero-innovation-pill">
-                <i data-lucide="copyright" style="width:13px;height:13px;"></i> byCikguJayResources
+
+            <div class="hero-actions-cluster" style="display:flex; align-items:center; gap:0.55rem; flex-wrap:wrap;">
+              <!-- Mod Peranti (Komputer / Tablet / Telefon - Ikon Sahaja) -->
+              <div id="device-mode-group" class="device-toggle-group" role="group" aria-label="Pilihan Mod Paparan Peranti">
+                <button id="btn-device-desktop" type="button" class="device-mode-btn active" title="Mod Komputer (Desktop)" aria-label="Mod Komputer">
+                  <i data-lucide="monitor" style="width:17px;height:17px"></i>
+                </button>
+                <button id="btn-device-tablet" type="button" class="device-mode-btn" title="Mod Tablet" aria-label="Mod Tablet">
+                  <i data-lucide="tablet" style="width:17px;height:17px"></i>
+                </button>
+                <button id="btn-device-mobile" type="button" class="device-mode-btn" title="Mod Telefon Bimbit (Phone)" aria-label="Mod Telefon Bimbit">
+                  <i data-lucide="smartphone" style="width:17px;height:17px"></i>
+                </button>
+              </div>
+
+              <!-- Butang Segerak Awan Header (Hijau jika Berfungsi, Merah jika Tidak Berfungsi) -->
+              <button id="btn-cloud-sync" type="button" class="cloud-sync-btn" title="Memeriksa sambungan Google Sheets..." aria-label="Segerak Awan Google Sheets">
+                <i id="cloud-sync-icon" data-lucide="cloud" style="width:18px;height:18px;"></i>
+                <span id="cloud-sync-status-dot" class="cloud-sync-dot"></span>
+              </button>
+
+              <button id="dark-mode-toggle" type="button" class="action-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#ffffff;" aria-label="Tukar tema">
+                <i id="dark-mode-icon" data-lucide="moon" style="width:16px;height:16px"></i>
+                <span id="dark-mode-label">Mod Gelap</span>
+              </button>
+
+              <button id="btn-logout" type="button" class="action-btn" style="background:rgba(239,68,68,0.25); border:1px solid rgba(239,68,68,0.45); color:#fee2e2;" aria-label="Log Keluar Sistem" title="Log Keluar Sistem">
+                <i data-lucide="log-out" style="width:16px;height:16px; color:#fca5a5;"></i>
+                <span>Log Keluar</span>
+              </button>
+
+              <div class="hero-date-pill" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(15,23,42,0.45); border:1px solid rgba(250,204,21,0.45); border-radius:10px; padding:0.45rem 0.95rem; font-size:0.83rem; font-weight:700;">
+                <i data-lucide="calendar" style="width:16px;height:16px; color:#facc15"></i>
+                <span id="today-display">Memuatkan tarikh...</span>
               </div>
             </div>
           </div>
+        </div>
+      </header>
 
-          <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-            <!-- Mod Peranti (Komputer / Tablet / Telefon - Ikon Sahaja) -->
-            <div id="device-mode-group" class="device-toggle-group" role="group" aria-label="Pilihan Mod Paparan Peranti">
-              <button id="btn-device-desktop" type="button" class="device-mode-btn active" title="Mod Komputer (Desktop)" aria-label="Mod Komputer">
-                <i data-lucide="monitor" style="width:17px;height:17px"></i>
-              </button>
-              <button id="btn-device-tablet" type="button" class="device-mode-btn" title="Mod Tablet" aria-label="Mod Tablet">
-                <i data-lucide="tablet" style="width:17px;height:17px"></i>
-              </button>
-              <button id="btn-device-mobile" type="button" class="device-mode-btn" title="Mod Telefon Bimbit (Phone)" aria-label="Mod Telefon Bimbit">
-                <i data-lucide="smartphone" style="width:17px;height:17px"></i>
-              </button>
+      <!-- PAGE 1: Kemasukan (Entry Form) -->
+      <main id="page1" class="dashboard-page-container">
+        <!-- 5 KAD RINGKASAN KPI EKSEKUTIF PASTEL (TNA DASHBOARD FORMAT) -->
+        <div id="page1-kpi-grid" class="kpi-pastel-grid" aria-label="Ringkasan Status Harian">
+          <div class="kpi-pastel-card kpi-pastel-blue">
+            <div class="kpi-pastel-icon">
+              <i data-lucide="users" style="width:24px;height:24px;"></i>
             </div>
+            <div class="kpi-pastel-body">
+              <div class="kpi-pastel-title">Jumlah Staf / Guru</div>
+              <div class="kpi-pastel-value" id="p1-kpi-total-guru">0</div>
+              <div class="kpi-pastel-sub" id="p1-kpi-total-sub">&#9650; Guru Berdaftar Aktif</div>
+            </div>
+          </div>
 
-            <!-- Butang Segerak Awan Header (Hijau jika Berfungsi, Merah jika Tidak Berfungsi) -->
-            <button id="btn-cloud-sync" type="button" class="cloud-sync-btn" title="Memeriksa sambungan Google Sheets..." aria-label="Segerak Awan Google Sheets">
-              <i id="cloud-sync-icon" data-lucide="cloud" style="width:18px;height:18px;"></i>
-              <span id="cloud-sync-status-dot" class="cloud-sync-dot"></span>
-            </button>
+          <div class="kpi-pastel-card kpi-pastel-mint">
+            <div class="kpi-pastel-icon">
+              <i data-lucide="user-check" style="width:24px;height:24px;"></i>
+            </div>
+            <div class="kpi-pastel-value-wrap">
+              <div class="kpi-pastel-title">Guru Hadir Bertugas</div>
+              <div class="kpi-pastel-value" id="p1-kpi-present-guru">0</div>
+              <div class="kpi-pastel-sub" id="p1-kpi-present-sub">(100% Kehadiran Semasa)</div>
+            </div>
+          </div>
 
-            <button id="dark-mode-toggle" type="button" class="action-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#ffffff;" aria-label="Tukar tema">
-              <i id="dark-mode-icon" data-lucide="moon" style="width:16px;height:16px"></i>
-              <span id="dark-mode-label">Mod Gelap</span>
-            </button>
+          <div class="kpi-pastel-card kpi-pastel-amber">
+            <div class="kpi-pastel-icon">
+              <i data-lucide="user-x" style="width:24px;height:24px;"></i>
+            </div>
+            <div class="kpi-pastel-body">
+              <div class="kpi-pastel-title">Guru Tidak Hadir</div>
+              <div class="kpi-pastel-value" id="p1-kpi-absent-guru">0</div>
+              <div class="kpi-pastel-sub" id="p1-kpi-absent-sub">Tiada guru bercuti</div>
+            </div>
+          </div>
 
-            <button id="btn-logout" type="button" class="action-btn" style="background:rgba(239,68,68,0.25); border:1px solid rgba(239,68,68,0.45); color:#fee2e2;" aria-label="Log Keluar Sistem" title="Log Keluar Sistem">
-              <i data-lucide="log-out" style="width:16px;height:16px; color:#fca5a5;"></i>
-              <span>Log Keluar</span>
-            </button>
+          <div class="kpi-pastel-card kpi-pastel-purple">
+            <div class="kpi-pastel-icon">
+              <i data-lucide="repeat" style="width:24px;height:24px;"></i>
+            </div>
+            <div class="kpi-pastel-body">
+              <div class="kpi-pastel-title">Waktu Kelas Ganti</div>
+              <div class="kpi-pastel-value" id="p1-kpi-slots-count">0 <span style="font-size:0.95rem;font-weight:700;">Waktu</span></div>
+              <div class="kpi-pastel-sub" id="p1-kpi-slots-sub">(Selesai Diganti: 0)</div>
+            </div>
+          </div>
 
-            <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:9999px; padding:0.45rem 1rem; font-size:0.85rem; font-weight:600;">
-              <i data-lucide="calendar" style="width:16px;height:16px; color:#facc15"></i>
-              <span id="today-display">Memuatkan tarikh...</span>
+          <div class="kpi-pastel-card kpi-pastel-rose">
+            <div class="kpi-pastel-icon">
+              <i data-lucide="calendar-check-2" style="width:24px;height:24px;"></i>
+            </div>
+            <div class="kpi-pastel-body">
+              <div class="kpi-pastel-title">Kumpulan Bertugas</div>
+              <div class="kpi-pastel-value" id="p1-kpi-duty-group" style="font-size:1.3rem;">Semua</div>
+              <div class="kpi-pastel-sub" id="p1-kpi-duty-sub">Penjadualan MMI Aktif</div>
             </div>
           </div>
         </div>
-      </div>
-    </header>
 
-    <!-- Navigasi Tab Modul -->
-    <nav class="nav-container">
-      <div class="nav-tabs-wrapper" role="tablist">
-        <button type="button" class="nav-tab active" data-page="page1">
-          <i data-lucide="edit-3" style="width:15px;height:15px"></i> Kemasukan
-        </button>
-        <button type="button" class="nav-tab" data-page="page2">
-          <i data-lucide="layout-grid" style="width:15px;height:15px"></i> Jadual Kelas
-        </button>
-        <button type="button" class="nav-tab" data-page="page3">
-          <i data-lucide="users" style="width:15px;height:15px"></i> Jadual Guru
-        </button>
-        <button type="button" class="nav-tab" data-page="page7">
-          <i data-lucide="calendar-days" style="width:15px;height:15px"></i> Jadual Induk
-        </button>
-        <button type="button" class="nav-tab" data-page="page5">
-          <i data-lucide="bar-chart-3" style="width:15px;height:15px"></i> Statistik
-        </button>
-        <button type="button" class="nav-tab" data-page="page6">
-          <i data-lucide="user-check" style="width:15px;height:15px"></i> Kehadiran Guru
-        </button>
-        <button type="button" class="nav-tab" data-page="page-import">
-          <i data-lucide="upload-cloud" style="width:15px;height:15px"></i> Urus &amp; Import Jadual
-        </button>
-      </div>
-    </nav>
-
-    <!-- PAGE 1: Kemasukan (Entry Form) -->
-    <main id="page1" style="max-width:1280px; width:100%; margin:0 auto; padding:0 1.25rem 2rem;">
-      <h1 class="main-page-title">PENJANAAN JADUAL GURU GANTI</h1>
-      <p class="main-page-subtitle">Copyright byCikguJayResources</p>
-
-      <section class="section-card overflow-hidden">
-        <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; gap:0.85rem;">
-          <div style="width:40px; height:40px; border-radius:10px; background:#f5f3ff; color:#8b5cf6; display:flex; align-items:center; justify-content:center; border:1px solid #ede9fe; flex-shrink:0;">
-            <i data-lucide="repeat" style="width:20px;height:20px"></i>
+        <section class="section-card tna-section-card overflow-hidden">
+          <div class="tna-card-header">
+            <div class="tna-card-header-icon">
+              <i data-lucide="repeat" style="width:20px;height:20px"></i>
+            </div>
+            <div>
+              <h3 class="tna-card-header-title">Maklumat &amp; Penjanaan Jadual Guru Ganti</h3>
+              <p class="tna-card-header-sub">Pilih tarikh dan nama guru tidak hadir untuk mengisi waktu, kelas serta mata pelajaran secara automatik.</p>
+            </div>
           </div>
-          <div>
-            <h3 style="font-weight:700; font-size:1.15rem; color:var(--text-primary);">Maklumat Jadual Guru Ganti</h3>
-            <p style="font-size:0.825rem; color:var(--text-secondary); margin-top:2px;">Pilih tarikh dan nama guru tidak hadir untuk mengisi waktu, kelas serta mata pelajaran secara automatik.</p>
-          </div>
-        </div>
 
         <!-- Banner Status Jadual Harian & Kawalan Pantas (Kecemasan & Tersimpan) -->
         <div id="daily-schedule-status-banner" class="daily-status-banner hidden" role="region" aria-live="polite"></div>
@@ -538,10 +641,10 @@
       </div>
 
       <!-- Seksyen Ringkasan Penggantian Mengikut Minggu -->
-      <div class="section-card" style="padding:1.5rem; margin-bottom:1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <div class="section-card tna-framed-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+        <div class="tna-card-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(99,102,241,0.25);">
+            <div class="tna-card-header-icon" style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(99,102,241,0.25);">
               <i data-lucide="layers" style="width:20px;height:20px"></i>
             </div>
             <div>
@@ -560,10 +663,10 @@
       </div>
 
       <!-- Seksyen Senarai Penuh Rekod Penggantian (Langsung daripada Google Sheet) -->
-      <div class="section-card" style="padding:1.5rem; margin-bottom:1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <div class="section-card tna-framed-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+        <div class="tna-card-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #059669, #10b981); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(16,185,129,0.25);">
+            <div class="tna-card-header-icon" style="width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, #059669, #10b981); color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(16,185,129,0.25);">
               <i data-lucide="file-spreadsheet" style="width:20px;height:20px"></i>
             </div>
             <div>
@@ -692,8 +795,8 @@
       </div>
 
       <!-- Ruangan Roster Kehadiran Guru Harian -->
-      <div class="section-card" style="padding:1.5rem; margin-bottom:1.75rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <div class="section-card tna-framed-card" style="padding:1.5rem; margin-bottom:1.75rem;">
+        <div class="tna-card-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div>
             <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary);">Roster Status Kehadiran Guru</h3>
             <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">Senarai lengkap status guru hadir, guru tidak hadir, dan perincian sebab ketidakhadiran harian.</p>
@@ -718,11 +821,11 @@
       </div>
 
       <!-- Ruangan Arkib Log Sejarah Kehadiran Terdahulu -->
-      <div class="section-card" style="padding:1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <div class="section-card tna-framed-card" style="padding:1.5rem;">
+        <div class="tna-card-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div>
             <div style="display:flex; align-items:center; gap:0.5rem;">
-              <div style="width:32px; height:32px; border-radius:8px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center;">
+              <div class="tna-card-header-icon" style="width:32px; height:32px; border-radius:8px; background:#eff6ff; color:#2563eb; display:flex; align-items:center; justify-content:center;">
                 <i data-lucide="archive" style="width:16px;height:16px"></i>
               </div>
               <h3 style="font-weight:800; font-size:1.15rem; color:var(--text-primary);">Arkib Rekod Ketidakhadiran Terdahulu</h3>
@@ -785,12 +888,12 @@
       </div>
 
       <!-- Seksyen Utama: Jadual Keseluruhan Harian (Master Timetable) -->
-      <div class="section-card" style="padding:1.25rem;">
+      <div class="section-card tna-framed-card" style="padding:1.25rem;">
         <div id="cal-detail">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
+          <div class="tna-card-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
             <div>
               <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                <span id="cal-day-badge" style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.3rem 0.8rem; border-radius:9999px; background:#1e3a8a; color:#ffffff; font-size:0.78rem; font-weight:800;">
+                <span id="cal-day-badge" style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.3rem 0.8rem; border-radius:9999px; background:#facc15; color:#0f172a; font-size:0.78rem; font-weight:800;">
                   <i data-lucide="calendar" style="width:13px;height:13px"></i>
                   <span id="cal-day-text">Hari</span>
                 </span>
@@ -890,10 +993,10 @@
       </section>
 
       <!-- KAD UTAMA 2: Tetapan Profil Rasmi Sekolah (Nama, Moto, Alamat, Logo & Kata Laluan) -->
-      <section class="section-card" style="padding:1.5rem; margin-top:1.5rem; border-left:4px solid #4f46e5;">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <section class="section-card tna-framed-card" style="padding:1.5rem; margin-top:1.5rem; border-left:4px solid #4f46e5;">
+        <div class="tna-card-header-bar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:40px; height:40px; border-radius:10px; background:#eef2ff; color:#4f46e5; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div class="tna-card-header-icon" style="width:40px; height:40px; border-radius:10px; background:#eef2ff; color:#4f46e5; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <i data-lucide="building-2" style="width:22px;height:22px;"></i>
             </div>
             <div>
@@ -953,9 +1056,9 @@
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; margin-top:1.5rem;">
         
         <!-- Kad 1: Status Sistem & Muat Turun Templat -->
-        <section class="section-card" style="padding:1.5rem;">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:#e0f2fe; color:#0369a1; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <section class="section-card tna-framed-card" style="padding:1.5rem;">
+          <div class="tna-card-header-bar" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+            <div class="tna-card-header-icon" style="width:38px; height:38px; border-radius:10px; background:#e0f2fe; color:#0369a1; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <i data-lucide="file-spreadsheet" style="width:20px;height:20px;"></i>
             </div>
             <div>
@@ -991,9 +1094,9 @@
         </section>
 
         <!-- Kad 2: Muat Naik / Import Jadual Baharu -->
-        <section class="section-card" style="padding:1.5rem;">
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:#fef3c7; color:#d97706; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <section class="section-card tna-framed-card" style="padding:1.5rem;">
+          <div class="tna-card-header-bar" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+            <div class="tna-card-header-icon" style="width:38px; height:38px; border-radius:10px; background:#fef3c7; color:#d97706; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <i data-lucide="upload-cloud" style="width:20px;height:20px;"></i>
             </div>
             <div>
@@ -1051,10 +1154,10 @@
       </div>
 
       <!-- KAD UTAMA 3: Pengurusan Senarai Guru & Kumpulan Bertugas (Pilihan) -->
-      <section id="duty-group-manager-card" class="section-card" style="padding:1.5rem; margin-top:1.5rem; border-left:4px solid #10b981;">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
+      <section id="duty-group-manager-card" class="section-card tna-framed-card" style="padding:1.5rem; margin-top:1.5rem; border-left:4px solid #10b981;">
+        <div class="tna-card-header-bar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-subtle);">
           <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div class="tna-card-header-icon" style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <i data-lucide="users" style="width:22px;height:22px;"></i>
             </div>
             <div>
@@ -1144,6 +1247,39 @@
         </div>
       </div>
     </footer>
+    </div><!-- /.app-main-area -->
+
+    <!-- Bar Navigasi Bawah Khas Telefon Bimbit (Mobile Bottom Quick Bar) -->
+    <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="Navigasi Pantas Telefon Bimbit">
+      <button type="button" class="mobile-bottom-btn active" data-mobile-page="page1">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+        <span>Utama</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page2">
+        <i data-lucide="layout-grid" style="width:18px;height:18px;"></i>
+        <span>Kelas</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page3">
+        <i data-lucide="users" style="width:18px;height:18px;"></i>
+        <span>Guru</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page7">
+        <i data-lucide="calendar-days" style="width:18px;height:18px;"></i>
+        <span>Induk</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page5">
+        <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i>
+        <span>Statistik</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page6">
+        <i data-lucide="user-check" style="width:18px;height:18px;"></i>
+        <span>Hadir</span>
+      </button>
+      <button type="button" class="mobile-bottom-btn" data-mobile-page="page-import">
+        <i data-lucide="settings" style="width:18px;height:18px;"></i>
+        <span>Tetapan</span>
+      </button>
+    </nav>
   </div>
 
   <!-- HTML Templates -->
@@ -1356,9 +1492,9 @@
   <div id="teacher-hover-popover" class="teacher-hover-popover hidden" aria-hidden="true"></div>
 
   <!-- Skrip Aplikasi -->
-  <script src="assets/js/config.js?v=20261115a"></script>
-  <script src="assets/js/timetable-data.js?v=20261115a"></script>
-  <script src="assets/js/api.js?v=20261115a"></script>
-  <script src="assets/js/app.js?v=20261115a"></script>
+  <script src="assets/js/config.js?v=20261116a"></script>
+  <script src="assets/js/timetable-data.js?v=20261116a"></script>
+  <script src="assets/js/api.js?v=20261116a"></script>
+  <script src="assets/js/app.js?v=20261116a"></script>
 </body>
 </html>
