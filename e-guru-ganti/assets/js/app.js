@@ -1042,10 +1042,20 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
   popover.style.top = "0px";
   popover.style.left = "0px";
 
-  const baseW = popover.offsetWidth || 300;
-  const baseH = popover.offsetHeight || 400;
-  const vw = document.documentElement.clientWidth || window.innerWidth;
-  const vh = document.documentElement.clientHeight || window.innerHeight;
+  // PENTING: sistem menggunakan CSS zoom pada <html> (Aksesibiliti 90% / 100% / 115%).
+  // getBoundingClientRect() & window.innerWidth memberi nilai "visual px", manakala
+  // style.left / style.top untuk elemen fixed dikira dalam unit CSS yang telah di-zoom.
+  // Jadi semua pengiraan dibuat dalam visual px, kemudian ditukar semula dengan membahagi zoom.
+  let zoomF = 1;
+  try {
+    zoomF = parseFloat(window.getComputedStyle(document.documentElement).zoom) || 1;
+  } catch (e) { zoomF = 1; }
+  if (!(zoomF > 0)) zoomF = 1;
+
+  const baseW = (popover.offsetWidth || 300) * zoomF;
+  const baseH = (popover.offsetHeight || 400) * zoomF;
+  const vw = window.innerWidth || document.documentElement.clientWidth;
+  const vh = window.innerHeight || document.documentElement.clientHeight;
   const M = 8;   // jarak minimum dari tepi skrin
   const GAP = 12; // jarak selamat dari menu dropdown
 
@@ -1098,8 +1108,8 @@ function showTeacherHoverPopover(teacherName, targetElement, masaSlot, candidate
   }
 
   popover.style.transformOrigin = "top left";
-  popover.style.left = Math.round(finalLeft) + "px";
-  popover.style.top = Math.round(finalTop) + "px";
+  popover.style.left = Math.round(finalLeft / zoomF) + "px";
+  popover.style.top = Math.round(finalTop / zoomF) + "px";
   popover.style.transform = "scale(" + finalScale.toFixed(3) + ")";
   popover.style.opacity = "1";
 }
