@@ -4757,36 +4757,43 @@ html {
 }
 
 /* ============================================================================
-   SISTEM REKA BENTUK EKSEKUTIF MINIMALIS, TERANG & PROFESIONAL (HEX EDITION V2.8)
-   Palet HEX Rasmi Projek e-GGs:
-   - Canvas & Permukaan Terang : #F8FAFC (Alabaster), #FFFFFF (Pure White), #E2E8F0 (Border)
-   - Teks Profesional          : #0F172A (Deep Slate), #334155 (Charcoal), #64748B (Muted Slate)
-   - Jenama Utama (Ocean Teal) : #0F3D56 (Nordic Cerulean), #0E7490 (Ocean Cyan), #0D9488 (Teal)
-   - Aksen Signature (Mint-Sky): #14B8A6 (Emerald Teal), #2DD4BF (Aqua Mint), #0284C7 (Sky Blue)
-   - Permukaan Pengepala Kad   : #F0FDFA -> #F0F9FF (Minimalist Frost-Teal)
+   SISTEM REKA BENTUK DIRAJA BERPRESTIJ (ROYAL PRESTIGE & GOLD FILAMENT V3.0)
+   - Palet Warna Pilihan 1 : Royal Sapphire & Deep Navy (#07152B, #0C2142, #1D4ED8, #2563EB)
+   - Art-Style Gaya 3      : Royal Prestige & Gold Filament (#F59E0B, #D97706, #FCD34D)
+   - Latar Belakang 3D     : Chevron Diraja & Baldu Pinstripe (Royal Chevron & Velvet)
+   - Geometri Variasi B    : Multi-Facet Diamond Shards & Polygonal Prisms (Chamfer 45°)
    ============================================================================ */
 
-/* 1. RANGKA UTAMA 2-LAJUR (APP SHELL, SIDEBAR KIRI MINIMALIS TERANG & RUANG KERJA KANAN) */
+/* 1. RANGKA UTAMA 2-LAJUR (APP SHELL, SIDEBAR KIRI DIRAJA & RUANG KERJA KANAN) */
 .app-shell {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  background-color: #F8FAFC;
+  background-color: #F1F5F9 !important;
+  background-image: linear-gradient(to bottom, #E2E8F0 1px, transparent 1px) !important;
+  background-size: 100% 48px !important;
   position: relative;
 }
 
 .dark .app-shell {
-  background-color: #0B1120;
+  background-color: #070F1E !important;
+  background-image: linear-gradient(to bottom, rgba(30, 58, 138, 0.25) 1px, transparent 1px) !important;
+  background-size: 100% 48px !important;
 }
 
-/* Jalur Atas Sistem (Clean Nordic Slate-Teal) */
+/* Jalur Atas Sistem (Royal Chevron & Gold Filament Trim) */
 .gov-top-bar {
-  background: linear-gradient(90deg, #0F2942 0%, #115E59 100%) !important;
-  border-bottom: 1px solid #134E4A !important;
+  background-color: #071223 !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2230%22%20viewBox%3D%220%200%2030%2030%22%3E%3Cpath%20d%3D%22M0%2015%20L15%200%20L30%2015%20L15%2030%20Z%22%20fill%3D%22none%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%221%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2215%22%20x2%3D%2230%22%20y2%3D%2215%22%20stroke%3D%22rgba(96%2C165%2C250%2C0.08)%22%20stroke-width%3D%220.8%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%220%22%20x2%3D%2215%22%20y2%3D%2230%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2215%22%20r%3D%221.2%22%20fill%3D%22rgba(252%2C211%2C77%2C0.3)%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(90deg, #071223 0%, #0E223E 100%) !important;
+  background-size: 24px 24px, 100% 100% !important;
+  border-bottom: 2px solid #F59E0B !important;
 }
 
-/* Bar Sisi Kiri Minimalis, Terang & Profesional (Bright Alabaster-White Sidebar) */
-.app-sidebar {
+/* Bar Sisi Kiri (Royal Chevron & Velvet Pinstripe + Potongan Faset Berlian) */
+.app-sidebar,
+.dark .app-sidebar {
   position: fixed;
   top: 0;
   left: 0;
@@ -4795,37 +4802,42 @@ html {
   z-index: 950;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 68%, #F0FDFA 100%);
-  color: #0F172A;
-  border-right: 1px solid #E2E8F0;
-  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.05);
+  background-color: #07152B !important;
+  background-image:
+    radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.16) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2230%22%20viewBox%3D%220%200%2030%2030%22%3E%3Cpath%20d%3D%22M0%2015%20L15%200%20L30%2015%20L15%2030%20Z%22%20fill%3D%22none%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%221%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2215%22%20x2%3D%2230%22%20y2%3D%2215%22%20stroke%3D%22rgba(96%2C165%2C250%2C0.08)%22%20stroke-width%3D%220.8%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%220%22%20x2%3D%2215%22%20y2%3D%2230%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2215%22%20r%3D%221.2%22%20fill%3D%22rgba(252%2C211%2C77%2C0.3)%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(180deg, #07152B 0%, #0C2346 55%, #040D1A 100%) !important;
+  background-size: auto, 28px 28px, 100% 100% !important;
+  color: #FFFFFF !important;
+  border-right: 2px solid #1E3A8A !important;
+  box-shadow: 8px 0 28px rgba(4, 13, 26, 0.45) !important;
   overflow-y: auto;
   overflow-x: hidden;
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s ease;
 }
 
-.dark .app-sidebar {
-  background: linear-gradient(180deg, #0F172A 0%, #111827 70%, #0D292A 100%);
-  color: #F8FAFC;
-  border-right: 1px solid #1E293B;
-  box-shadow: 6px 0 24px rgba(2, 6, 23, 0.45);
-}
-
 /* Pengepala Jenama dalam Sidebar */
-.sidebar-brand {
+.sidebar-brand,
+.dark .sidebar-brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.65rem;
   padding: 1.15rem 1.1rem 1rem;
-  border-bottom: 1px solid #E2E8F0;
-  background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
-  position: relative;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 21, 43, 0.95) 100%) !important;
+  border-bottom: 2px solid #F59E0B !important;
+  position: relative !important;
 }
 
-.dark .sidebar-brand {
-  border-bottom: 1px solid #1E293B;
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, transparent 100%);
+.sidebar-brand::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  bottom: 0;
+  right: 15px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #F59E0B 50%, transparent 100%);
+  pointer-events: none;
 }
 
 .sidebar-brand-left {
@@ -4841,8 +4853,8 @@ html {
   border-radius: 12px;
   background: #FFFFFF;
   padding: 3px;
-  border: 2px solid #14B8A6;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.16);
+  border: 2.5px solid #F59E0B !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.45) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4862,23 +4874,21 @@ html {
   min-width: 0;
 }
 
-.sidebar-brand-title {
+.sidebar-brand-title,
+.dark .sidebar-brand-title {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.15rem;
-  font-weight: 800;
-  color: #0F172A;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
-.dark .sidebar-brand-title {
-  color: #F8FAFC;
-}
-
-.sidebar-brand-sub {
+.sidebar-brand-sub,
+.dark .sidebar-brand-sub {
   font-size: 0.7rem;
-  color: #0D9488;
-  font-weight: 700;
+  color: #FCD34D !important;
+  font-weight: 700 !important;
   margin-top: 2px;
   line-height: 1.25;
   display: -webkit-box;
@@ -4887,28 +4897,19 @@ html {
   overflow: hidden;
 }
 
-.dark .sidebar-brand-sub {
-  color: #5EEAD4;
-}
-
-.sidebar-close-btn {
+.sidebar-close-btn,
+.dark .sidebar-close-btn {
   display: none;
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid #CBD5E1;
-  background: #F1F5F9;
-  color: #334155;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  color: #FCD34D !important;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-}
-
-.dark .sidebar-close-btn {
-  border-color: #334155;
-  background: #1E293B;
-  color: #F8FAFC;
 }
 
 /* Senarai Menu Navigasi Vertikal dalam Sidebar */
@@ -4923,7 +4924,7 @@ html {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
-  gap: 0.35rem !important;
+  gap: 0.38rem !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -4932,68 +4933,61 @@ html {
   width: 100% !important;
 }
 
-.app-sidebar .nav-tab {
+.app-sidebar .nav-tab,
+.dark .app-sidebar .nav-tab {
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 0.75rem !important;
   padding: 0.72rem 0.95rem !important;
-  border-radius: 10px !important;
+  border-radius: 9px !important;
   font-size: 0.86rem !important;
-  font-weight: 600 !important;
-  color: #475569 !important;
+  font-weight: 700 !important;
+  color: #CBD5E1 !important;
   background: transparent !important;
   border: 1px solid transparent !important;
   text-align: left !important;
   cursor: pointer;
+  position: relative !important;
   transition: all 0.18s ease !important;
   white-space: nowrap;
 }
 
-.dark .app-sidebar .nav-tab {
-  color: #94A3B8 !important;
-}
-
 .app-sidebar .nav-tab svg,
-.app-sidebar .nav-tab i {
-  color: #64748B !important;
-  stroke: #64748B !important;
-}
-
+.app-sidebar .nav-tab i,
 .dark .app-sidebar .nav-tab svg,
 .dark .app-sidebar .nav-tab i {
   color: #94A3B8 !important;
   stroke: #94A3B8 !important;
 }
 
-.app-sidebar .nav-tab:hover {
-  background: #F0FDFA !important;
-  color: #0F766E !important;
-  border-color: #CCFBF1 !important;
+.app-sidebar .nav-tab:hover,
+.dark .app-sidebar .nav-tab:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
   transform: translateX(3px);
 }
 
 .app-sidebar .nav-tab:hover svg,
-.app-sidebar .nav-tab:hover i {
-  color: #0D9488 !important;
-  stroke: #0D9488 !important;
+.app-sidebar .nav-tab:hover i,
+.dark .app-sidebar .nav-tab:hover svg,
+.dark .app-sidebar .nav-tab:hover i {
+  color: #FCD34D !important;
+  stroke: #FCD34D !important;
 }
 
-.dark .app-sidebar .nav-tab:hover {
-  background: rgba(20, 184, 166, 0.12) !important;
-  color: #5EEAD4 !important;
-  border-color: rgba(20, 184, 166, 0.25) !important;
-}
-
-/* Butang Navigasi Aktif: Pil Teal-Cerulean Profesional (#0D9488 -> #0284C7) */
+/* Butang Navigasi Aktif: Bucu Potongan Faset Berlian Chamfer 45° + Filamen Emas */
 .app-sidebar .nav-tab.active,
 .dark .app-sidebar .nav-tab.active {
-  background: linear-gradient(135deg, #0D9488 0%, #0891B2 55%, #0284C7 100%) !important;
+  background: linear-gradient(180deg, #1D4ED8 0%, #17387A 100%) !important;
   color: #FFFFFF !important;
   font-weight: 800 !important;
-  border: 1px solid #14B8A6 !important;
-  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  border: 1px solid #F59E0B !important;
+  border-left: 3px solid #F59E0B !important;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px) !important;
+  box-shadow: 0 4px 12px rgba(10, 25, 47, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.6) !important;
   transform: none !important;
 }
 
@@ -5001,37 +4995,31 @@ html {
 .app-sidebar .nav-tab.active i,
 .dark .app-sidebar .nav-tab.active svg,
 .dark .app-sidebar .nav-tab.active i {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #FCD34D !important;
+  stroke: #FCD34D !important;
   stroke-width: 2.4px;
 }
 
-/* Bahagian Bawah Sidebar & Jalur Pepenjuru Aqua-Sky (#14B8A6 -> #38BDF8) */
-.sidebar-footer {
+/* Bahagian Bawah Sidebar & Kotak Status Berpotong Faset Chamfer */
+.sidebar-footer,
+.dark .sidebar-footer {
   position: relative;
   padding: 1rem 0.9rem 2.3rem;
   margin-top: auto;
   overflow: hidden;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid rgba(30, 58, 138, 0.6) !important;
 }
 
-.dark .sidebar-footer {
-  border-top-color: #1E293B;
-}
-
-.sidebar-status-box {
-  background: #FFFFFF;
-  border: 1px solid #CCFBF1;
+.sidebar-status-box,
+.dark .sidebar-status-box {
+  background: rgba(8, 22, 43, 0.85) !important;
+  border: 1.5px solid #F59E0B !important;
   border-radius: 10px;
   padding: 0.65rem 0.8rem;
   position: relative;
   z-index: 2;
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.06);
-}
-
-.dark .sidebar-status-box {
-  background: rgba(15, 23, 42, 0.7);
-  border-color: rgba(20, 184, 166, 0.3);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
 }
 
 .sidebar-status-row {
@@ -5049,26 +5037,20 @@ html {
   flex-shrink: 0;
 }
 
-.sidebar-status-label {
+.sidebar-status-label,
+.dark .sidebar-status-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #0F172A;
+  color: #FFFFFF !important;
 }
 
-.dark .sidebar-status-label {
-  color: #F8FAFC;
-}
-
-.sidebar-status-ver {
+.sidebar-status-ver,
+.dark .sidebar-status-ver {
   font-size: 0.68rem;
-  color: #0D9488;
-  font-weight: 600;
+  color: #FCD34D !important;
+  font-weight: 700 !important;
   margin-top: 2px;
   padding-left: 1.2rem;
-}
-
-.dark .sidebar-status-ver {
-  color: #5EEAD4;
 }
 
 .sidebar-gold-ribbon {
@@ -5088,9 +5070,9 @@ html {
   right: 0;
   bottom: 14px;
   height: 11px;
-  background: linear-gradient(90deg, #0D9488 0%, #2DD4BF 55%, #38BDF8 100%);
+  background: linear-gradient(90deg, #D97706 0%, #F59E0B 60%, #FCD34D 100%) !important;
   transform: rotate(-8deg);
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 .sidebar-gold-ribbon::after {
@@ -5100,9 +5082,9 @@ html {
   right: -10%;
   bottom: 2px;
   height: 9px;
-  background: linear-gradient(90deg, #0284C7 0%, #5EEAD4 70%, #0D9488 100%);
+  background: linear-gradient(90deg, #1D4ED8 0%, #60A5FA 70%, #93C5FD 100%) !important;
   transform: rotate(-8deg);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* Ruang Kerja Utama Kanan */
@@ -5116,46 +5098,61 @@ html {
   transition: margin-left 0.28s ease;
 }
 
-/* 2. HEADER UTAMA SEKOLAH (OCEANIC TEAL-CERULEAN #0F3D56 -> #0E7490 -> #0284C7) */
+/* 2. HEADER UTAMA SEKOLAH (ROYAL CHEVRON 3D + MULTI-FACET DIAMOND SHARDS GEOMETRY B) */
 .hero-band {
-  position: relative;
-  background: linear-gradient(95deg, #0F3D56 0%, #0E6BA8 52%, #0D9488 100%) !important;
-  border-bottom: 3px solid #2DD4BF !important;
-  box-shadow: 0 6px 20px rgba(15, 61, 86, 0.12) !important;
-  overflow: hidden;
+  position: relative !important;
+  background-color: #07152B !important;
+  background-image:
+    /* Facet Shard Kiri */
+    linear-gradient(125deg, rgba(245, 158, 11, 0.3) 0%, transparent 40%),
+    /* Facet Shard Tengah Bawah */
+    linear-gradient(35deg, transparent 40%, rgba(37, 99, 235, 0.3) 60%, transparent 80%),
+    /* Facet Shard Kanan */
+    linear-gradient(215deg, rgba(245, 158, 11, 0.25) 0%, transparent 45%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2230%22%20viewBox%3D%220%200%2030%2030%22%3E%3Cpath%20d%3D%22M0%2015%20L15%200%20L30%2015%20L15%2030%20Z%22%20fill%3D%22none%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%221%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%2215%22%20x2%3D%2230%22%20y2%3D%2215%22%20stroke%3D%22rgba(96%2C165%2C250%2C0.08)%22%20stroke-width%3D%220.8%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%220%22%20x2%3D%2215%22%20y2%3D%2230%22%20stroke%3D%22rgba(245%2C158%2C11%2C0.12)%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2215%22%20r%3D%221.2%22%20fill%3D%22rgba(252%2C211%2C77%2C0.3)%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(95deg, #051020 0%, #0C2142 50%, #15346E 100%) !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 30px 30px, 100% 100% !important;
+  border-bottom: 4px solid #F59E0B !important;
+  box-shadow: 0 10px 30px rgba(5, 16, 32, 0.3) !important;
+  overflow: hidden !important;
 }
 
-/* Bucu Pepenjuru Aqua-Mint di Kiri Atas Header (#2DD4BF -> #14B8A6 -> #0D9488) */
+/* Geometri Berlian Tiga-Lapis Kiri (Multi-Facet Left Shard) */
 .hero-band::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 95px;
-  height: 100%;
-  background: linear-gradient(135deg, #5EEAD4 0%, #14B8A6 55%, #0D9488 100%);
-  clip-path: polygon(0 0, 88px 0, 18px 100%, 0 100%);
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.95;
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: -15px !important;
+  width: 240px !important;
+  height: 150px !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.85) 0%, rgba(29, 78, 216, 0.5) 70%, transparent 100%) !important;
+  clip-path: polygon(0 0, 220px 0, 150px 50%, 75px 100%, 0 100%) !important;
+  border-right: 2px solid #FCD34D !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
 }
 
+/* Geometri Faset Berlian Kanan Bawah (Multi-Facet Right Shard) */
 .hero-band::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 112px;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(94, 234, 212, 0.35) 0%, rgba(20, 184, 166, 0.08) 100%);
-  clip-path: polygon(88px 0, 106px 0, 36px 100%, 18px 100%);
-  pointer-events: none;
-  z-index: 1;
+  content: '' !important;
+  position: absolute !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+  top: auto !important;
+  width: 190px !important;
+  height: 65px !important;
+  background: linear-gradient(315deg, rgba(245, 158, 11, 0.35) 0%, transparent 100%) !important;
+  clip-path: polygon(45px 100%, 100% 0, 100% 100%) !important;
+  border-top: 2px solid #F59E0B !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
 }
 
 .hero-band-inner {
-  position: relative;
-  z-index: 2;
+  position: relative !important;
+  z-index: 2 !important;
   max-width: 1440px;
   margin: 0 auto;
   padding: 1.1rem 1.5rem 1.1rem 2.25rem;
@@ -5176,24 +5173,40 @@ html {
   min-width: 0;
 }
 
+.school-logo-wrapper {
+  border: 2.5px solid #F59E0B !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4) !important;
+}
+
+.hero-date-pill {
+  background: #08162B !important;
+  border: 1.5px solid #F59E0B !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  color: #FFFFFF !important;
+}
+
+.hero-date-pill svg {
+  color: #FCD34D !important;
+}
+
 .sidebar-hamburger-btn {
   display: none;
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1.5px solid #5EEAD4;
-  color: #FFFFFF;
+  background: rgba(8, 22, 43, 0.75);
+  border: 1.5px solid #F59E0B;
+  color: #FCD34D;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .sidebar-hamburger-btn:hover {
-  background: rgba(45, 212, 191, 0.25);
+  background: rgba(245, 158, 11, 0.25);
   transform: scale(1.03);
 }
 
@@ -5212,7 +5225,7 @@ main#page-import {
   padding: 1.25rem 1.5rem 2.25rem !important;
 }
 
-/* 3. BARIS 5 KAD RINGKASAN KPI MINIMALIS TERANG (BRIGHT HEX KPI STRIP) */
+/* 3. BARIS 5 KAD RINGKASAN KPI DIRAJA BERPRESTIJ (ROYAL PRESTIGE KPI STRIP) */
 .kpi-pastel-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -5225,16 +5238,19 @@ main#page-import {
   align-items: center;
   gap: 0.85rem;
   padding: 1rem 1.1rem;
-  border-radius: 14px;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-radius: 12px !important;
+  border-top: 3.5px solid #1D4ED8 !important;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 14px rgba(8, 22, 43, 0.05) !important;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .kpi-pastel-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 20px rgba(8, 22, 43, 0.1) !important;
 }
 
 .kpi-pastel-icon {
@@ -5263,7 +5279,8 @@ main#page-import {
 .kpi-pastel-value {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.65rem;
-  font-weight: 800;
+  font-weight: 800 !important;
+  color: #0F172A !important;
   line-height: 1.15;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -5281,31 +5298,30 @@ main#page-import {
   text-overflow: ellipsis;
 }
 
-/* 5 Tema Warna Minimalis Terang (Menepati Kod HEX Rasmi) */
-/* Kad 1: Sky Cerulean (#F0F9FF / #BAE6FD / #0284C7) */
+/* 5 Tema Kad KPI Mengikut Gaya 3 Royal Prestige */
+/* Kad 1: Royal Blue (#1D4ED8) */
 .kpi-pastel-blue,
 .stat-card.stat-card-blue,
 .att-kpi-card.att-kpi-total {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%) !important;
-  border: 1.5px solid #BAE6FD !important;
-  border-left: 4px solid #0284C7 !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-top: 3.5px solid #1D4ED8 !important;
 }
 .kpi-pastel-blue .kpi-pastel-icon {
-  background: #E0F2FE;
-  color: #0284C7;
-  border: 1px solid #BAE6FD;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #BFDBFE;
 }
-.kpi-pastel-blue .kpi-pastel-title { color: #0369A1; }
-.kpi-pastel-blue .kpi-pastel-value { color: #0F172A; }
-.kpi-pastel-blue .kpi-pastel-sub { color: #0D9488; }
+.kpi-pastel-blue .kpi-pastel-title { color: #1E40AF; }
+.kpi-pastel-blue .kpi-pastel-sub { color: #059669; }
 
-/* Kad 2: Emerald Mint (#ECFDF5 / #A7F3D0 / #059669) */
+/* Kad 2: Emerald Mint (#059669) */
 .kpi-pastel-mint,
 .stat-card.stat-card-emerald,
 .att-kpi-card.att-kpi-present {
-  background: linear-gradient(135deg, #FFFFFF 0%, #ECFDF5 100%) !important;
-  border: 1.5px solid #A7F3D0 !important;
-  border-left: 4px solid #10B981 !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-top: 3.5px solid #059669 !important;
 }
 .kpi-pastel-mint .kpi-pastel-icon {
   background: #D1FAE5;
@@ -5313,14 +5329,13 @@ main#page-import {
   border: 1px solid #A7F3D0;
 }
 .kpi-pastel-mint .kpi-pastel-title { color: #047857; }
-.kpi-pastel-mint .kpi-pastel-value { color: #0F172A; }
 .kpi-pastel-mint .kpi-pastel-sub { color: #059669; }
 
-/* Kad 3: Warm Amber (#FFFBEB / #FDE68A / #D97706) */
+/* Kad 3: Royal Gold Amber (#D97706) */
 .kpi-pastel-amber {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFFBEB 100%) !important;
-  border: 1.5px solid #FDE68A !important;
-  border-left: 4px solid #F59E0B !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-top: 3.5px solid #D97706 !important;
 }
 .kpi-pastel-amber .kpi-pastel-icon {
   background: #FEF3C7;
@@ -5328,33 +5343,31 @@ main#page-import {
   border: 1px solid #FDE68A;
 }
 .kpi-pastel-amber .kpi-pastel-title { color: #B45309; }
-.kpi-pastel-amber .kpi-pastel-value { color: #0F172A; }
 .kpi-pastel-amber .kpi-pastel-sub { color: #D97706; }
 
-/* Kad 4: Royal Indigo (#EEF2FF / #C7D2FE / #4F46E5) */
+/* Kad 4: Imperial Purple (#7C3AED) */
 .kpi-pastel-purple,
 .stat-card.stat-card-purple,
 .att-kpi-card.att-kpi-relief {
-  background: linear-gradient(135deg, #FFFFFF 0%, #EEF2FF 100%) !important;
-  border: 1.5px solid #C7D2FE !important;
-  border-left: 4px solid #6366F1 !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-top: 3.5px solid #7C3AED !important;
 }
 .kpi-pastel-purple .kpi-pastel-icon {
-  background: #E0E7FF;
-  color: #4F46E5;
-  border: 1px solid #C7D2FE;
+  background: #EDE9FE;
+  color: #6D28D9;
+  border: 1px solid #DDD6FE;
 }
-.kpi-pastel-purple .kpi-pastel-title { color: #4338CA; }
-.kpi-pastel-purple .kpi-pastel-value { color: #0F172A; }
-.kpi-pastel-purple .kpi-pastel-sub { color: #4F46E5; }
+.kpi-pastel-purple .kpi-pastel-title { color: #5B21B6; }
+.kpi-pastel-purple .kpi-pastel-sub { color: #6D28D9; }
 
-/* Kad 5: Rose Coral (#FFF1F2 / #FECDD3 / #E11D48) */
+/* Kad 5: Crimson Rose (#E11D48) */
 .kpi-pastel-rose,
 .stat-card.stat-card-rose,
 .att-kpi-card.att-kpi-absent {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFF1F2 100%) !important;
-  border: 1.5px solid #FECDD3 !important;
-  border-left: 4px solid #F43F5E !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-top: 3.5px solid #E11D48 !important;
 }
 .kpi-pastel-rose .kpi-pastel-icon {
   background: #FFE4E6;
@@ -5362,86 +5375,70 @@ main#page-import {
   border: 1px solid #FECDD3;
 }
 .kpi-pastel-rose .kpi-pastel-title { color: #BE123C; }
-.kpi-pastel-rose .kpi-pastel-value { color: #0F172A; }
 .kpi-pastel-rose .kpi-pastel-sub { color: #E11D48; }
 
 /* Sokongan Mod Gelap untuk Kad KPI */
+.dark .kpi-pastel-card,
 .dark .kpi-pastel-blue,
-.dark .stat-card.stat-card-blue,
-.dark .att-kpi-card.att-kpi-total {
-  background: linear-gradient(135deg, #0F172A 0%, #0C4A6E 100%) !important;
-  border-color: #0284C7 !important;
-}
 .dark .kpi-pastel-mint,
-.dark .stat-card.stat-card-emerald,
-.dark .att-kpi-card.att-kpi-present {
-  background: linear-gradient(135deg, #0F172A 0%, #064E3B 100%) !important;
-  border-color: #10B981 !important;
-}
-.dark .kpi-pastel-amber {
-  background: linear-gradient(135deg, #0F172A 0%, #78350F 100%) !important;
-  border-color: #F59E0B !important;
-}
+.dark .kpi-pastel-amber,
 .dark .kpi-pastel-purple,
-.dark .stat-card.stat-card-purple,
-.dark .att-kpi-card.att-kpi-relief {
-  background: linear-gradient(135deg, #0F172A 0%, #312E81 100%) !important;
-  border-color: #6366F1 !important;
-}
 .dark .kpi-pastel-rose,
+.dark .stat-card.stat-card-blue,
+.dark .stat-card.stat-card-emerald,
+.dark .stat-card.stat-card-purple,
 .dark .stat-card.stat-card-rose,
-.dark .att-kpi-card.att-kpi-absent {
-  background: linear-gradient(135deg, #0F172A 0%, #881337 100%) !important;
-  border-color: #F43F5E !important;
+.dark .att-kpi-card {
+  background: #0B172A !important;
+  border-color: #1E3A8A !important;
 }
+.dark .kpi-pastel-blue { border-top-color: #3B82F6 !important; }
+.dark .kpi-pastel-mint { border-top-color: #10B981 !important; }
+.dark .kpi-pastel-amber { border-top-color: #F59E0B !important; }
+.dark .kpi-pastel-purple { border-top-color: #8B5CF6 !important; }
+.dark .kpi-pastel-rose { border-top-color: #F43F5E !important; }
 .dark .kpi-pastel-card .kpi-pastel-title { color: #CBD5E1 !important; }
 .dark .kpi-pastel-card .kpi-pastel-value { color: #F8FAFC !important; }
-.dark .kpi-pastel-card .kpi-pastel-sub { color: #5EEAD4 !important; }
+.dark .kpi-pastel-card .kpi-pastel-sub { color: #FCD34D !important; }
 
-/* 4. KAD SEKSYEN & PENGEPALA KAD MINIMALIS TERANG (FROST-TEAL + AQUA CORNER WEDGE) */
+/* 4. KAD SEKSYEN & PENGEPALA KAD DIRAJA BERPRESTIJ (ROYAL NAVY + GOLD FILAMENT) */
 .section-card {
   border-radius: 14px !important;
-  border: 1px solid #E2E8F0 !important;
+  border: 1.5px solid #CBD5E1 !important;
   background: #FFFFFF !important;
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
+  box-shadow: 0 6px 20px rgba(8, 22, 43, 0.06) !important;
 }
 
 .dark .section-card {
-  background: #0F172A !important;
-  border-color: #1E293B !important;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35) !important;
+  background: #0B172A !important;
+  border-color: #1E3A8A !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45) !important;
 }
 
 .tna-framed-card {
   overflow: hidden !important;
 }
 
-/* Pengepala Kad Minimalis Terang (#F0FDFA -> #F0F9FF) */
+/* Pengepala Kad Royal Prestige (#08162B -> #112D54 -> #1E3A8A + Sempadan Emas #F59E0B) */
 .tna-card-header,
 .tna-card-header-bar {
   position: relative;
-  background: linear-gradient(90deg, #F0FDFA 0%, #F0F9FF 60%, #F8FAFC 100%) !important;
-  color: #0F172A !important;
+  background: linear-gradient(90deg, #08162B 0%, #112D54 65%, #1E3A8A 100%) !important;
+  color: #FFFFFF !important;
   padding: 0.95rem 1.4rem 0.95rem 1.85rem !important;
-  border-bottom: 2px solid #99F6E4 !important;
+  border-bottom: 3px solid #F59E0B !important;
+  box-shadow: inset 0 -1px 0 #FCD34D !important;
   display: flex;
   align-items: center;
   gap: 0.85rem;
   overflow: hidden;
 }
 
-.dark .tna-card-header,
-.dark .tna-card-header-bar {
-  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
-  color: #F8FAFC !important;
-  border-bottom-color: #14B8A6 !important;
-}
-
 .tna-card-header-bar {
   margin: -1.5rem -1.5rem 1.25rem -1.5rem !important;
 }
 
-/* Bucu Pepenjuru Teal-Cyan pada Setiap Pengepala Kad (#14B8A6 -> #0284C7) */
+/* Bucu Pepenjuru Filamen Emas & Nilam pada Setiap Pengepala Kad */
 .tna-card-header::before,
 .tna-card-header-bar::before,
 .page-header-panel::before,
@@ -5453,154 +5450,137 @@ main#page-import {
   left: 0;
   width: 34px;
   height: 34px;
-  background: linear-gradient(135deg, #2DD4BF 0%, #0D9488 55%, #0284C7 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #1D4ED8 100%) !important;
   clip-path: polygon(0 0, 100% 0, 0 100%);
   pointer-events: none;
   z-index: 2;
 }
 
-.tna-card-header-icon {
+.tna-card-header-icon,
+.dark .tna-card-header-icon {
   width: 38px !important;
   height: 38px !important;
   border-radius: 10px !important;
-  background: #CCFBF1 !important;
-  border: 1px solid #5EEAD4 !important;
-  color: #0F766E !important;
+  background: #112D54 !important;
+  border: 1.5px solid #F59E0B !important;
+  color: #FCD34D !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0;
-  box-shadow: none !important;
-}
-
-.dark .tna-card-header-icon {
-  background: rgba(20, 184, 166, 0.2) !important;
-  border-color: #14B8A6 !important;
-  color: #5EEAD4 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 .tna-card-header-title,
 .tna-card-header h3,
-.tna-card-header-bar h3 {
-  color: #0F172A !important;
+.tna-card-header-bar h3,
+.dark .tna-card-header-title,
+.dark .tna-card-header h3,
+.dark .tna-card-header-bar h3 {
+  color: #FFFFFF !important;
   font-weight: 800 !important;
   font-size: 1.05rem !important;
   letter-spacing: -0.01em;
   margin: 0 !important;
 }
 
-.dark .tna-card-header-title,
-.dark .tna-card-header h3,
-.dark .tna-card-header-bar h3 {
-  color: #F8FAFC !important;
-}
-
 .tna-card-header-sub,
 .tna-card-header p,
-.tna-card-header-bar p {
-  color: #475569 !important;
+.tna-card-header-bar p,
+.dark .tna-card-header-sub,
+.dark .tna-card-header p,
+.dark .tna-card-header-bar p {
+  color: #BFDBFE !important;
   font-size: 0.78rem !important;
   margin: 2px 0 0 !important;
 }
 
-.dark .tna-card-header-sub,
-.dark .tna-card-header p,
-.dark .tna-card-header-bar p {
-  color: #94A3B8 !important;
-}
-
-.tna-card-header-bar code {
-  background: #E0F2FE !important;
-  color: #0369A1 !important;
+.tna-card-header-bar code,
+.dark .tna-card-header-bar code {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #FCD34D !important;
   padding: 1px 6px;
   border-radius: 4px;
 }
 
-.dark .tna-card-header-bar code {
-  background: rgba(2, 132, 199, 0.25) !important;
-  color: #7DD3FC !important;
+/* Baris Guru Tidak Hadir (.teacher-row) */
+.teacher-row {
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(8, 22, 43, 0.04) !important;
+}
+
+.dark .teacher-row {
+  background: #0F172A !important;
+  border-color: #1E3A8A !important;
 }
 
 /* Sub-panel Jadual Automatik Waktu Guru Ganti (Page 1) */
 .sub-panel {
-  border-radius: 14px !important;
-  border: 1px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+  border: 1px solid #CBD5E1 !important;
   overflow: hidden;
-  background: #FFFFFF !important;
+  background: #F8FAFC !important;
   padding: 0 1.25rem 1.25rem !important;
 }
 
 .dark .sub-panel {
-  background: #0F172A !important;
-  border-color: #1E293B !important;
+  background: #0B172A !important;
+  border-color: #1E3A8A !important;
 }
 
-.sub-panel > .panel-header {
+.sub-panel > .panel-header,
+.dark .sub-panel > .panel-header {
   position: relative;
-  background: linear-gradient(90deg, #F0FDFA 0%, #F0F9FF 100%) !important;
+  background: linear-gradient(90deg, #08162B 0%, #112D54 100%) !important;
   margin: 0 -1.25rem 1.15rem -1.25rem !important;
   padding: 0.85rem 1.25rem 0.85rem 1.75rem !important;
-  border-bottom: 2px solid #99F6E4 !important;
+  border-bottom: 2.5px solid #1D4ED8 !important;
 }
 
-.dark .sub-panel > .panel-header {
-  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
-  border-bottom-color: #14B8A6 !important;
-}
-
-.sub-panel > .panel-header .panel-title h4 {
-  color: #0F172A !important;
+.sub-panel > .panel-header .panel-title h4,
+.dark .sub-panel > .panel-header .panel-title h4 {
+  color: #FFFFFF !important;
   font-weight: 800 !important;
   font-size: 0.98rem !important;
 }
 
-.dark .sub-panel > .panel-header .panel-title h4 {
-  color: #F8FAFC !important;
-}
-
-.sub-panel > .panel-header .panel-title svg {
-  color: #0D9488 !important;
-}
-
+.sub-panel > .panel-header .panel-title svg,
 .dark .sub-panel > .panel-header .panel-title svg {
-  color: #2DD4BF !important;
+  color: #60A5FA !important;
 }
 
-.sub-panel > .panel-header .btn-secondary {
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  border: 1px solid #CBD5E1 !important;
-}
-
+.sub-panel > .panel-header .btn-secondary,
 .dark .sub-panel > .panel-header .btn-secondary {
-  background: #1E293B !important;
-  color: #F8FAFC !important;
-  border-color: #334155 !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(245, 158, 11, 0.45) !important;
 }
 
 .sub-panel > .panel-header .btn-secondary:hover {
-  background: #CCFBF1 !important;
-  border-color: #14B8A6 !important;
-  color: #0F766E !important;
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #F59E0B !important;
+  color: #FCD34D !important;
 }
 
-/* Page Header Panel (Halaman 2, 3, 5, 6, 7, Import) — Minimalis Terang */
+/* Page Header Panel (Halaman 2, 3, 5, 6, 7, Import) — Royal Prestige */
 .page-header-panel {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(90deg, #FFFFFF 0%, #F0FDFA 55%, #F0F9FF 100%) !important;
-  border: 1px solid #CCFBF1 !important;
-  border-bottom: 3px solid #14B8A6 !important;
+  background: linear-gradient(90deg, #FFFFFF 0%, #F8FAFC 55%, #EFF6FF 100%) !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-bottom: 3.5px solid #1D4ED8 !important;
   border-radius: 14px !important;
   padding: 1.15rem 1.5rem 1.15rem 1.9rem !important;
   color: #0F172A !important;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(8, 22, 43, 0.05) !important;
 }
 
 .dark .page-header-panel {
-  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
-  border-color: #115E59 !important;
-  border-bottom-color: #14B8A6 !important;
+  background: linear-gradient(90deg, #08162B 0%, #112D54 100%) !important;
+  border-color: #1E3A8A !important;
+  border-bottom-color: #F59E0B !important;
   color: #F8FAFC !important;
 }
 
@@ -5619,7 +5599,7 @@ main#page-import {
 }
 
 .dark .page-header-panel .page-subtitle {
-  color: #94A3B8 !important;
+  color: #93C5FD !important;
 }
 
 .page-header-panel label {
@@ -5630,51 +5610,46 @@ main#page-import {
   color: #E2E8F0 !important;
 }
 
-/* Pengepala Kad Jadual Kelas (.tt-card-header) — Oceanic Teal-Slate (#0F3D56 -> #0E7490) */
-#page2 .tt-card-header {
-  background: linear-gradient(90deg, #0F3D56 0%, #0E7490 100%) !important;
-  color: #FFFFFF !important;
-}
-
+/* Pengepala Kad Jadual Kelas (.tt-card-header) — Royal Navy & Gold Filament */
+#page2 .tt-card-header,
 .tt-card-header {
   position: relative;
   overflow: hidden;
+  background: linear-gradient(90deg, #08162B 0%, #112D54 65%, #1E3A8A 100%) !important;
+  color: #FFFFFF !important;
   padding-left: 1.5rem !important;
-  border-bottom: 2px solid #2DD4BF !important;
+  border-bottom: 2.5px solid #F59E0B !important;
 }
 
-/* 5. BAR NAVIGASI BAWAH TELEFON BIMBIT (MINIMALIS TERANG) & BACKDROP DRAWER */
+/* 5. BAR NAVIGASI BAWAH TELEFON BIMBIT (ROYAL PRESTIGE) & BACKDROP DRAWER */
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(7, 21, 43, 0.6);
   backdrop-filter: blur(3px);
   z-index: 1150;
   transition: opacity 0.25s ease;
 }
 
-.mobile-bottom-nav {
+.mobile-bottom-nav,
+.dark .mobile-bottom-nav {
   display: none;
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 1050;
-  background: #FFFFFF;
-  border-top: 2px solid #14B8A6;
-  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.08);
+  background: #07152B;
+  border-top: 2px solid #F59E0B;
+  box-shadow: 0 -6px 20px rgba(7, 21, 43, 0.3);
   padding: 0.35rem 0.25rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
   justify-content: space-around;
   align-items: center;
   gap: 2px;
 }
 
-.dark .mobile-bottom-nav {
-  background: #0F172A;
-  border-top-color: #14B8A6;
-}
-
-.mobile-bottom-btn {
+.mobile-bottom-btn,
+.dark .mobile-bottom-btn {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -5684,17 +5659,13 @@ main#page-import {
   gap: 2px;
   padding: 0.38rem 0.15rem;
   border-radius: 8px;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
-  color: #64748B;
+  color: #94A3B8;
   font-size: 0.64rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
-}
-
-.dark .mobile-bottom-btn {
-  color: #94A3B8;
 }
 
 .mobile-bottom-btn span {
@@ -5705,10 +5676,12 @@ main#page-import {
 }
 
 .mobile-bottom-btn.active {
-  background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%);
+  background: linear-gradient(180deg, #1D4ED8 0%, #17387A 100%);
   color: #FFFFFF;
   font-weight: 800;
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+  border: 1px solid #F59E0B;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 /* ============================================================================
