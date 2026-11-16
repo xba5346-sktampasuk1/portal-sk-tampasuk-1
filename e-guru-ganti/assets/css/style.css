@@ -4757,27 +4757,35 @@ html {
 }
 
 /* ============================================================================
-   SISTEM REKA BENTUK EKSEKUTIF TNA DASHBOARD (ARAHAN KEDUA - V2.7)
-   - Mengekalkan Palet Warna Rasmi (Royal Navy Blue, Gold/Amber, Pastel KPI)
-   - Susun Atur 2-Lajur (Sidebar Kiri Vertikal + Ruang Kerja Utama Kanan)
-   - Kad Seksyen Berpengepala Navy Gelap + Bucu Pepenjuru Emas (Gold Wedge)
-   - Responsif Penuh: Komputer Riba (Laptop), Tablet & Telefon Bimbit
+   SISTEM REKA BENTUK EKSEKUTIF MINIMALIS, TERANG & PROFESIONAL (HEX EDITION V2.8)
+   Palet HEX Rasmi Projek e-GGs:
+   - Canvas & Permukaan Terang : #F8FAFC (Alabaster), #FFFFFF (Pure White), #E2E8F0 (Border)
+   - Teks Profesional          : #0F172A (Deep Slate), #334155 (Charcoal), #64748B (Muted Slate)
+   - Jenama Utama (Ocean Teal) : #0F3D56 (Nordic Cerulean), #0E7490 (Ocean Cyan), #0D9488 (Teal)
+   - Aksen Signature (Mint-Sky): #14B8A6 (Emerald Teal), #2DD4BF (Aqua Mint), #0284C7 (Sky Blue)
+   - Permukaan Pengepala Kad   : #F0FDFA -> #F0F9FF (Minimalist Frost-Teal)
    ============================================================================ */
 
-/* 1. RANGKA UTAMA 2-LAJUR (APP SHELL, SIDEBAR KIRI & RUANG KERJA KANAN) */
+/* 1. RANGKA UTAMA 2-LAJUR (APP SHELL, SIDEBAR KIRI MINIMALIS TERANG & RUANG KERJA KANAN) */
 .app-shell {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  background-color: #eef2f7;
+  background-color: #F8FAFC;
   position: relative;
 }
 
 .dark .app-shell {
-  background-color: #0b1120;
+  background-color: #0B1120;
 }
 
-/* Bar Sisi Kiri (Vertical Sidebar - TNA Style) */
+/* Jalur Atas Sistem (Clean Nordic Slate-Teal) */
+.gov-top-bar {
+  background: linear-gradient(90deg, #0F2942 0%, #115E59 100%) !important;
+  border-bottom: 1px solid #134E4A !important;
+}
+
+/* Bar Sisi Kiri Minimalis, Terang & Profesional (Bright Alabaster-White Sidebar) */
 .app-sidebar {
   position: fixed;
   top: 0;
@@ -4787,13 +4795,20 @@ html {
   z-index: 950;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #081d47 0%, #0c2b68 55%, #061535 100%);
-  color: #ffffff;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 6px 0 24px rgba(2, 6, 23, 0.2);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 68%, #F0FDFA 100%);
+  color: #0F172A;
+  border-right: 1px solid #E2E8F0;
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.05);
   overflow-y: auto;
   overflow-x: hidden;
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s ease;
+}
+
+.dark .app-sidebar {
+  background: linear-gradient(180deg, #0F172A 0%, #111827 70%, #0D292A 100%);
+  color: #F8FAFC;
+  border-right: 1px solid #1E293B;
+  box-shadow: 6px 0 24px rgba(2, 6, 23, 0.45);
 }
 
 /* Pengepala Jenama dalam Sidebar */
@@ -4803,9 +4818,14 @@ html {
   justify-content: space-between;
   gap: 0.65rem;
   padding: 1.15rem 1.1rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
+  border-bottom: 1px solid #E2E8F0;
+  background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
   position: relative;
+}
+
+.dark .sidebar-brand {
+  border-bottom: 1px solid #1E293B;
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, transparent 100%);
 }
 
 .sidebar-brand-left {
@@ -4819,10 +4839,10 @@ html {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #ffffff;
+  background: #FFFFFF;
   padding: 3px;
-  border: 2px solid #facc15;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  border: 2px solid #14B8A6;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4846,15 +4866,19 @@ html {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.15rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0F172A;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
+.dark .sidebar-brand-title {
+  color: #F8FAFC;
+}
+
 .sidebar-brand-sub {
   font-size: 0.7rem;
-  color: #93c5fd;
-  font-weight: 600;
+  color: #0D9488;
+  font-weight: 700;
   margin-top: 2px;
   line-height: 1.25;
   display: -webkit-box;
@@ -4863,18 +4887,28 @@ html {
   overflow: hidden;
 }
 
+.dark .sidebar-brand-sub {
+  color: #5EEAD4;
+}
+
 .sidebar-close-btn {
   display: none;
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  border: 1px solid #CBD5E1;
+  background: #F1F5F9;
+  color: #334155;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.dark .sidebar-close-btn {
+  border-color: #334155;
+  background: #1E293B;
+  color: #F8FAFC;
 }
 
 /* Senarai Menu Navigasi Vertikal dalam Sidebar */
@@ -4908,7 +4942,7 @@ html {
   border-radius: 10px !important;
   font-size: 0.86rem !important;
   font-weight: 600 !important;
-  color: #cbd5e1 !important;
+  color: #475569 !important;
   background: transparent !important;
   border: 1px solid transparent !important;
   text-align: left !important;
@@ -4917,21 +4951,49 @@ html {
   white-space: nowrap;
 }
 
+.dark .app-sidebar .nav-tab {
+  color: #94A3B8 !important;
+}
+
+.app-sidebar .nav-tab svg,
+.app-sidebar .nav-tab i {
+  color: #64748B !important;
+  stroke: #64748B !important;
+}
+
+.dark .app-sidebar .nav-tab svg,
+.dark .app-sidebar .nav-tab i {
+  color: #94A3B8 !important;
+  stroke: #94A3B8 !important;
+}
+
 .app-sidebar .nav-tab:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: #F0FDFA !important;
+  color: #0F766E !important;
+  border-color: #CCFBF1 !important;
   transform: translateX(3px);
 }
 
-/* Butang Navigasi Aktif: Pil Emas-Amber (Persis Imej Rujukan TNA) */
+.app-sidebar .nav-tab:hover svg,
+.app-sidebar .nav-tab:hover i {
+  color: #0D9488 !important;
+  stroke: #0D9488 !important;
+}
+
+.dark .app-sidebar .nav-tab:hover {
+  background: rgba(20, 184, 166, 0.12) !important;
+  color: #5EEAD4 !important;
+  border-color: rgba(20, 184, 166, 0.25) !important;
+}
+
+/* Butang Navigasi Aktif: Pil Teal-Cerulean Profesional (#0D9488 -> #0284C7) */
 .app-sidebar .nav-tab.active,
 .dark .app-sidebar .nav-tab.active {
-  background: linear-gradient(135deg, #facc15 0%, #eab308 55%, #d97706 100%) !important;
-  color: #081d47 !important;
+  background: linear-gradient(135deg, #0D9488 0%, #0891B2 55%, #0284C7 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 800 !important;
-  border: 1px solid #fef08a !important;
-  box-shadow: 0 6px 16px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid #14B8A6 !important;
+  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
   transform: none !important;
 }
 
@@ -4939,27 +5001,37 @@ html {
 .app-sidebar .nav-tab.active i,
 .dark .app-sidebar .nav-tab.active svg,
 .dark .app-sidebar .nav-tab.active i {
-  color: #081d47 !important;
-  stroke: #081d47 !important;
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
   stroke-width: 2.4px;
 }
 
-/* Bahagian Bawah Sidebar & Jalur Pepenjuru Emas (Gold Geometric Ribbons) */
+/* Bahagian Bawah Sidebar & Jalur Pepenjuru Aqua-Sky (#14B8A6 -> #38BDF8) */
 .sidebar-footer {
   position: relative;
   padding: 1rem 0.9rem 2.3rem;
   margin-top: auto;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #E2E8F0;
+}
+
+.dark .sidebar-footer {
+  border-top-color: #1E293B;
 }
 
 .sidebar-status-box {
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #FFFFFF;
+  border: 1px solid #CCFBF1;
   border-radius: 10px;
   padding: 0.65rem 0.8rem;
   position: relative;
   z-index: 2;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.06);
+}
+
+.dark .sidebar-status-box {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(20, 184, 166, 0.3);
 }
 
 .sidebar-status-row {
@@ -4972,22 +5044,31 @@ html {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
   flex-shrink: 0;
 }
 
 .sidebar-status-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: #0F172A;
+}
+
+.dark .sidebar-status-label {
+  color: #F8FAFC;
 }
 
 .sidebar-status-ver {
   font-size: 0.68rem;
-  color: #93c5fd;
+  color: #0D9488;
+  font-weight: 600;
   margin-top: 2px;
   padding-left: 1.2rem;
+}
+
+.dark .sidebar-status-ver {
+  color: #5EEAD4;
 }
 
 .sidebar-gold-ribbon {
@@ -5006,10 +5087,10 @@ html {
   left: 0;
   right: 0;
   bottom: 14px;
-  height: 12px;
-  background: linear-gradient(90deg, #b45309 0%, #facc15 55%, #eab308 100%);
+  height: 11px;
+  background: linear-gradient(90deg, #0D9488 0%, #2DD4BF 55%, #38BDF8 100%);
   transform: rotate(-8deg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2);
 }
 
 .sidebar-gold-ribbon::after {
@@ -5018,8 +5099,8 @@ html {
   left: 25%;
   right: -10%;
   bottom: 2px;
-  height: 10px;
-  background: linear-gradient(90deg, #ca8a04 0%, #fde047 70%, #b45309 100%);
+  height: 9px;
+  background: linear-gradient(90deg, #0284C7 0%, #5EEAD4 70%, #0D9488 100%);
   transform: rotate(-8deg);
   opacity: 0.85;
 }
@@ -5035,16 +5116,16 @@ html {
   transition: margin-left 0.28s ease;
 }
 
-/* 2. HEADER UTAMA SEKOLAH DENGAN BUCU PEPENJURU EMAS (TNA TOP BANNER) */
+/* 2. HEADER UTAMA SEKOLAH (OCEANIC TEAL-CERULEAN #0F3D56 -> #0E7490 -> #0284C7) */
 .hero-band {
   position: relative;
-  background: linear-gradient(95deg, #081d47 0%, #0e2f70 50%, #164096 100%) !important;
-  border-bottom: 3px solid #eab308 !important;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14) !important;
+  background: linear-gradient(95deg, #0F3D56 0%, #0E6BA8 52%, #0D9488 100%) !important;
+  border-bottom: 3px solid #2DD4BF !important;
+  box-shadow: 0 6px 20px rgba(15, 61, 86, 0.12) !important;
   overflow: hidden;
 }
 
-/* Bucu Pepenjuru Emas-Amber di Kiri Atas Header */
+/* Bucu Pepenjuru Aqua-Mint di Kiri Atas Header (#2DD4BF -> #14B8A6 -> #0D9488) */
 .hero-band::before {
   content: '';
   position: absolute;
@@ -5052,7 +5133,7 @@ html {
   left: 0;
   width: 95px;
   height: 100%;
-  background: linear-gradient(135deg, #fde047 0%, #eab308 55%, #b45309 100%);
+  background: linear-gradient(135deg, #5EEAD4 0%, #14B8A6 55%, #0D9488 100%);
   clip-path: polygon(0 0, 88px 0, 18px 100%, 0 100%);
   pointer-events: none;
   z-index: 1;
@@ -5066,7 +5147,7 @@ html {
   left: 0;
   width: 112px;
   height: 100%;
-  background: linear-gradient(135deg, rgba(250, 204, 21, 0.35) 0%, rgba(234, 179, 8, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(94, 234, 212, 0.35) 0%, rgba(20, 184, 166, 0.08) 100%);
   clip-path: polygon(88px 0, 106px 0, 36px 100%, 18px 100%);
   pointer-events: none;
   z-index: 1;
@@ -5100,19 +5181,19 @@ html {
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1.5px solid #facc15;
-  color: #ffffff;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1.5px solid #5EEAD4;
+  color: #FFFFFF;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .sidebar-hamburger-btn:hover {
-  background: rgba(250, 204, 21, 0.25);
+  background: rgba(45, 212, 191, 0.25);
   transform: scale(1.03);
 }
 
@@ -5131,7 +5212,7 @@ main#page-import {
   padding: 1.25rem 1.5rem 2.25rem !important;
 }
 
-/* 3. BARIS 5 KAD RINGKASAN KPI EKSEKUTIF PASTEL (TNA PASTEL KPI STRIP) */
+/* 3. BARIS 5 KAD RINGKASAN KPI MINIMALIS TERANG (BRIGHT HEX KPI STRIP) */
 .kpi-pastel-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -5147,13 +5228,13 @@ main#page-import {
   border-radius: 14px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .kpi-pastel-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
 .kpi-pastel-icon {
@@ -5200,122 +5281,134 @@ main#page-import {
   text-overflow: ellipsis;
 }
 
-/* 5 Tema Warna Pastel Rasmi (Biru, Mint/Hijau, Amber/Kuning, Ungu, Rose/Merah Jambu) */
+/* 5 Tema Warna Minimalis Terang (Menepati Kod HEX Rasmi) */
+/* Kad 1: Sky Cerulean (#F0F9FF / #BAE6FD / #0284C7) */
 .kpi-pastel-blue,
 .stat-card.stat-card-blue,
 .att-kpi-card.att-kpi-total {
-  background: linear-gradient(135deg, #eef6ff 0%, #dbeafe 100%) !important;
-  border: 1.5px solid #bfdbfe !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%) !important;
+  border: 1.5px solid #BAE6FD !important;
+  border-left: 4px solid #0284C7 !important;
 }
 .kpi-pastel-blue .kpi-pastel-icon {
-  background: rgba(37, 99, 235, 0.12);
-  color: #1d4ed8;
-  border: 1px solid rgba(37, 99, 235, 0.22);
+  background: #E0F2FE;
+  color: #0284C7;
+  border: 1px solid #BAE6FD;
 }
-.kpi-pastel-blue .kpi-pastel-title { color: #1e3a8a; }
-.kpi-pastel-blue .kpi-pastel-value { color: #0f172a; }
-.kpi-pastel-blue .kpi-pastel-sub { color: #059669; }
+.kpi-pastel-blue .kpi-pastel-title { color: #0369A1; }
+.kpi-pastel-blue .kpi-pastel-value { color: #0F172A; }
+.kpi-pastel-blue .kpi-pastel-sub { color: #0D9488; }
 
+/* Kad 2: Emerald Mint (#ECFDF5 / #A7F3D0 / #059669) */
 .kpi-pastel-mint,
 .stat-card.stat-card-emerald,
 .att-kpi-card.att-kpi-present {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
-  border: 1.5px solid #a7f3d0 !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #ECFDF5 100%) !important;
+  border: 1.5px solid #A7F3D0 !important;
+  border-left: 4px solid #10B981 !important;
 }
 .kpi-pastel-mint .kpi-pastel-icon {
-  background: rgba(5, 150, 105, 0.12);
-  color: #047857;
-  border: 1px solid rgba(5, 150, 105, 0.22);
+  background: #D1FAE5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
 }
-.kpi-pastel-mint .kpi-pastel-title { color: #064e3b; }
-.kpi-pastel-mint .kpi-pastel-value { color: #0f172a; }
-.kpi-pastel-mint .kpi-pastel-sub { color: #047857; }
+.kpi-pastel-mint .kpi-pastel-title { color: #047857; }
+.kpi-pastel-mint .kpi-pastel-value { color: #0F172A; }
+.kpi-pastel-mint .kpi-pastel-sub { color: #059669; }
 
+/* Kad 3: Warm Amber (#FFFBEB / #FDE68A / #D97706) */
 .kpi-pastel-amber {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
-  border: 1.5px solid #fde68a !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFBEB 100%) !important;
+  border: 1.5px solid #FDE68A !important;
+  border-left: 4px solid #F59E0B !important;
 }
 .kpi-pastel-amber .kpi-pastel-icon {
-  background: rgba(217, 119, 6, 0.14);
-  color: #b45309;
-  border: 1px solid rgba(217, 119, 6, 0.25);
+  background: #FEF3C7;
+  color: #D97706;
+  border: 1px solid #FDE68A;
 }
-.kpi-pastel-amber .kpi-pastel-title { color: #78350f; }
-.kpi-pastel-amber .kpi-pastel-value { color: #0f172a; }
-.kpi-pastel-amber .kpi-pastel-sub { color: #b45309; }
+.kpi-pastel-amber .kpi-pastel-title { color: #B45309; }
+.kpi-pastel-amber .kpi-pastel-value { color: #0F172A; }
+.kpi-pastel-amber .kpi-pastel-sub { color: #D97706; }
 
+/* Kad 4: Royal Indigo (#EEF2FF / #C7D2FE / #4F46E5) */
 .kpi-pastel-purple,
 .stat-card.stat-card-purple,
 .att-kpi-card.att-kpi-relief {
-  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important;
-  border: 1.5px solid #ddd6fe !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #EEF2FF 100%) !important;
+  border: 1.5px solid #C7D2FE !important;
+  border-left: 4px solid #6366F1 !important;
 }
 .kpi-pastel-purple .kpi-pastel-icon {
-  background: rgba(124, 58, 237, 0.12);
-  color: #6d28d9;
-  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: #E0E7FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
 }
-.kpi-pastel-purple .kpi-pastel-title { color: #4c1d95; }
-.kpi-pastel-purple .kpi-pastel-value { color: #0f172a; }
-.kpi-pastel-purple .kpi-pastel-sub { color: #6d28d9; }
+.kpi-pastel-purple .kpi-pastel-title { color: #4338CA; }
+.kpi-pastel-purple .kpi-pastel-value { color: #0F172A; }
+.kpi-pastel-purple .kpi-pastel-sub { color: #4F46E5; }
 
+/* Kad 5: Rose Coral (#FFF1F2 / #FECDD3 / #E11D48) */
 .kpi-pastel-rose,
 .stat-card.stat-card-rose,
 .att-kpi-card.att-kpi-absent {
-  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%) !important;
-  border: 1.5px solid #fecdd3 !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF1F2 100%) !important;
+  border: 1.5px solid #FECDD3 !important;
+  border-left: 4px solid #F43F5E !important;
 }
 .kpi-pastel-rose .kpi-pastel-icon {
-  background: rgba(225, 29, 72, 0.12);
-  color: #be123c;
-  border: 1px solid rgba(225, 29, 72, 0.22);
+  background: #FFE4E6;
+  color: #E11D48;
+  border: 1px solid #FECDD3;
 }
-.kpi-pastel-rose .kpi-pastel-title { color: #881337; }
-.kpi-pastel-rose .kpi-pastel-value { color: #0f172a; }
-.kpi-pastel-rose .kpi-pastel-sub { color: #be123c; }
+.kpi-pastel-rose .kpi-pastel-title { color: #BE123C; }
+.kpi-pastel-rose .kpi-pastel-value { color: #0F172A; }
+.kpi-pastel-rose .kpi-pastel-sub { color: #E11D48; }
 
-/* Sokongan Mod Gelap untuk Kad KPI Pastel */
+/* Sokongan Mod Gelap untuk Kad KPI */
 .dark .kpi-pastel-blue,
 .dark .stat-card.stat-card-blue,
 .dark .att-kpi-card.att-kpi-total {
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  border-color: rgba(59, 130, 246, 0.4) !important;
+  background: linear-gradient(135deg, #0F172A 0%, #0C4A6E 100%) !important;
+  border-color: #0284C7 !important;
 }
 .dark .kpi-pastel-mint,
 .dark .stat-card.stat-card-emerald,
 .dark .att-kpi-card.att-kpi-present {
-  background: linear-gradient(135deg, rgba(6, 78, 59, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
+  background: linear-gradient(135deg, #0F172A 0%, #064E3B 100%) !important;
+  border-color: #10B981 !important;
 }
 .dark .kpi-pastel-amber {
-  background: linear-gradient(135deg, rgba(120, 53, 15, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  border-color: rgba(245, 158, 11, 0.4) !important;
+  background: linear-gradient(135deg, #0F172A 0%, #78350F 100%) !important;
+  border-color: #F59E0B !important;
 }
 .dark .kpi-pastel-purple,
 .dark .stat-card.stat-card-purple,
 .dark .att-kpi-card.att-kpi-relief {
-  background: linear-gradient(135deg, rgba(76, 29, 149, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  border-color: rgba(139, 92, 246, 0.4) !important;
+  background: linear-gradient(135deg, #0F172A 0%, #312E81 100%) !important;
+  border-color: #6366F1 !important;
 }
 .dark .kpi-pastel-rose,
 .dark .stat-card.stat-card-rose,
 .dark .att-kpi-card.att-kpi-absent {
-  background: linear-gradient(135deg, rgba(136, 19, 55, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
-  border-color: rgba(244, 63, 94, 0.4) !important;
+  background: linear-gradient(135deg, #0F172A 0%, #881337 100%) !important;
+  border-color: #F43F5E !important;
 }
-.dark .kpi-pastel-card .kpi-pastel-title { color: #cbd5e1 !important; }
-.dark .kpi-pastel-card .kpi-pastel-value { color: #f8fafc !important; }
-.dark .kpi-pastel-card .kpi-pastel-sub { color: #93c5fd !important; }
+.dark .kpi-pastel-card .kpi-pastel-title { color: #CBD5E1 !important; }
+.dark .kpi-pastel-card .kpi-pastel-value { color: #F8FAFC !important; }
+.dark .kpi-pastel-card .kpi-pastel-sub { color: #5EEAD4 !important; }
 
-/* 4. KAD SEKSYEN & PENGEPALA KAD NAVY GELAP + BUCU PEPENJURU EMAS (TNA CARD HEADERS) */
+/* 4. KAD SEKSYEN & PENGEPALA KAD MINIMALIS TERANG (FROST-TEAL + AQUA CORNER WEDGE) */
 .section-card {
   border-radius: 14px !important;
-  border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06) !important;
+  border: 1px solid #E2E8F0 !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
 }
 
 .dark .section-card {
-  border-color: #334155 !important;
+  background: #0F172A !important;
+  border-color: #1E293B !important;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35) !important;
 }
 
@@ -5323,25 +5416,32 @@ main#page-import {
   overflow: hidden !important;
 }
 
-/* Pengepala Kad Utama Page 1 (.tna-card-header) & Kad Seksyen (.tna-card-header-bar) */
+/* Pengepala Kad Minimalis Terang (#F0FDFA -> #F0F9FF) */
 .tna-card-header,
 .tna-card-header-bar {
   position: relative;
-  background: linear-gradient(90deg, #0b2559 0%, #143985 65%, #0e2c6b 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(90deg, #F0FDFA 0%, #F0F9FF 60%, #F8FAFC 100%) !important;
+  color: #0F172A !important;
   padding: 0.95rem 1.4rem 0.95rem 1.85rem !important;
-  border-bottom: 2px solid #eab308 !important;
+  border-bottom: 2px solid #99F6E4 !important;
   display: flex;
   align-items: center;
   gap: 0.85rem;
   overflow: hidden;
 }
 
+.dark .tna-card-header,
+.dark .tna-card-header-bar {
+  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
+  color: #F8FAFC !important;
+  border-bottom-color: #14B8A6 !important;
+}
+
 .tna-card-header-bar {
   margin: -1.5rem -1.5rem 1.25rem -1.5rem !important;
 }
 
-/* Bucu Pepenjuru Emas pada Setiap Pengepala Kad (Signature TNA Card Corner Wedge) */
+/* Bucu Pepenjuru Teal-Cyan pada Setiap Pengepala Kad (#14B8A6 -> #0284C7) */
 .tna-card-header::before,
 .tna-card-header-bar::before,
 .page-header-panel::before,
@@ -5353,7 +5453,7 @@ main#page-import {
   left: 0;
   width: 34px;
   height: 34px;
-  background: linear-gradient(135deg, #fde047 0%, #eab308 55%, #b45309 100%);
+  background: linear-gradient(135deg, #2DD4BF 0%, #0D9488 55%, #0284C7 100%);
   clip-path: polygon(0 0, 100% 0, 0 100%);
   pointer-events: none;
   z-index: 2;
@@ -5363,9 +5463,9 @@ main#page-import {
   width: 38px !important;
   height: 38px !important;
   border-radius: 10px !important;
-  background: rgba(255, 255, 255, 0.14) !important;
-  border: 1px solid rgba(250, 204, 21, 0.45) !important;
-  color: #fde047 !important;
+  background: #CCFBF1 !important;
+  border: 1px solid #5EEAD4 !important;
+  color: #0F766E !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -5373,114 +5473,181 @@ main#page-import {
   box-shadow: none !important;
 }
 
+.dark .tna-card-header-icon {
+  background: rgba(20, 184, 166, 0.2) !important;
+  border-color: #14B8A6 !important;
+  color: #5EEAD4 !important;
+}
+
 .tna-card-header-title,
 .tna-card-header h3,
 .tna-card-header-bar h3 {
-  color: #ffffff !important;
+  color: #0F172A !important;
   font-weight: 800 !important;
   font-size: 1.05rem !important;
   letter-spacing: -0.01em;
   margin: 0 !important;
 }
 
+.dark .tna-card-header-title,
+.dark .tna-card-header h3,
+.dark .tna-card-header-bar h3 {
+  color: #F8FAFC !important;
+}
+
 .tna-card-header-sub,
 .tna-card-header p,
 .tna-card-header-bar p {
-  color: #bfdbfe !important;
+  color: #475569 !important;
   font-size: 0.78rem !important;
   margin: 2px 0 0 !important;
 }
 
+.dark .tna-card-header-sub,
+.dark .tna-card-header p,
+.dark .tna-card-header-bar p {
+  color: #94A3B8 !important;
+}
+
 .tna-card-header-bar code {
-  background: rgba(255, 255, 255, 0.16) !important;
-  color: #fef08a !important;
+  background: #E0F2FE !important;
+  color: #0369A1 !important;
   padding: 1px 6px;
   border-radius: 4px;
+}
+
+.dark .tna-card-header-bar code {
+  background: rgba(2, 132, 199, 0.25) !important;
+  color: #7DD3FC !important;
 }
 
 /* Sub-panel Jadual Automatik Waktu Guru Ganti (Page 1) */
 .sub-panel {
   border-radius: 14px !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #E2E8F0 !important;
   overflow: hidden;
-  background: #ffffff !important;
+  background: #FFFFFF !important;
   padding: 0 1.25rem 1.25rem !important;
 }
 
 .dark .sub-panel {
-  background: #0f172a !important;
-  border-color: #334155 !important;
+  background: #0F172A !important;
+  border-color: #1E293B !important;
 }
 
 .sub-panel > .panel-header {
   position: relative;
-  background: linear-gradient(90deg, #0b2559 0%, #163d8a 100%) !important;
+  background: linear-gradient(90deg, #F0FDFA 0%, #F0F9FF 100%) !important;
   margin: 0 -1.25rem 1.15rem -1.25rem !important;
   padding: 0.85rem 1.25rem 0.85rem 1.75rem !important;
-  border-bottom: 2px solid #eab308 !important;
+  border-bottom: 2px solid #99F6E4 !important;
+}
+
+.dark .sub-panel > .panel-header {
+  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
+  border-bottom-color: #14B8A6 !important;
 }
 
 .sub-panel > .panel-header .panel-title h4 {
-  color: #ffffff !important;
+  color: #0F172A !important;
   font-weight: 800 !important;
   font-size: 0.98rem !important;
 }
 
+.dark .sub-panel > .panel-header .panel-title h4 {
+  color: #F8FAFC !important;
+}
+
 .sub-panel > .panel-header .panel-title svg {
-  color: #facc15 !important;
+  color: #0D9488 !important;
+}
+
+.dark .sub-panel > .panel-header .panel-title svg {
+  color: #2DD4BF !important;
 }
 
 .sub-panel > .panel-header .btn-secondary {
-  background: rgba(255, 255, 255, 0.14) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+}
+
+.dark .sub-panel > .panel-header .btn-secondary {
+  background: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
 }
 
 .sub-panel > .panel-header .btn-secondary:hover {
-  background: rgba(250, 204, 21, 0.25) !important;
-  border-color: #facc15 !important;
+  background: #CCFBF1 !important;
+  border-color: #14B8A6 !important;
+  color: #0F766E !important;
 }
 
-/* Page Header Panel (Halaman 2, 3, 5, 6, 7, Import) */
+/* Page Header Panel (Halaman 2, 3, 5, 6, 7, Import) — Minimalis Terang */
 .page-header-panel {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(90deg, #0b2559 0%, #153c8a 65%, #0d2b6b 100%) !important;
-  border: 1px solid #1e3a8a !important;
-  border-bottom: 3px solid #eab308 !important;
+  background: linear-gradient(90deg, #FFFFFF 0%, #F0FDFA 55%, #F0F9FF 100%) !important;
+  border: 1px solid #CCFBF1 !important;
+  border-bottom: 3px solid #14B8A6 !important;
   border-radius: 14px !important;
   padding: 1.15rem 1.5rem 1.15rem 1.9rem !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
+  color: #0F172A !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+}
+
+.dark .page-header-panel {
+  background: linear-gradient(90deg, #0F2942 0%, #134E4A 100%) !important;
+  border-color: #115E59 !important;
+  border-bottom-color: #14B8A6 !important;
+  color: #F8FAFC !important;
 }
 
 .page-header-panel .page-title {
-  color: #ffffff !important;
+  color: #0F172A !important;
   font-size: 1.25rem !important;
   font-weight: 800 !important;
 }
 
+.dark .page-header-panel .page-title {
+  color: #F8FAFC !important;
+}
+
 .page-header-panel .page-subtitle {
-  color: #bfdbfe !important;
+  color: #475569 !important;
+}
+
+.dark .page-header-panel .page-subtitle {
+  color: #94A3B8 !important;
 }
 
 .page-header-panel label {
-  color: #e2e8f0 !important;
+  color: #334155 !important;
 }
 
-/* Pengepala Kad Jadual Kelas & Jadual Guru (.tt-card-header) */
+.dark .page-header-panel label {
+  color: #E2E8F0 !important;
+}
+
+/* Pengepala Kad Jadual Kelas (.tt-card-header) — Oceanic Teal-Slate (#0F3D56 -> #0E7490) */
+#page2 .tt-card-header {
+  background: linear-gradient(90deg, #0F3D56 0%, #0E7490 100%) !important;
+  color: #FFFFFF !important;
+}
+
 .tt-card-header {
   position: relative;
   overflow: hidden;
   padding-left: 1.5rem !important;
-  border-bottom: 2px solid #eab308 !important;
+  border-bottom: 2px solid #2DD4BF !important;
 }
 
-/* 5. BAR NAVIGASI BAWAH TELEFON BIMBIT & BACKDROP DRAWER */
+/* 5. BAR NAVIGASI BAWAH TELEFON BIMBIT (MINIMALIS TERANG) & BACKDROP DRAWER */
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.6);
+  background: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(3px);
   z-index: 1150;
   transition: opacity 0.25s ease;
@@ -5493,13 +5660,18 @@ main#page-import {
   right: 0;
   bottom: 0;
   z-index: 1050;
-  background: linear-gradient(90deg, #081d47 0%, #0d2b6b 100%);
-  border-top: 2px solid #eab308;
-  box-shadow: 0 -6px 20px rgba(2, 6, 23, 0.28);
+  background: #FFFFFF;
+  border-top: 2px solid #14B8A6;
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.08);
   padding: 0.35rem 0.25rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
   justify-content: space-around;
   align-items: center;
   gap: 2px;
+}
+
+.dark .mobile-bottom-nav {
+  background: #0F172A;
+  border-top-color: #14B8A6;
 }
 
 .mobile-bottom-btn {
@@ -5514,11 +5686,15 @@ main#page-import {
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: #cbd5e1;
+  color: #64748B;
   font-size: 0.64rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.dark .mobile-bottom-btn {
+  color: #94A3B8;
 }
 
 .mobile-bottom-btn span {
@@ -5529,10 +5705,10 @@ main#page-import {
 }
 
 .mobile-bottom-btn.active {
-  background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-  color: #081d47;
+  background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%);
+  color: #FFFFFF;
   font-weight: 800;
-  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.35);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
 }
 
 /* ============================================================================
